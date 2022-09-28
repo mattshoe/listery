@@ -3,7 +3,7 @@ package com.listery.ui.home
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.listery.data.repository.IRecipeRepository
-import com.listery.data.room.Recipe
+import com.listery.data.model.recipe.Recipe
 import com.listery.databinding.RecipeListItemBinding
 import com.listery.ui.recyclerview.BaseAdapter
 import javax.inject.Inject

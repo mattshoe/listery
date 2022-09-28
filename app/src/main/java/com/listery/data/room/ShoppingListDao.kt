@@ -7,7 +7,7 @@ import com.listery.data.model.recipe.Recipe
 import com.listery.data.model.recipe.RecipeMetadata
 
 @Dao
-interface RecipeDao {
+interface ShoppingListDao {
 
     @Transaction
     @Query("SELECT * FROM recipemetadata")

@@ -2,6 +2,8 @@ package com.listery.data.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.listery.data.model.MeasurementUnit
+import com.listery.data.model.recipe.*
 
 @Database(
     entities = [

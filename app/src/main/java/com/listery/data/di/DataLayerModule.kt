@@ -2,12 +2,11 @@ package com.listery.data.di
 
 import android.app.Application
 import androidx.room.Room
-import com.listery.ListeryApplication
 import com.listery.data.repository.IRecipeRepository
 import com.listery.data.repository.RecipeRepository
 import com.listery.data.room.AppDatabase
 import com.listery.data.room.RecipeDao
-import com.listery.data.room.RecipeMetadata
+import com.listery.data.model.recipe.RecipeMetadata
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
