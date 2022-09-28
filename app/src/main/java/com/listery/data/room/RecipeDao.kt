@@ -13,10 +13,10 @@ interface RecipeDao {
     @Query("SELECT * FROM recipemetadata")
     fun getAll(): LiveData<List<Recipe>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertRecipeMetadata(vararg recipeMetadata: RecipeMetadata)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertIngredients(vararg ingredient: Ingredient)
 
 //    @Transaction

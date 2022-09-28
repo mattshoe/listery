@@ -8,11 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.listery.data.room.RecipeListAdapter
 import com.listery.databinding.FragmentHomeBinding
 import com.listery.di.AndroidInjector
 import com.listery.di.ViewModelFactory
+import com.listery.di.get
 import javax.inject.Inject
+import javax.inject.Provider
 
 class HomeFragment : Fragment() {
 
@@ -21,6 +22,9 @@ class HomeFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var adapterProvider: Provider<RecipeListAdapter>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,10 +44,10 @@ class HomeFragment : Fragment() {
 
         homeViewModel.recipes.observe(
             viewLifecycleOwner,
-            Observer {
+            Observer { recipes ->
                 dataBinding.recipeList.apply {
                     layoutManager = LinearLayoutManager(view?.context, LinearLayoutManager.VERTICAL, false)
-                    adapter = RecipeListAdapter(it)
+                    adapter = adapterProvider.get(recipes)
                 }
             }
         )

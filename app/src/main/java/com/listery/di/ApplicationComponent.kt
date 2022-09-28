@@ -1,9 +1,10 @@
-package com.listery
+package com.listery.di
 
 import android.app.Application
 import android.content.Context
+import com.listery.ListeryApplication
+import com.listery.MainActivity
 import com.listery.data.di.DataLayerModule
-import com.listery.di.ViewModelModule
 import com.listery.ui.home.HomeFragment
 import com.listery.ui.home.HomeViewModel
 import com.listery.ui.notifications.NotificationsFragment
