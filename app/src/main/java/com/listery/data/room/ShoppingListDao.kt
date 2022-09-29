@@ -2,24 +2,43 @@ package com.listery.data.room
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.listery.data.model.recipe.Ingredient
-import com.listery.data.model.recipe.Recipe
-import com.listery.data.model.recipe.RecipeMetadata
+import com.listery.data.room.entities.shoppinglist.ListItem
+import com.listery.data.room.entities.shoppinglist.ShoppingList
 
 @Dao
 interface ShoppingListDao {
 
-    @Transaction
-    @Query("SELECT * FROM recipemetadata")
-    fun getAll(): LiveData<List<Recipe>>
+    @Query("SELECT * FROM shoppinglist")
+    fun getShoppingLists(): LiveData<List<ShoppingList>>
+
+    @Query("SELECT * FROM listitem")
+    fun getListItems(): LiveData<List<ListItem>>
+
+    @Query("SELECT * FROM listitem WHERE owningList LIKE :shoppingList")
+    fun getListItems(shoppingList: String): LiveData<List<ListItem>>
+
+    @Query("SELECT * FROM listitem WHERE complete == false")
+    fun getActiveListItems(): LiveData<List<ListItem>>
+
+    @Query("SELECT * FROM listitem WHERE complete == true")
+    fun getFinishedListItems(): LiveData<List<ListItem>>
+
+    @Query("SELECT * FROM listitem WHERE owningList LIKE :shoppingList AND  complete == false")
+    fun getActiveListItems(shoppingList: String): LiveData<List<ListItem>>
+
+    @Query("SELECT * FROM listitem WHERE owningList LIKE :shoppingList AND  complete == true")
+    fun getFinishedListItems(shoppingList: String): LiveData<List<ListItem>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertRecipeMetadata(vararg recipeMetadata: RecipeMetadata)
+    fun insertShoppingList(vararg item: ShoppingList)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertIngredients(vararg ingredient: Ingredient)
+    fun insertListItem(vararg item: ListItem)
 
-//    @Delete
-//    abstract fun delete(recipe: RecipeWithIngredients)
+    @Delete
+    abstract fun delete(item: ShoppingList)
+
+    @Delete
+    abstract fun delete(item: ListItem)
 
 }

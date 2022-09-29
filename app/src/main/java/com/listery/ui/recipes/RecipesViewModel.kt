@@ -1,13 +1,31 @@
 package com.listery.ui.recipes
 
-import androidx.lifecycle.LiveData
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.listery.data.model.UserRecipe
+import com.listery.data.repository.IRecipeRepository
+import com.listery.ui.BaseViewModel
+import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class RecipesViewModel : ViewModel() {
+class RecipesViewModel @Inject constructor(
+    application: Application,
+    private val recipeRepository: IRecipeRepository
+) : BaseViewModel(application) {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is recipes Fragment"
+    val recipes: MutableLiveData<List<UserRecipe>> = MutableLiveData()
+
+    init {
+        addDisposable(
+            recipeRepository.getRecipes()
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    {
+                        recipes.postValue(it)
+                    },
+                    {}
+                )
+        )
     }
-    val text: LiveData<String> = _text
 }

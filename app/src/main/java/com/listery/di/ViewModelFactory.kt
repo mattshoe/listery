@@ -2,6 +2,7 @@ package com.listery.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton

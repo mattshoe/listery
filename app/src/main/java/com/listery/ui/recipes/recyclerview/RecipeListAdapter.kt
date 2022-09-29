@@ -1,9 +1,8 @@
-package com.listery.ui.home
+package com.listery.ui.recipes.recyclerview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.listery.data.model.UserRecipe
-import com.listery.data.room.entities.recipe.RecipeEntity
 import com.listery.data.repository.IRecipeRepository
 import com.listery.databinding.RecipeListItemBinding
 import com.listery.ui.recyclerview.BaseAdapter

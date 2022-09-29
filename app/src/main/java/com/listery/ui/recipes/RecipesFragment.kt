@@ -2,41 +2,39 @@ package com.listery.ui.recipes
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.listery.databinding.FragmentDashboardBinding
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.listery.databinding.FragmentRecipesBinding
+import com.listery.di.ApplicationComponent
+import com.listery.di.get
+import com.listery.ui.BaseFragment
+import com.listery.ui.home.RecipeListAdapter
+import javax.inject.Inject
+import javax.inject.Provider
 
-class RecipesFragment : Fragment() {
+class RecipesFragment: BaseFragment<RecipesViewModel, FragmentRecipesBinding>() {
+    override val viewModelClass = RecipesViewModel::class.java
 
-    private var _binding: FragmentDashboardBinding? = null
+    @Inject
+    lateinit var adapterProvider: Provider<RecipeListAdapter>
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    override fun inject(component: ApplicationComponent) = component.inject(this)
+    override fun bind(i: LayoutInflater, c: ViewGroup?, a: Boolean) = FragmentRecipesBinding.inflate(i, c, a)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(RecipesViewModel::class.java)
-
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onCreateView(savedInstanceState: Bundle?) {
+        viewModel.recipes.observe(
+            viewLifecycleOwner,
+            Observer { recipes ->
+                binding.recipeList.apply {
+                    layoutManager = LinearLayoutManager(
+                        view?.context,
+                        LinearLayoutManager.VERTICAL,
+                        false
+                    )
+                    adapter = adapterProvider.get(recipes)
+                }
+            }
+        )
     }
 }
