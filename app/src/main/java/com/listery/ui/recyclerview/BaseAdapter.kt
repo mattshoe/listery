@@ -24,13 +24,16 @@ abstract class BaseAdapter<TData, TViewHolder: BaseViewHolder>: RecyclerView.Ada
         holder.reset()
     }
 
-    protected fun setText(view: TextView, text: CharSequence) {
-        if (text.length > 0) {
-            view.setText(text)
-            view.visibility = View.VISIBLE
-        }
-        else {
-            view.visibility = View.GONE
-        }
+    protected fun setText(view: TextView, text: CharSequence?) {
+        text?.let { text ->
+            if (text.length > 0) {
+                view.setText(text)
+                view.visibility = View.VISIBLE
+            }
+            else {
+                view.visibility = View.GONE
+            }
+        } ?: run { view.visibility = View.GONE }
+
     }
 }

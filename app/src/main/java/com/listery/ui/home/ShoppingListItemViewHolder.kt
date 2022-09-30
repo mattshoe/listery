@@ -1,10 +1,11 @@
 package com.listery.ui.home
 
 import com.listery.databinding.RecipeListItemBinding
+import com.listery.databinding.ShoppingListItemBinding
 import com.listery.ui.recyclerview.BaseViewHolder
 
-class RecipeViewHolder(
-    private val binding: RecipeListItemBinding
+class ShoppingListItemViewHolder(
+    private val binding: ShoppingListItemBinding
 ): BaseViewHolder(binding.root) {
     val checkbox = binding.checkbox
     val title = binding.itemTitle

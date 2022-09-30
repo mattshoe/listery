@@ -6,30 +6,24 @@ import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
 
 
-@Entity
-data class ShoppingList(
-    @PrimaryKey
-    val name: String,
-    val notes: String
-)
-
 @Entity(
+    tableName = "list_item",
     foreignKeys = [
             ForeignKey(
-            entity = ShoppingList::class,
+            entity = ShoppingListEntity::class,
             parentColumns = arrayOf("name"),
             childColumns = arrayOf("owningList"),
             onDelete = CASCADE
         )
     ]
 )
-data class ListItem(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long,
+data class ListItemEntity(
     val owningList: String,
     val title: String,
     val subtitle: String?,
     val quantity: Double?,
     val unit: String?,
-    val complete: Boolean
+    val complete: Boolean,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
 )

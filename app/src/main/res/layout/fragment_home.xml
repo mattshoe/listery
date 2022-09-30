@@ -12,7 +12,7 @@
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/add_item"
-        tools:listitem="@layout/recipe_list_item"
+        tools:listitem="@layout/shopping_list_item"
         tools:itemCount="5"
         android:clipToPadding="false"/>
 

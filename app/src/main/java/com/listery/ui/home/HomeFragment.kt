@@ -16,7 +16,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     override val viewModelClass = HomeViewModel::class.java
 
     @Inject
-    lateinit var adapterProvider: Provider<RecipeListAdapter>
+    lateinit var adapterProvider: Provider<ShoppingListAdapter>
 
     override fun inject(component: ApplicationComponent) = component.inject(this)
     override fun bind(i: LayoutInflater, c: ViewGroup?, a: Boolean) = FragmentHomeBinding.inflate(i, c, a)
@@ -24,12 +24,12 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     override fun onCreateView(
         savedInstanceState: Bundle?
     ) {
-        viewModel.recipes.observe(
+        viewModel.shoppingLists.observe(
             viewLifecycleOwner,
-            Observer { recipes ->
+            Observer { lists ->
                 binding.recipeList.apply {
                     layoutManager = LinearLayoutManager(view?.context, LinearLayoutManager.VERTICAL, false)
-                    adapter = adapterProvider.get(recipes)
+                    adapter = adapterProvider.get(lists.first().items)
                 }
             }
         )

@@ -1,44 +1,47 @@
 package com.listery.data.room
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.listery.data.room.entities.shoppinglist.ListItem
-import com.listery.data.room.entities.shoppinglist.ShoppingList
+import com.listery.data.room.entities.shoppinglist.ListItemEntity
+import com.listery.data.room.entities.shoppinglist.ShoppingListEntity
+import io.reactivex.Single
 
 @Dao
 interface ShoppingListDao {
 
-    @Query("SELECT * FROM shoppinglist")
-    fun getShoppingLists(): LiveData<List<ShoppingList>>
+    @Query("SELECT * FROM shopping_list")
+    fun getAllShoppingListEntities(): Single<List<ShoppingListEntity>>
 
-    @Query("SELECT * FROM listitem")
-    fun getListItems(): LiveData<List<ListItem>>
+    @Query("SELECT * FROM shopping_list WHERE name LIKE :name LIMIT 1")
+    fun getShopppingListEntity(name: String): Single<ShoppingListEntity>
 
-    @Query("SELECT * FROM listitem WHERE owningList LIKE :shoppingList")
-    fun getListItems(shoppingList: String): LiveData<List<ListItem>>
+    @Query("SELECT * FROM list_item")
+    fun getAllListItemEntities(): Single<List<ListItemEntity>>
 
-    @Query("SELECT * FROM listitem WHERE complete == false")
-    fun getActiveListItems(): LiveData<List<ListItem>>
+    @Query("SELECT * FROM list_item WHERE owningList LIKE :shoppingList")
+    fun getAllListItemEntities(shoppingList: String): Single<List<ListItemEntity>>
 
-    @Query("SELECT * FROM listitem WHERE complete == true")
-    fun getFinishedListItems(): LiveData<List<ListItem>>
+    @Query("SELECT * FROM list_item WHERE complete == false")
+    fun getActiveListItemEntities(): Single<List<ListItemEntity>>
 
-    @Query("SELECT * FROM listitem WHERE owningList LIKE :shoppingList AND  complete == false")
-    fun getActiveListItems(shoppingList: String): LiveData<List<ListItem>>
+    @Query("SELECT * FROM list_item WHERE complete == true")
+    fun getFinishedListItemEntities(): Single<List<ListItemEntity>>
 
-    @Query("SELECT * FROM listitem WHERE owningList LIKE :shoppingList AND  complete == true")
-    fun getFinishedListItems(shoppingList: String): LiveData<List<ListItem>>
+    @Query("SELECT * FROM list_item WHERE owningList LIKE :shoppingList AND  complete == false")
+    fun getActiveListItemEntities(shoppingList: String): Single<List<ListItemEntity>>
+
+    @Query("SELECT * FROM list_item WHERE owningList LIKE :shoppingList AND  complete == true")
+    fun getFinishedListItemEntities(shoppingList: String): Single<List<ListItemEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertShoppingList(vararg item: ShoppingList)
+    fun insertShoppingListEntities(vararg item: ShoppingListEntity): Single<List<Long>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertListItem(vararg item: ListItem)
+    fun insertListItemEntities(vararg item: ListItemEntity): Single<List<Long>>
 
     @Delete
-    abstract fun delete(item: ShoppingList)
+    abstract fun delete(item: ShoppingListEntity): Int
 
     @Delete
-    abstract fun delete(item: ListItem)
+    abstract fun delete(item: ListItemEntity): Int
 
 }

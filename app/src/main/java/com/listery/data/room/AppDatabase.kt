@@ -6,8 +6,8 @@ import com.listery.data.room.entities.MeasurementUnitEntity
 import com.listery.data.room.entities.recipe.IngredientEntity
 import com.listery.data.room.entities.recipe.RecipeEntity
 import com.listery.data.room.entities.recipe.RecipeIngredientEntity
-import com.listery.data.room.entities.shoppinglist.ListItem
-import com.listery.data.room.entities.shoppinglist.ShoppingList
+import com.listery.data.room.entities.shoppinglist.ListItemEntity
+import com.listery.data.room.entities.shoppinglist.ShoppingListEntity
 
 @Database(
     entities = [
@@ -18,8 +18,8 @@ import com.listery.data.room.entities.shoppinglist.ShoppingList
         RecipeIngredientEntity::class,
 
         // Shopping list
-        ShoppingList::class,
-        ListItem::class
+        ShoppingListEntity::class,
+        ListItemEntity::class
     ],
     version = 1
 )

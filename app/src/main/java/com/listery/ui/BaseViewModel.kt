@@ -7,7 +7,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
-abstract class BaseViewModel @Inject constructor(
+abstract class BaseViewModel(
     application: Application
 ): AndroidViewModel(application) {
     private val disposableContainer = CompositeDisposable()

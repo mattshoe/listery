@@ -9,7 +9,7 @@ import com.listery.databinding.FragmentRecipesBinding
 import com.listery.di.ApplicationComponent
 import com.listery.di.get
 import com.listery.ui.BaseFragment
-import com.listery.ui.home.RecipeListAdapter
+import com.listery.ui.recipes.recyclerview.RecipeListAdapter
 import javax.inject.Inject
 import javax.inject.Provider
 
