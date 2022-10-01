@@ -2,17 +2,13 @@ package com.listery.di
 
 import android.app.Application
 import android.content.Context
-import androidx.lifecycle.ViewModel
-import androidx.viewbinding.ViewBinding
 import com.listery.ListeryApplication
 import com.listery.MainActivity
-import com.listery.data.di.DataLayerModule
-import com.listery.ui.BaseFragment
+import com.listery.data.repository.di.RepositoryModule
+import com.listery.data.room.di.RoomModule
 import com.listery.ui.home.HomeFragment
-import com.listery.ui.home.HomeViewModel
 import com.listery.ui.profile.ProfileFragment
 import com.listery.ui.recipes.RecipesFragment
-import com.listery.ui.recipes.RecipesViewModel
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
@@ -24,7 +20,8 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AppModule::class,
-        DataLayerModule::class,
+        RepositoryModule::class,
+        RoomModule::class,
         ViewModelModule::class
     ]
 )

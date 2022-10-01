@@ -9,8 +9,9 @@ import com.listery.ui.recyclerview.BaseAdapter
 import javax.inject.Inject
 
 class RecipeListAdapter @Inject constructor(
+    viewModel: RecipeListViewModel,
     private val recipeRepository: IRecipeRepository
-): BaseAdapter<UserRecipe, RecipeViewHolder>() {
+): BaseAdapter<UserRecipe, RecipeViewHolder, RecipeListViewModel>(viewModel) {
 
     companion object {
         private const val LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
@@ -23,11 +24,12 @@ class RecipeListAdapter @Inject constructor(
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        setText(holder.title, randomText(75))
-        setText(holder.description, randomText(LOREM_IPSUM.length - 1))
+        setText(holder.title, data[position].entity.name)
+        setText(holder.description, data[position].userIngredients.joinToString { it.entity.name })
         setText(holder.quantity, (0..1000).random().toString())
 
         holder.checkbox.setOnClickListener {
+            viewModel.delete(data[position])
             remove(position)
         }
     }

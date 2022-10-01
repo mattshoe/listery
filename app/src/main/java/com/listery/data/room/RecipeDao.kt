@@ -6,9 +6,10 @@ import com.listery.data.room.entities.MeasurementUnitEntity
 import com.listery.data.room.entities.recipe.IngredientEntity
 import com.listery.data.room.entities.recipe.RecipeEntity
 import com.listery.data.room.entities.recipe.RecipeIngredientEntity
-import com.listery.data.room.entities.recipe.RecipeIngredientRelationEntity
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
+import java.util.function.BiFunction
 
 @Dao
 abstract class RecipeDao {
@@ -89,5 +90,29 @@ abstract class RecipeDao {
                 insertRecipeIngredientEntities(*recipeIngredients.toTypedArray())
             }
         }
+    }
+
+    @Delete
+    abstract fun delete(vararg recipeEntity: RecipeEntity): Int
+
+    @Delete
+    abstract fun delete(vararg ingredientEntity: IngredientEntity): Int
+
+    @Delete
+    abstract fun delete(vararg recipeIngredient: RecipeIngredientEntity): Int
+
+    @Transaction
+    open fun delete(recipe: UserRecipe) {
+        delete(recipe.entity)
+        delete(
+            *recipe.userIngredients.map {
+                RecipeIngredientEntity(
+                    recipe.entity.name,
+                    it.entity.name,
+                    it.qty,
+                    it.unit?.name
+                )
+            }.toTypedArray()
+        )
     }
 }

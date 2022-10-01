@@ -1,6 +1,8 @@
 package com.listery
 
+import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 
 fun <T, U> Single<List<T>>.flatMapEach(
     mapper: (T) -> Single<U>
@@ -9,4 +11,20 @@ fun <T, U> Single<List<T>>.flatMapEach(
         .flatMap {
             mapper.invoke(it).toObservable()
         }.toList()
+}
+
+fun <T> runInBackground(action: () -> T): Single<T> {
+    return Single.fromCallable {
+        action.invoke()
+    }.applyIOScheduler()
+}
+
+fun <T> Single<T>.applyIOScheduler(): Single<T> {
+    return subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.io())
+}
+
+fun <T> Observable<T>.applyIOScheduler(): Observable<T> {
+    return subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.io())
 }
