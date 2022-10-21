@@ -2,13 +2,15 @@ package com.listery.ui.recyclerview
 
 import android.view.View
 import android.widget.TextView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.listery.ui.BaseViewModel
 
-abstract class BaseAdapter<TData, TViewHolder: BaseViewHolder, TViewModel: BaseViewModel>(
+abstract class BaseAdapter<TData, TViewHolder: BaseViewHolder, TViewModel: BaseViewModel<*>>(
     protected val viewModel: TViewModel
 ): RecyclerView.Adapter<TViewHolder>() {
     protected lateinit var data: MutableList<TData>
+        private set
 
     open fun init(data: List<TData>) {
         this.data = data.toMutableList()
@@ -24,13 +26,13 @@ abstract class BaseAdapter<TData, TViewHolder: BaseViewHolder, TViewModel: BaseV
 
     override fun onViewRecycled(holder: TViewHolder) {
         super.onViewRecycled(holder)
-        holder.reset()
+        holder.recycle()
     }
 
     protected fun setText(view: TextView, text: CharSequence?) {
         text?.let { text ->
-            if (text.length > 0) {
-                view.setText(text)
+            if (text.isNotEmpty()) {
+                view.text = text
                 view.visibility = View.VISIBLE
             }
             else {

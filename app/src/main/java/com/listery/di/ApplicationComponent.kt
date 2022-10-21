@@ -8,7 +8,8 @@ import com.listery.data.repository.di.RepositoryModule
 import com.listery.data.room.di.RoomModule
 import com.listery.ui.home.HomeFragment
 import com.listery.ui.profile.ProfileFragment
-import com.listery.ui.recipes.RecipesFragment
+import com.listery.ui.recipes.create.RecipeCreateFragment
+import com.listery.ui.recipes.home.RecipesHomeFragment
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
@@ -32,7 +33,9 @@ interface ApplicationComponent {
 
     fun inject(fragment: HomeFragment)
 
-    fun inject(fragment: RecipesFragment)
+    fun inject(fragment: RecipesHomeFragment)
+
+    fun inject(fragment: RecipeCreateFragment)
 
     fun inject(fragment: ProfileFragment)
 

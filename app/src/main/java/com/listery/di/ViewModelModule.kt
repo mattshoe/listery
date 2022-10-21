@@ -3,7 +3,8 @@ package com.listery.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.listery.ui.home.HomeViewModel
-import com.listery.ui.recipes.RecipesViewModel
+import com.listery.ui.recipes.create.RecipeCreateViewModel
+import com.listery.ui.recipes.home.RecipeHomeViewModel
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
@@ -22,12 +23,18 @@ interface ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(RecipesViewModel::class)
-    fun recipesViewModel(viewModel: RecipesViewModel): ViewModel
+    @ViewModelKey(RecipeHomeViewModel::class)
+    fun recipeHomeViewModel(viewModel: RecipeHomeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RecipeCreateViewModel::class)
+    fun recipeCreateViewModel(viewModel: RecipeCreateViewModel): ViewModel
 
 
     fun homeViewModel(): HomeViewModel
-    fun recipesViewModel(): RecipesViewModel
+    fun recipeHomeViewModel(): RecipeHomeViewModel
+    fun recipeCreateViewModel(): RecipeCreateViewModel
 }
 
 

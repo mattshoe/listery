@@ -7,12 +7,13 @@ import com.listery.applyIOScheduler
 import com.listery.data.model.UserShoppingList
 import com.listery.data.repository.IShoppingListRepository
 import com.listery.ui.BaseViewModel
+import com.listery.ui.NoArgs
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
     application: Application,
     private val shoppingListRepository: IShoppingListRepository
-) : BaseViewModel(application) {
+) : BaseViewModel<NoArgs>(application) {
 
     val shoppingLists: MutableLiveData<List<UserShoppingList>> = MutableLiveData()
     val selectedList: MutableLiveData<UserShoppingList> = MutableLiveData()

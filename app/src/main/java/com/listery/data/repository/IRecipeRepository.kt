@@ -10,6 +10,7 @@ import io.reactivex.Single
 interface IRecipeRepository: MutableRepository {
 
     fun getRecipes(): Single<List<UserRecipe>>
+    fun getRecipe(name: String): Single<UserRecipe>
     fun getRecipeIngredients(recipeName: String): Single<List<RecipeIngredientEntity>>
     fun getIngredients(): Single<List<IngredientEntity>>
     fun getIngredients(recipeName: String): Single<List<IngredientEntity>>

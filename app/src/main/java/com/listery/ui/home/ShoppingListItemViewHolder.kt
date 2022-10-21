@@ -12,7 +12,7 @@ class ShoppingListItemViewHolder(
     val description = binding.description
     val quantity = binding.quantity
     
-    override fun reset() {
+    override fun recycle() {
         title.text = null
         description.text = null
         quantity.text = null

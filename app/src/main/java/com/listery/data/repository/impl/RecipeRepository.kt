@@ -6,6 +6,7 @@ import com.listery.data.observer.MutableDataObservable
 import com.listery.data.repository.IRecipeRepository
 import com.listery.data.room.RecipeDao
 import com.listery.data.room.entities.recipe.IngredientEntity
+import com.listery.data.room.entities.recipe.RecipeEntity
 import com.listery.data.room.entities.recipe.RecipeIngredientEntity
 import io.reactivex.Single
 import javax.inject.Inject
@@ -20,24 +21,14 @@ class RecipeRepository @Inject constructor(
         return recipeDao.getAllRecipeEntities()
             .flattenAsObservable { it }
             .flatMap { recipe ->
-                getRecipeIngredients(recipe.name)
-                    .map {
-                        it
-                    }
-                    .flattenAsObservable { it }
-                    .flatMap { recipeIngredient ->
-                        recipeDao.getIngredientEntity(recipeIngredient.ingredientName).flatMap { ingredient ->
-                            recipeIngredient.unit?.let { unitName ->
-                                recipeDao.getMeasurementUnit(unitName).map { unit ->
-                                    UserIngredient(ingredient, recipeIngredient.quantity, unit)
-                                }
-                            } ?: Single.just(UserIngredient(ingredient, recipeIngredient.quantity, null))
-                        }.toObservable()
-                    }.toList()
-                    .map {
-                        UserRecipe(recipe, it)
-                    }.toObservable()
+                gatherRecipeIngredients(recipe).toObservable()
             }.toList()
+    }
+
+    override fun getRecipe(name: String): Single<UserRecipe> {
+        return recipeDao.getRecipeEntity(name).flatMap {
+            gatherRecipeIngredients(it)
+        }
     }
 
     override fun getRecipeIngredients(recipeName: String): Single<List<RecipeIngredientEntity>> {
@@ -64,5 +55,25 @@ class RecipeRepository @Inject constructor(
         val id = recipeDao.delete(userRecipe.entity)
         recipeDao.delete(userRecipe)
         onDataChanged.post(DataStatus.DELETED)
+    }
+
+    private fun gatherRecipeIngredients(recipe: RecipeEntity): Single<UserRecipe> {
+        return getRecipeIngredients(recipe.name)
+            .map {
+                it
+            }
+            .flattenAsObservable { it }
+            .flatMap { recipeIngredient ->
+                recipeDao.getIngredientEntity(recipeIngredient.ingredientName).flatMap { ingredient ->
+                    recipeIngredient.unit?.let { unitName ->
+                        recipeDao.getMeasurementUnit(unitName).map { unit ->
+                            UserIngredient(ingredient, recipeIngredient.quantity, unit)
+                        }
+                    } ?: Single.just(UserIngredient(ingredient, recipeIngredient.quantity, null))
+                }.toObservable()
+            }.toList()
+            .map {
+                UserRecipe(recipe, it)
+            }
     }
 }

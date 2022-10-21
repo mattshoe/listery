@@ -33,7 +33,7 @@ class ShoppingListAdapter @Inject constructor(
 
     override fun onViewRecycled(holder: ShoppingListItemViewHolder) {
         super.onViewRecycled(holder)
-        holder.reset()
+        holder.recycle()
     }
 
     private fun randomText(maxChars: Int): String {

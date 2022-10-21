@@ -11,16 +11,18 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.listery.R
 import com.listery.databinding.FragmentHomeBinding
 import com.listery.di.ApplicationComponent
 import com.listery.di.get
 import com.listery.ui.BaseFragment
+import com.listery.ui.NoArgs
 import javax.inject.Inject
 import javax.inject.Provider
 
-class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
+class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding, NoArgs>() {
     override val viewModelClass = HomeViewModel::class.java
 
     @Inject

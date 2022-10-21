@@ -44,4 +44,7 @@ interface ShoppingListDao {
     @Delete
     abstract fun delete(item: ListItemEntity): Int
 
+    @Query("DELETE FROM list_item WHERE complete == true")
+    abstract fun deleteFinishedListItemEntities(): Single<Int>
+
 }

@@ -13,6 +13,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavArgs
 import androidx.viewbinding.ViewBinding
 import com.listery.MainActivity
 import com.listery.di.ApplicationComponent
@@ -20,7 +21,9 @@ import com.listery.di.ListeryInjector
 import com.listery.di.ViewModelFactory
 import javax.inject.Inject
 
-abstract class BaseFragment<TViewModel: BaseViewModel, TBinding: ViewBinding>: Fragment(),
+typealias NoArgs = NavArgs
+
+abstract class BaseFragment<TViewModel: BaseViewModel<TArgs>, TBinding: ViewBinding, TArgs: NavArgs>: Fragment(),
     DefaultLifecycleObserver {
     private lateinit var _binding: TBinding
     private lateinit var _viewModel: TViewModel
@@ -37,6 +40,7 @@ abstract class BaseFragment<TViewModel: BaseViewModel, TBinding: ViewBinding>: F
 
     protected abstract fun inject(component: ApplicationComponent)
     protected abstract fun bind(i: LayoutInflater, c: ViewGroup?, a: Boolean): TBinding
+    protected open fun buildNavArgs(bundle: Bundle): TArgs? = null
 
     @CallSuper
     override fun onAttach(context: Context) {
@@ -48,7 +52,14 @@ abstract class BaseFragment<TViewModel: BaseViewModel, TBinding: ViewBinding>: F
     override fun onCreate(savedInstanceState: Bundle?) {
         super<Fragment>.onCreate(savedInstanceState)
         inject(ListeryInjector.build(requireActivity()))
-        _viewModel = ViewModelProvider(this, viewModelFactory)[viewModelClass]
+
+        _viewModel = ViewModelProvider(this, viewModelFactory)[viewModelClass].apply {
+            arguments?.let { bundle ->
+                buildNavArgs(bundle)?.let { args ->
+                    setArguments(args)
+                }
+            }
+        }
     }
 
     @CallSuper

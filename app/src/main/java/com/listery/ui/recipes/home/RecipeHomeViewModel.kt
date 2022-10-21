@@ -1,4 +1,4 @@
-package com.listery.ui.recipes
+package com.listery.ui.recipes.home
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
@@ -6,13 +6,13 @@ import com.listery.applyIOScheduler
 import com.listery.data.model.UserRecipe
 import com.listery.data.repository.IRecipeRepository
 import com.listery.ui.BaseViewModel
-import io.reactivex.schedulers.Schedulers
+import com.listery.ui.NoArgs
 import javax.inject.Inject
 
-class RecipesViewModel @Inject constructor(
+class RecipeHomeViewModel @Inject constructor(
     application: Application,
     private val recipeRepository: IRecipeRepository
-) : BaseViewModel(application) {
+) : BaseViewModel<NoArgs>(application) {
 
     val recipes = MutableLiveData<List<UserRecipe>>()
 
