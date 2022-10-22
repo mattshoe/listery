@@ -19,7 +19,7 @@ object RoomModule {
     fun providesAppDatabase(application: Application): AppDatabase {
         if (!this::appDatabase.isInitialized) {
             appDatabase = DbInitializer.initialize(application).apply {
-//                DbInitializer.seed(this)
+                DbInitializer.seed(this)
             }
         }
 

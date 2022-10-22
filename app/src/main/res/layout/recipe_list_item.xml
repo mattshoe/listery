@@ -28,33 +28,6 @@
             android:ellipsize="end"
             tools:text="Description and/or notes " />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/description"
-            app:layout_constraintStart_toStartOf="parent">
-
-                <TextView
-                    android:id="@+id/quantity_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:text="Qty:"/>
-
-                <TextView
-                    android:id="@+id/quantity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/quantity_label"
-                    android:paddingStart="4dp"
-                    tools:text="2.5"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"

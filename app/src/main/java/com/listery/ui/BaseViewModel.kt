@@ -13,13 +13,15 @@ abstract class BaseViewModel<TArgs: Any>(
 ): AndroidViewModel(application) {
     private val disposableContainer = CompositeDisposable()
 
-    protected val arguments: DataObservable<TArgs> = MutableDataObservable()
+    protected lateinit var arguments: TArgs
+        private set
 
     fun setArguments(args: TArgs) {
-        with (arguments as? MutableDataObservable) {
-            this?.post(args)
-        }
+        this.arguments = args
+        onArgumentsSet(args)
     }
+
+    protected open fun onArgumentsSet(args: TArgs) { }
 
     protected fun addDisposable(disposable: Disposable) {
         disposableContainer.add(disposable)

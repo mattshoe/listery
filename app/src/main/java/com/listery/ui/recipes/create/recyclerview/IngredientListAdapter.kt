@@ -3,15 +3,14 @@ package com.listery.ui.recipes.create.recyclerview
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.listery.data.model.UserIngredient
-import com.listery.data.model.UserRecipe
-import com.listery.data.repository.IRecipeRepository
 import com.listery.databinding.IngredientListItemBinding
-import com.listery.databinding.RecipeListItemBinding
+import com.listery.text.NumberFormatter
 import com.listery.ui.recyclerview.BaseAdapter
 import javax.inject.Inject
 
 class IngredientListAdapter @Inject constructor(
-    viewModel: IngredientListViewModel
+    viewModel: IngredientListViewModel,
+    private val numberFormatter: NumberFormatter
 ): BaseAdapter<UserIngredient, IngredientViewHolder, IngredientListViewModel>(viewModel) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngredientViewHolder {
@@ -22,7 +21,12 @@ class IngredientListAdapter @Inject constructor(
 
     override fun onBindViewHolder(holder: IngredientViewHolder, position: Int) {
         setText(holder.name, data[position].entity.name)
-        setText(holder.quantity, data[position].qty.toString())
+        setText(
+            holder.quantity,
+            numberFormatter.concise(
+                data[position].qty
+            )
+        )
         setText(holder.unit, data[position].unit?.name)
     }
 

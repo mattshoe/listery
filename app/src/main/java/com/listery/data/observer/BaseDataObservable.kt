@@ -3,12 +3,17 @@ package com.listery.data.observer
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.atomic.AtomicBoolean
 
 open class BaseDataObservable<T>(
     protected val scheduler: Scheduler
 ): Disposable {
+
+    var value: T? = null
+        private set
+
     private val isDisposed = AtomicBoolean(false)
 
     protected val disposableContainer = CompositeDisposable()
@@ -17,7 +22,7 @@ open class BaseDataObservable<T>(
     protected fun addObserver(observer: (T) -> Unit) {
         disposableContainer.add(
             observable
-                .subscribeOn(scheduler)
+                .subscribeOn(Schedulers.io())
                 .observeOn(scheduler)
                 .doOnNext(observer)
                 .subscribe()
@@ -25,6 +30,7 @@ open class BaseDataObservable<T>(
     }
 
     protected fun postData(data: T) {
+        value = data
         observable.onNext(data)
     }
 

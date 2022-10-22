@@ -5,6 +5,7 @@ import com.listery.data.model.UserRecipe
 import com.listery.data.observer.MutableDataObservable
 import com.listery.data.repository.IRecipeRepository
 import com.listery.data.room.RecipeDao
+import com.listery.data.room.entities.MeasurementUnitEntity
 import com.listery.data.room.entities.recipe.IngredientEntity
 import com.listery.data.room.entities.recipe.RecipeEntity
 import com.listery.data.room.entities.recipe.RecipeIngredientEntity
@@ -47,8 +48,21 @@ class RecipeRepository @Inject constructor(
         return recipeDao.getIngredientEntity(name)
     }
 
+    override fun getUnits(): Single<List<MeasurementUnitEntity>> {
+        return recipeDao.getMeasurementUnits()
+    }
+
+    override fun addIngredientForRecipe(ingredient: UserIngredient, recipeName: String) {
+        recipeDao.insertIngredientForRecipe(
+            ingredient,
+            RecipeEntity(recipeName, "")
+        )
+        onDataChanged.post(DataStatus.ADDED)
+    }
+
     override fun addRecipe(userRecipe: UserRecipe) {
         recipeDao.insertRecipeAndIngredients(userRecipe)
+        onDataChanged.post(DataStatus.ADDED)
     }
 
     override fun deleteRecipe(userRecipe: UserRecipe) {

@@ -3,13 +3,13 @@ package com.listery.ui.recipes.home
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.listery.databinding.FragmentRecipeHomeBinding
 import com.listery.di.ApplicationComponent
 import com.listery.di.get
 import com.listery.ui.BaseFragment
 import com.listery.ui.NoArgs
+import com.listery.ui.recipes.create.bottomsheet.AddIngredientBottomSheet
 import com.listery.ui.recipes.home.recyclerview.RecipeListAdapter
 import javax.inject.Inject
 import javax.inject.Provider
@@ -37,9 +37,7 @@ class RecipesHomeFragment: BaseFragment<RecipeHomeViewModel, FragmentRecipeHomeB
         viewModel.loadData()
 
         binding.addRecipeButton.setOnClickListener {
-            findNavController().navigate(
-                RecipesHomeFragmentDirections.actionNavigationRecipesHomeToNavigationRecipeCreate(null)
-            )
+            RecipesHomeFragmentDirections.actionNavigationRecipesHomeToCreateRecipeBottomSheet()
         }
     }
 }

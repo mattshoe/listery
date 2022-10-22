@@ -19,11 +19,13 @@ class RecipeCreateViewModel @Inject constructor(
     val recipe = MutableLiveData<UserRecipe>()
 
     init {
-        addDisposable(
-            arguments.observe {
-                loadData(it.recipeName)
-            }
-        )
+        recipeRepository.onDataChanged.observe {
+            loadData(arguments.recipeName)
+        }
+    }
+
+    override fun onArgumentsSet(args: RecipeCreateFragmentArgs) {
+        loadData(args.recipeName)
     }
 
     private fun loadData(recipeName: String? = null) {

@@ -1,6 +1,7 @@
 package com.listery.data.room
 
 import androidx.room.*
+import com.listery.data.model.UserIngredient
 import com.listery.data.model.UserRecipe
 import com.listery.data.room.entities.MeasurementUnitEntity
 import com.listery.data.room.entities.recipe.IngredientEntity
@@ -64,19 +65,22 @@ abstract class RecipeDao {
     @Query("SELECT * FROM measurement_unit WHERE name LIKE :name LIMIT 1")
     abstract fun getMeasurementUnit(name: String): Single<MeasurementUnitEntity>
 
+    @Query("SELECT * FROM measurement_unit")
+    abstract fun getMeasurementUnits(): Single<List<MeasurementUnitEntity>>
 
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertIngredientEntities(vararg ingredientEntity: IngredientEntity): Single<List<Long>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertRecipeEntities(vararg recipeEntity: RecipeEntity): Single<List<Long>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertMeasurementUnit(vararg measurementUnitEntity: MeasurementUnitEntity): Single<List<Long>>
+    abstract fun insertIngredientEntities(vararg ingredientEntity: IngredientEntity): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertRecipeIngredientEntities(vararg recipeIngredientEntities: RecipeIngredientEntity): Single<List<Long>>
+    abstract fun insertRecipeEntities(vararg recipeEntity: RecipeEntity): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun insertMeasurementUnit(vararg measurementUnitEntity: MeasurementUnitEntity): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun insertRecipeIngredientEntities(vararg recipeIngredientEntities: RecipeIngredientEntity): List<Long>
 
     @Transaction
     open fun insertRecipeAndIngredients(userRecipe: UserRecipe) {
@@ -90,6 +94,20 @@ abstract class RecipeDao {
                 insertRecipeIngredientEntities(*recipeIngredients.toTypedArray())
             }
         }
+    }
+
+    @Transaction
+    open fun insertIngredientForRecipe(ingredient: UserIngredient, recipe: RecipeEntity) {
+        insertIngredientEntities(ingredient.entity)
+        ingredient.unit?.let {
+            insertMeasurementUnit(it)
+        }
+        insertRecipeIngredientEntities(
+            RecipeIngredientEntity(
+                recipe.name,
+                ingredient
+            )
+        )
     }
 
     @Delete

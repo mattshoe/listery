@@ -6,13 +6,14 @@ import androidx.navigation.findNavController
 import com.listery.data.model.UserRecipe
 import com.listery.data.repository.IRecipeRepository
 import com.listery.databinding.RecipeListItemBinding
+import com.listery.text.NumberFormatter
 import com.listery.ui.recipes.home.RecipesHomeFragmentDirections
 import com.listery.ui.recyclerview.BaseAdapter
 import javax.inject.Inject
 
 class RecipeListAdapter @Inject constructor(
     viewModel: RecipeListViewModel,
-    private val recipeRepository: IRecipeRepository
+    private val numberFormatter: NumberFormatter
 ): BaseAdapter<UserRecipe, RecipeViewHolder, RecipeListViewModel>(viewModel) {
 
     companion object {
@@ -28,19 +29,12 @@ class RecipeListAdapter @Inject constructor(
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         setText(holder.title, data[position].entity.name)
         setText(holder.description, data[position].userIngredients.joinToString { it.entity.name })
-        setText(holder.quantity, (0..1000).random().toString())
 
         holder.root.setOnClickListener {
             it.findNavController().navigate(
                 RecipesHomeFragmentDirections.actionNavigationRecipesHomeToNavigationRecipeCreate(holder.title.text.toString())
             )
-
         }
-
-//        holder.checkbox.setOnClickListener {
-//            viewModel.delete(data[position])
-//            remove(position)
-//        }
     }
 
     override fun onViewRecycled(holder: RecipeViewHolder) {

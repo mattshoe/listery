@@ -4,11 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.listery.data.room.entities.shoppinglist.ListItemEntity
 import com.listery.databinding.ShoppingListItemBinding
+import com.listery.text.NumberFormatter
 import com.listery.ui.recyclerview.BaseAdapter
 import javax.inject.Inject
 
 class ShoppingListAdapter @Inject constructor(
-    viewModel: ShoppingListViewModel
+    viewModel: ShoppingListViewModel,
+    private val numberFormatter: NumberFormatter
 ): BaseAdapter<ListItemEntity, ShoppingListItemViewHolder, ShoppingListViewModel>(viewModel) {
 
     companion object {
@@ -24,7 +26,12 @@ class ShoppingListAdapter @Inject constructor(
     override fun onBindViewHolder(holder: ShoppingListItemViewHolder, position: Int) {
         setText(holder.title, data[position].title)
         setText(holder.description, data[position].subtitle)
-        setText(holder.quantity, data[position].quantity.toString())
+        data[position].quantity?.let {
+            setText(
+                holder.quantity,
+                numberFormatter.concise(it)
+            )
+        }
 
         holder.checkbox.setOnClickListener {
             remove(position)
@@ -34,14 +41,6 @@ class ShoppingListAdapter @Inject constructor(
     override fun onViewRecycled(holder: ShoppingListItemViewHolder) {
         super.onViewRecycled(holder)
         holder.recycle()
-    }
-
-    private fun randomText(maxChars: Int): String {
-        val maxStart = maxChars - 1
-        val randomStart = (0..maxStart).random()
-        val randomEnd = (randomStart..maxChars).random()
-
-        return LOREM_IPSUM.substring(randomStart, randomEnd)
     }
 
 }

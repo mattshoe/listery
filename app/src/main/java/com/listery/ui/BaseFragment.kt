@@ -19,6 +19,8 @@ import com.listery.MainActivity
 import com.listery.di.ApplicationComponent
 import com.listery.di.ListeryInjector
 import com.listery.di.ViewModelFactory
+import dagger.android.AndroidInjection
+import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 typealias NoArgs = NavArgs

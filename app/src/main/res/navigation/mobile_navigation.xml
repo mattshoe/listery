@@ -18,6 +18,10 @@
         tools:layout="@layout/fragment_recipe_home" >
 
         <action
+            android:id="@+id/action_navigation_recipes_home_to_createRecipeBottomSheet"
+            app:destination="@id/createRecipeBottomSheet" />
+
+        <action
             android:id="@+id/action_navigation_recipes_home_to_navigation_recipe_create"
             app:destination="@id/navigation_recipe_create" />
 
@@ -37,10 +41,37 @@
 
         <argument
             android:name="recipeName"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null"/>
+            app:argType="string"/>
+
+        <action
+            android:id="@+id/action_navigation_recipe_create_to_addIngredientBottomSheet"
+            app:destination="@id/addIngredientBottomSheet" />
 
     </fragment>
+
+    <dialog
+        android:id="@+id/createRecipeBottomSheet"
+        android:name="com.listery.ui.recipes.create.bottomsheet.CreateRecipeBottomSheet"
+        android:label="CreateRecipeBottomSheet"
+        tools:layout="@layout/create_recipe_bottom_sheet">
+
+        <action
+            android:id="@+id/action_createRecipeBottomSheet_to_navigation_recipe_create"
+            app:destination="@id/navigation_recipe_create"
+            app:popUpTo="@id/navigation_recipes_home" />
+
+    </dialog>
+
+    <dialog
+        android:id="@+id/addIngredientBottomSheet"
+        android:name="com.listery.ui.recipes.create.bottomsheet.AddIngredientBottomSheet"
+        android:label="AddIngredientBottomSheet"
+        tools:layout="@layout/create_ingredient_bottom_sheet">
+
+        <argument
+            android:name="recipeName"
+            app:argType="string"/>
+
+    </dialog>
 
 </navigation>

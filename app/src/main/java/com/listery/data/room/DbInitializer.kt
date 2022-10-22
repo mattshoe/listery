@@ -11,6 +11,7 @@ import com.listery.data.room.entities.shoppinglist.ShoppingListEntity
 import io.reactivex.Single
 import kotlinx.coroutines.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.random.Random
 
 object DbInitializer {
 
@@ -51,7 +52,7 @@ object DbInitializer {
                         val ingredientEntities = mutableListOf<IngredientEntity>().apply {
                             repeat(15) {
                                 add(
-                                    IngredientEntity(name = "Ingredint $it")
+                                    IngredientEntity(name = "Ingredient $it")
                                 )
                             }
                         }
@@ -67,7 +68,7 @@ object DbInitializer {
                         val recipeIngredientEntities = mutableListOf<RecipeIngredientEntity>().apply {
                             recipeEntities.forEach { recipe ->
                                 randomSubset(ingredientEntities).forEach { ingredient ->
-                                    val qty = (1..434231).random().toDouble()
+                                    val qty = randomDouble()
                                     val unit = units[(0 until units.size).random()]
 
                                     add(
@@ -101,7 +102,7 @@ object DbInitializer {
                                             ListItemEntity(
                                                 list.name, it,
                                                 it + "subtitle",
-                                                (0..43214).random().toDouble(),
+                                                randomDouble(),
                                                 units.shuffled().first().name,
                                                 false
                                             )
@@ -126,11 +127,30 @@ object DbInitializer {
                                     }
                                 }
                             }.subscribe()
+//                            insertRecipeEntities(*recipeEntities.toTypedArray()).flatMap {
+//                                insertIngredientEntities(*ingredientEntities.toTypedArray()).flatMap {
+//                                    insertMeasurementUnit(*units.toTypedArray()).flatMap {
+//                                        insertRecipeIngredientEntities(*recipeIngredientEntities.toTypedArray()).flatMap {
+//                                            insertShoppingListEntities(*shoppingLists.toTypedArray()).flatMap {
+//                                                insertListItemEntities(*listItems.toTypedArray()).map {
+//                                                    it.map {
+//                                                        it + 1
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }.subscribe()
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun randomDouble(): Double {
+        return Random.nextDouble(0.1, 1000000.0)
     }
 
     private fun <T> randomSubset(list: List<T>): List<T> {

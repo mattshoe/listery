@@ -8,11 +8,9 @@ class RecipeViewHolder(
 ): BaseViewHolder(binding.root) {
     val title = binding.itemTitle
     val description = binding.description
-    val quantity = binding.quantity
     
     override fun recycle() {
         title.text = null
         description.text = null
-        quantity.text = null
     }
 }
