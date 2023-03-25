@@ -18,7 +18,7 @@ class RecipeHomeViewModel @Inject constructor(
 
     init {
         addDisposable(
-            recipeRepository.onDataChanged.observe {
+            recipeRepository.onDataChanged.subscribe {
                 loadData()
             }
         )

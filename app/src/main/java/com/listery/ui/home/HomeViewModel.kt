@@ -20,7 +20,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         addDisposable(
-            shoppingListRepository.onDataChanged.observe {
+            shoppingListRepository.onDataChanged.subscribe {
                 loadData()
             }
         )

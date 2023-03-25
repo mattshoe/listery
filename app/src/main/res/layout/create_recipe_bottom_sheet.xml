@@ -14,26 +14,20 @@
         android:textSize="20sp"
         android:text="New recipe"/>
 
-    <EditText
+    <com.listery.ui.view.SingleLineTextInput
         android:id="@+id/recipe_name_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/title"
         android:layout_marginTop="16dp"
-        android:maxLines="1"
-        android:inputType="text"
         android:scrollHorizontally="true"
-        android:ellipsize="end"
         android:hint="Recipe name" />
 
-    <EditText
+    <com.listery.ui.view.MultiLineTextInput
         android:id="@+id/recipe_notes_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/recipe_name_input"
-        android:gravity="bottom"
-        android:maxLines="4"
-        android:scrollbars="vertical"
         android:hint="Notes"
         android:layout_marginTop="8dp"/>
 

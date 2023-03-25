@@ -19,7 +19,7 @@ class AddIngredientBottomSheetViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository
 ): BaseViewModel<AddIngredientBottomSheetArgs>(application) {
 
-    val ingredientAdded = MutableEventObservable(AndroidSchedulers.mainThread())
+    val ingredientAdded = MutableLiveData<Unit>()
     val ingredientsList = MutableLiveData<List<IngredientEntity>>()
     val unitList = MutableLiveData<List<MeasurementUnitEntity>>()
 
@@ -63,7 +63,7 @@ class AddIngredientBottomSheetViewModel @Inject constructor(
                 )
             }.subscribe(
                 {
-                    ingredientAdded.trigger()
+                    ingredientAdded.postValue(Unit)
                 },
                 {
                     Log.e("MATTSHOE", it.message ?: "wut")

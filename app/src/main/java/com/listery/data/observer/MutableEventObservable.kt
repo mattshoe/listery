@@ -7,6 +7,6 @@ class MutableEventObservable(
     scheduler: Scheduler = Schedulers.io()
 ): EventObservable(scheduler) {
     fun trigger() {
-        postData(Unit)
+        postData(true)
     }
 }

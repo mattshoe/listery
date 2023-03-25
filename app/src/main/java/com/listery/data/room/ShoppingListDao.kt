@@ -33,10 +33,10 @@ interface ShoppingListDao {
     fun getFinishedListItemEntities(shoppingList: String): Single<List<ListItemEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertShoppingListEntities(vararg item: ShoppingListEntity): Single<List<Long>>
+    fun insertShoppingListEntities(vararg item: ShoppingListEntity): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertListItemEntities(vararg item: ListItemEntity): Single<List<Long>>
+    fun insertListItemEntities(vararg item: ListItemEntity): List<Long>
 
     @Delete
     abstract fun delete(item: ShoppingListEntity): Int

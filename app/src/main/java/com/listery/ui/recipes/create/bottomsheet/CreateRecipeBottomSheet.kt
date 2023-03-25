@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.listery.data.repository.impl.RecipeRepository
 import com.listery.databinding.CreateRecipeBottomSheetBinding
+import com.listery.databinding.FragmentRecipeHomeBinding
 import com.listery.di.ApplicationComponent
 import com.listery.ui.NoArgs
 import com.listery.ui.dialog.BottomSheet
@@ -44,7 +45,7 @@ class CreateRecipeBottomSheet: BottomSheet<CreateRecipeBottomSheetViewModel, Cre
 
         viewModel.recipeCreatedSuccessfully.observe {
             findNavController().navigate(
-                CreateRecipeBottomSheetDirections.actionCreateRecipeBottomSheetToNavigationRecipeCreate(
+                RecipesHomeFragmentDirections.actionNavigationRecipesHomeToNavigationRecipeCreate(
                     binding.recipeNameInput.text.toString()
                 )
             )

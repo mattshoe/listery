@@ -17,11 +17,13 @@ import com.listery.di.ApplicationComponent
 import com.listery.di.get
 import com.listery.ui.BaseFragment
 import com.listery.ui.NoArgs
+import com.listery.ui.toolbar.ToolbarContext
 import javax.inject.Inject
 import javax.inject.Provider
 
 class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding, NoArgs>() {
     override val viewModelClass = HomeViewModel::class.java
+    override val toolbarContext = ToolbarContext.SHOPPTING_LIST
 
     @Inject
     lateinit var adapterProvider: Provider<ShoppingListAdapter>
@@ -29,10 +31,10 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding, NoArgs>() {
     override fun inject(component: ApplicationComponent) = component.inject(this)
     override fun bind(i: LayoutInflater, c: ViewGroup?, a: Boolean) = FragmentHomeBinding.inflate(i, c, a)
 
-    override fun configureToolbar(toolbar: Toolbar) {
-        super.configureToolbar(toolbar)
+    override fun configureToolbar(toolbar: Toolbar, layout: ViewGroup) {
+        super.configureToolbar(toolbar, layout)
         viewModel.shoppingLists.observe(viewLifecycleOwner) { lists ->
-            toolbar.findViewById<Spinner>(R.id.list_spinner)?.let { spinner ->
+            layout.findViewById<Spinner>(R.id.list_spinner)?.let { spinner ->
                 spinner.adapter = ArrayAdapter(
                     this@HomeFragment.requireContext(),
                     R.layout.shopping_list_spinner_item,

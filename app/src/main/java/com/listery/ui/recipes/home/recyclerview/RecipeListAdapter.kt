@@ -28,7 +28,7 @@ class RecipeListAdapter @Inject constructor(
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         setText(holder.title, data[position].entity.name)
-        setText(holder.description, data[position].userIngredients.joinToString { it.entity.name })
+        setText(holder.description, data[position].userIngredients.joinToString { it.entity.name }.trim())
 
         holder.root.setOnClickListener {
             it.findNavController().navigate(

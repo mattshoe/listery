@@ -40,14 +40,14 @@ object DbInitializer {
                 async(context = Dispatchers.IO) {
                     db.recipeDao().apply {
                         val recipeEntities = mutableListOf<RecipeEntity>().apply {
-                            repeat(100) {
-                                add(
-                                    RecipeEntity(
-                                        "Recipe #$it",
-                                        "notes for recipe $it"
-                                    )
-                                )
-                            }
+//                            repeat(100) {
+//                                add(
+//                                    RecipeEntity(
+//                                        "Recipe #$it",
+//                                        "notes for recipe $it"
+//                                    )
+//                                )
+//                            }
                         }
                         val ingredientEntities = mutableListOf<IngredientEntity>().apply {
                             repeat(15) {
@@ -89,44 +89,32 @@ object DbInitializer {
 
                             val shoppingLists = mutableListOf<ShoppingListEntity>().apply {
                                 add(ShoppingListEntity("Shopping"))
-                                add(ShoppingListEntity("Bonemantha"))
-                                add(ShoppingListEntity("Strippers"))
-                                add(ShoppingListEntity("Murduh"))
-                                add(ShoppingListEntity("Halloween"))
                             }
 
                             val listItems = mutableListOf<ListItemEntity>().apply {
-                                shoppingLists.forEach { list ->
-                                    randomSubset(LOREM_IPSUM.split(" ").toList()).forEach {
-                                        add(
-                                            ListItemEntity(
-                                                list.name, it,
-                                                it + "subtitle",
-                                                randomDouble(),
-                                                units.shuffled().first().name,
-                                                false
-                                            )
-                                        )
-
-                                    }
-                                }
+//                                shoppingLists.forEach { list ->
+//                                    randomSubset(LOREM_IPSUM.split(" ").toList()).forEach {
+//                                        add(
+//                                            ListItemEntity(
+//                                                list.name, it,
+//                                                it + "subtitle",
+//                                                randomDouble(),
+//                                                units.shuffled().first().name,
+//                                                false
+//                                            )
+//                                        )
+//
+//                                    }
+//                                }
                             }
 
-                            insertRecipeEntities(*recipeEntities.toTypedArray()).flatMap {
-                                insertIngredientEntities(*ingredientEntities.toTypedArray()).flatMap {
-                                    insertMeasurementUnit(*units.toTypedArray()).flatMap {
-                                        insertRecipeIngredientEntities(*recipeIngredientEntities.toTypedArray()).flatMap {
-                                            insertShoppingListEntities(*shoppingLists.toTypedArray()).flatMap {
-                                                insertListItemEntities(*listItems.toTypedArray()).map {
-                                                    it.map {
-                                                        it + 1
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }.subscribe()
+                            insertRecipeEntities(*recipeEntities.toTypedArray())
+                            insertIngredientEntities(*ingredientEntities.toTypedArray())
+                            insertMeasurementUnit(*units.toTypedArray())
+                            insertRecipeIngredientEntities(*recipeIngredientEntities.toTypedArray())
+                            insertShoppingListEntities(*shoppingLists.toTypedArray())
+                            insertListItemEntities(*listItems.toTypedArray())
+
 //                            insertRecipeEntities(*recipeEntities.toTypedArray()).flatMap {
 //                                insertIngredientEntities(*ingredientEntities.toTypedArray()).flatMap {
 //                                    insertMeasurementUnit(*units.toTypedArray()).flatMap {

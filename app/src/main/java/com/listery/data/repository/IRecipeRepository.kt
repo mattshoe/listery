@@ -7,9 +7,13 @@ import com.listery.data.room.entities.recipe.IngredientEntity
 import com.listery.data.room.entities.recipe.RecipeIngredientEntity
 import com.listery.data.observer.DataObservable
 import com.listery.data.room.entities.MeasurementUnitEntity
+import io.reactivex.Observable
 import io.reactivex.Single
+import javax.inject.Singleton
 
 interface IRecipeRepository: MutableRepository {
+
+    val onRecipeUpdated: Observable<String>
 
     fun getRecipes(): Single<List<UserRecipe>>
     fun getRecipe(name: String): Single<UserRecipe>

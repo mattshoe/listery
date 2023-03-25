@@ -1,7 +1,5 @@
 package com.listery.di
 
-import android.app.Application
-import android.content.Context
 import com.listery.ListeryApplication
 import com.listery.MainActivity
 import com.listery.data.repository.di.RepositoryModule
@@ -12,10 +10,8 @@ import com.listery.ui.recipes.create.RecipeCreateFragment
 import com.listery.ui.recipes.create.bottomsheet.AddIngredientBottomSheet
 import com.listery.ui.recipes.create.bottomsheet.CreateRecipeBottomSheet
 import com.listery.ui.recipes.home.RecipesHomeFragment
-import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
-import dagger.Module
 import javax.inject.Singleton
 
 
@@ -55,16 +51,3 @@ interface ApplicationComponent {
 
 }
 
-@Module
-interface AppModule {
-
-    // could also be an abstract class
-    @Singleton
-    @Binds
-    fun bindApplication(application: ListeryApplication): Application
-
-    // if you also want to bind context
-    @Singleton
-    @Binds
-    fun bindContext(application: ListeryApplication): Context
-}

@@ -14,11 +14,9 @@ abstract class RepositoryModule(
     application: Application
 ) {
 
-    @Singleton
     @Binds
     abstract fun bindsRecipeRepository(repository: RecipeRepository): IRecipeRepository
 
-    @Singleton
     @Binds
     abstract fun bindsShoppingListRepository(repository: ShoppingListRepository): IShoppingListRepository
 

@@ -6,13 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavArgs
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.listery.ListeryApplication
 import com.listery.di.ApplicationComponent
-import com.listery.di.ListeryInjector
 import com.listery.di.ViewModelFactory
 import com.listery.ui.BaseViewModel
 import javax.inject.Inject
@@ -36,7 +35,7 @@ abstract class BottomSheet<TViewModel: BaseViewModel<TArgs>, TBinding: ViewBindi
     open fun onCreateView(savedInstanceState: Bundle?) { }
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        inject(ListeryInjector.build(requireActivity()))
+        inject(ListeryApplication.applicationComponent)
 
         viewModel = ViewModelProvider(this, viewModelFactory)[viewModelClass].apply {
             arguments?.let { bundle ->

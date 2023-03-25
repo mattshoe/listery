@@ -1,6 +1,7 @@
 package com.listery.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import com.listery.data.observer.DataObservable
@@ -31,5 +32,6 @@ abstract class BaseViewModel<TArgs: Any>(
     override fun onCleared() {
         super.onCleared()
         disposableContainer.clear()
+        Log.d("MATTSHOE", "Clearing viewmodel: ${this::class.java.simpleName}")
     }
 }

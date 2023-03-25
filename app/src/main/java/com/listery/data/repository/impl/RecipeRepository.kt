@@ -9,14 +9,21 @@ import com.listery.data.room.entities.MeasurementUnitEntity
 import com.listery.data.room.entities.recipe.IngredientEntity
 import com.listery.data.room.entities.recipe.RecipeEntity
 import com.listery.data.room.entities.recipe.RecipeIngredientEntity
+import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.ReplaySubject
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RecipeRepository @Inject constructor(
     private val recipeDao: RecipeDao
 ) : IRecipeRepository {
 
-    override val onDataChanged = MutableDataObservable<DataStatus>()
+    override val onDataChanged = PublishSubject.create<DataStatus>()
+    override val onRecipeUpdated = ReplaySubject.create<String>()
 
     override fun getRecipes(): Single<List<UserRecipe>> {
         return recipeDao.getAllRecipeEntities()
@@ -57,18 +64,19 @@ class RecipeRepository @Inject constructor(
             ingredient,
             RecipeEntity(recipeName, "")
         )
-        onDataChanged.post(DataStatus.ADDED)
+        onDataChanged.onNext(DataStatus.ADDED)
+        onRecipeUpdated.onNext(recipeName)
     }
 
     override fun addRecipe(userRecipe: UserRecipe) {
         recipeDao.insertRecipeAndIngredients(userRecipe)
-        onDataChanged.post(DataStatus.ADDED)
+        onDataChanged.onNext(DataStatus.ADDED)
     }
 
     override fun deleteRecipe(userRecipe: UserRecipe) {
         val id = recipeDao.delete(userRecipe.entity)
         recipeDao.delete(userRecipe)
-        onDataChanged.post(DataStatus.DELETED)
+        onDataChanged.onNext(DataStatus.DELETED)
     }
 
     private fun gatherRecipeIngredients(recipe: RecipeEntity): Single<UserRecipe> {

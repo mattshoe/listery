@@ -14,33 +14,32 @@
         android:textColor="@color/primaryTextColor"
         android:text="Add ingredient"/>
     
-    <AutoCompleteTextView
+    <com.listery.ui.view.SingleLineTextInput
         android:id="@id/ingredient_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/header"
-        android:maxLines="1"
         android:hint="Ingredient name" />
 
-    <EditText
+    <com.listery.ui.view.SingleLineDecimalInput
         android:id="@+id/quantity"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:width="100dp"
         app:layout_constraintTop_toBottomOf="@id/ingredient_name"
         app:layout_constraintStart_toStartOf="parent"
-        android:scrollbars="horizontal"
-        android:inputType="numberDecimal"
         android:hint="Quantity"/>
 
-    <AutoCompleteTextView
+    <com.listery.ui.view.SingleLineTextInput
         android:id="@+id/unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
         android:minWidth="100dp"
         android:maxWidth="200dp"
         app:layout_constraintBottom_toBottomOf="@id/quantity"
         app:layout_constraintStart_toEndOf="@id/quantity"
-        android:layout_marginLeft="8dp"
+        android:nextFocusForward="@id/submit_ingredient_button"
         android:hint="Units" />
 
     <androidx.appcompat.widget.AppCompatButton

@@ -7,8 +7,11 @@ import com.listery.data.repository.sharedprefs.SharedPreferencesDao
 import com.listery.data.room.ShoppingListDao
 import com.listery.flatMapEach
 import io.reactivex.Single
+import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ShoppingListRepository @Inject constructor(
     private val shoppingListDao: ShoppingListDao,
     private val sharedPreferences: SharedPreferencesDao
@@ -19,7 +22,7 @@ class ShoppingListRepository @Inject constructor(
         private const val DEFAULT_LIST = "Shopping"
     }
 
-    override val onDataChanged = MutableDataObservable<DataStatus>()
+    override val onDataChanged = PublishSubject.create<DataStatus>()
 
     override fun getAllShoppingLists(): Single<List<UserShoppingList>> {
         return shoppingListDao.getAllShoppingListEntities()

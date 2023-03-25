@@ -34,7 +34,9 @@ class AddIngredientBottomSheet: BottomSheet<AddIngredientBottomSheetViewModel, C
 
     override fun bind(i: LayoutInflater, c: ViewGroup?, a: Boolean) = CreateIngredientBottomSheetBinding.inflate(i, c, a)
     override fun buildNavArgs(bundle: Bundle): AddIngredientBottomSheetArgs = AddIngredientBottomSheetArgs.fromBundle(bundle)
-    override fun inject(component: ApplicationComponent)  = component.inject(this)
+    override fun inject(component: ApplicationComponent) {
+        component.inject(this)
+    }
 
     override fun onCreateView(savedInstanceState: Bundle?) {
         super.onCreateView(savedInstanceState)
@@ -43,7 +45,7 @@ class AddIngredientBottomSheet: BottomSheet<AddIngredientBottomSheetViewModel, C
         binding.quantity.addTextChangedListener(textWatcher)
         binding.unit.addTextChangedListener(textWatcher)
 
-        viewModel.ingredientAdded.observe {
+        viewModel.ingredientAdded.observe(viewLifecycleOwner) {
             dismiss()
         }
 

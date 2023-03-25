@@ -1,6 +1,7 @@
 package com.listery.ui.recipes.create
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.listery.applyIOScheduler
 import com.listery.data.model.UserIngredient
@@ -19,9 +20,29 @@ class RecipeCreateViewModel @Inject constructor(
     val recipe = MutableLiveData<UserRecipe>()
 
     init {
-        recipeRepository.onDataChanged.observe {
-            loadData(arguments.recipeName)
-        }
+        addDisposable(
+            recipeRepository.onDataChanged.subscribe(
+                {
+                    loadData(arguments.recipeName)
+                },
+                {
+                    Log.e("MATTSHOE", it.message ?: "ugh")
+                }
+            )
+        )
+
+        addDisposable(
+            recipeRepository.onRecipeUpdated.subscribe(
+                {
+                    if (recipe.value?.entity?.name == it) {
+                        loadData(arguments.recipeName)
+                    }
+                },
+                {
+                    Log.e("MATTSHOE", it.message ?: "ugh")
+                }
+            )
+        )
     }
 
     override fun onArgumentsSet(args: RecipeCreateFragmentArgs) {

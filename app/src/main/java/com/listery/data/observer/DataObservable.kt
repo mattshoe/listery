@@ -9,9 +9,7 @@ open class DataObservable<T>(
 ): BaseDataObservable<T>(scheduler) {
 
     fun observe(observer: (T) -> Unit): Disposable {
-        return this.also {
-            addObserver(observer)
-        }
+        return addObserver(observer)
     }
 
 }

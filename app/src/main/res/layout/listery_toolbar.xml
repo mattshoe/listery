@@ -16,18 +16,33 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/title_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="gone">
 
-            <ImageView
-                android:id="@+id/icon"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/toolbar_title_text"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_baseline_restaurant_menu_24"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:tint="@color/primaryTextColor" />
+                android:gravity="start|center"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMaxTextSize="24sp"
+                android:maxLines="1"
+                android:textStyle="bold"
+                tools:text="Title of the page"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/shopping_list_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <Spinner
                 android:id="@+id/list_spinner"
@@ -35,7 +50,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/icon"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintWidth_percent="0.4"
                 android:background="?attr/colorPrimary"
                 android:dropDownWidth="match_parent"
