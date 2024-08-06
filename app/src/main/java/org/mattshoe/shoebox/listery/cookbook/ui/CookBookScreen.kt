@@ -2,7 +2,6 @@ package org.mattshoe.shoebox.listery.cookbook.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -32,11 +31,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -59,8 +57,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookState
 import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookViewModelImpl
-import org.mattshoe.shoebox.listery.model.Recipe
+import org.mattshoe.shoebox.listery.ui.BottomNavItem
 import org.mattshoe.shoebox.listery.ui.common.ClickableLinkText
+import org.mattshoe.shoebox.listery.ui.common.Level1AppBar
+import org.mattshoe.shoebox.listery.ui.common.ListeryNavigationBar
 import org.mattshoe.shoebox.listery.ui.theme.ListeryTheme
 import org.mattshoe.shoebox.listery.util.bottomBorder
 
@@ -72,7 +72,6 @@ fun CookBookScreenPreview() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CookBookScreen() {
     val viewmodel: CookBookViewModelImpl = hiltViewModel()
@@ -87,12 +86,11 @@ fun CookBookScreen() {
     }
 
     Scaffold(
-        topBar = { CookBookTopBar() },
-        bottomBar = { ListeryNavigationBar() },
+        topBar = { Level1AppBar("Cookbook") },
+        bottomBar = { ListeryNavigationBar(BottomNavItem.Cookbook) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                },
+                onClick = { },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
@@ -127,73 +125,6 @@ fun CookBookScreen() {
     }
 }
 
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun CookBookTopBar() {
-    TopAppBar(
-        title = {
-            Text(text = "Cookbook")
-        },
-        colors = TopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = Color.White,
-            navigationIconContentColor = Color.White,
-            actionIconContentColor = Color.White,
-            scrolledContainerColor = Color.Green
-        ),
-        actions = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_account),
-                    contentDescription = "User Profile",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-            IconButton(onClick = { /*TODO*/ }) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_more_options),
-                    contentDescription = "More Options",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
-    )
-}
-
-@Composable
-fun ListeryNavigationBar() {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary
-    ) {
-        NavigationIcon(icon = R.drawable.ic_meal_plan, label = "Plan")
-        NavigationIcon(icon = R.drawable.ic_cookbook, label = "Cookbook")
-        NavigationIcon(icon = R.drawable.ic_shopping_list, label = "Shopping")
-    }
-}
-
-@Composable
-fun RowScope.NavigationIcon(
-    @DrawableRes icon: Int,
-    label: String
-) {
-    NavigationBarItem(
-        selected = false,
-        onClick = { /*TODO*/ },
-        icon = {
-            Image(
-                painter = painterResource(id = icon),
-                contentDescription = label,
-                modifier = Modifier.size(24.dp)
-            )
-        },
-        label = {
-            Text(text = label, color = MaterialTheme.colorScheme.onPrimary)
-        }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar() {
     var searchText: String by remember { mutableStateOf("") }
