@@ -1,13 +1,11 @@
 package org.mattshoe.shoebox.listery.cookbook.ui
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,15 +21,11 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -56,7 +50,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookState
-import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookViewModelImpl
+import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookViewModel
+import org.mattshoe.shoebox.listery.cookbook.viewmodel.UserIntent
 import org.mattshoe.shoebox.listery.ui.BottomNavItem
 import org.mattshoe.shoebox.listery.ui.common.ClickableLinkText
 import org.mattshoe.shoebox.listery.ui.common.Level1AppBar
@@ -74,7 +69,7 @@ fun CookBookScreenPreview() {
 
 @Composable
 fun CookBookScreen() {
-    val viewmodel: CookBookViewModelImpl = hiltViewModel()
+    val viewmodel: CookBookViewModel = hiltViewModel()
     val state = viewmodel.state.collectAsState()
     val recipeList by remember {
         derivedStateOf {
@@ -90,7 +85,7 @@ fun CookBookScreen() {
         bottomBar = { ListeryNavigationBar(BottomNavItem.Cookbook) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { },
+                onClick = { viewmodel.handleUserIntent(UserIntent.NewRecipe) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
@@ -118,8 +113,13 @@ fun CookBookScreen() {
                     it.url,
                     it.calories,
                     it.ingredientCount,
-                    it.prepTime
-                )
+                    it.prepTime,
+                    onStarTap = {
+                        viewmodel.handleUserIntent(UserIntent.RecipeStarTapped(it))
+                    }
+                ) {
+                    viewmodel.handleUserIntent(UserIntent.RecipeTapped(it))
+                }
             }
         }
     }
@@ -211,7 +211,9 @@ fun RecipeCard(
     url: String,
     calories: Int,
     ingredientCount: Int,
-    prepTime: String
+    prepTime: String,
+    onStarTap: () -> Unit,
+    onTap: () -> Unit
 ) {
     Card(
         modifier = Modifier
