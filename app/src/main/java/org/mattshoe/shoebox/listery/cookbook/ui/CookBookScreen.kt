@@ -38,6 +38,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,94 +55,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.mattshoe.shoebox.listery.R
+import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookState
+import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookViewModelImpl
+import org.mattshoe.shoebox.listery.model.Recipe
 import org.mattshoe.shoebox.listery.ui.common.ClickableLinkText
 import org.mattshoe.shoebox.listery.ui.theme.ListeryTheme
 import org.mattshoe.shoebox.listery.util.bottomBorder
-
-data class Recipe(
-    val name: String,
-    val starred: Boolean,
-    val url: String,
-    val calories: Int,
-    val ingredientCount: Int,
-    val prepTime: String
-)
-
-val recipeList = listOf(
-    Recipe(
-        "Avocado toast and eggs",
-        false,
-        "https://www.reducetarian.com",
-        275,
-        5,
-        "20 min"
-    ),
-    Recipe(
-        "Poop on a stick",
-        false,
-        "https://www.reducetarian.com",
-        275,
-        5,
-        "45 min"
-    ),
-    Recipe(
-        "Kraft mac n cheese",
-        true,
-        "https://www.reducetarian.com",
-        400,
-        2,
-        "20 min"
-    ),
-    Recipe(
-        "Cauliflower Pizza",
-        true,
-        "https://www.reducetarian.com",
-        700,
-        1,
-        "20 min"
-    ),
-    Recipe(
-        "Papa John's",
-        false,
-        "https://www.reducetarian.com",
-        1250,
-        1,
-        "1 hr"
-    ),
-    Recipe(
-        "Butter Chicken",
-        false,
-        "https://www.reducetarian.com",
-        650,
-        24,
-        "1 hr 10 min"
-    ),
-    Recipe(
-        "Sunday WingDay",
-        true,
-        "https://www.reducetarian.com",
-        400,
-        3,
-        "35 min"
-    ),
-    Recipe(
-        "Spaghetti O's",
-        false,
-        "https://www.google.com",
-        200,
-        1,
-        "5 min"
-    ),
-    Recipe(
-        "Fish and Chips",
-        true,
-        "https://www.reducetarian.com",
-        525,
-        8,
-        "45 min"
-    ),
-)
 
 @Preview(showBackground = true)
 @Composable
@@ -153,6 +75,17 @@ fun CookBookScreenPreview() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CookBookScreen() {
+    val viewmodel: CookBookViewModelImpl = hiltViewModel()
+    val state = viewmodel.state.collectAsState()
+    val recipeList by remember {
+        derivedStateOf {
+            when (state.value) {
+                is CookBookState.Success -> (state.value as CookBookState.Success).recipes
+                else -> emptyList()
+            }
+        }
+    }
+
     Scaffold(
         topBar = { CookBookTopBar() },
         bottomBar = { ListeryNavigationBar() },
@@ -381,7 +314,8 @@ fun RecipeCard(
                 )
                 IconButton(
                     onClick = { /*TODO*/ },
-                    modifier = Modifier.padding(0.dp)
+                    modifier = Modifier
+                        .padding(0.dp)
                         .size(24.dp)
                 ) {
                     Image(
@@ -389,7 +323,9 @@ fun RecipeCard(
                             id = if (starred) R.drawable.ic_filled_star else R.drawable.ic_hollow_star
                         ),
                         contentDescription = "More Options",
-                        modifier = Modifier.size(24.dp).padding(0.dp)
+                        modifier = Modifier
+                            .size(24.dp)
+                            .padding(0.dp)
                     )
                 }
             }
