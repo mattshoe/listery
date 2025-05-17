@@ -17,7 +17,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 Recipe(
                     "Avocado toast and eggs",
                     false,
-                    "https://www.reducetarian.com",
+                    null,
                     275,
                     5,
                     "20 min"
@@ -25,7 +25,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 Recipe(
                     "Poop on a stick",
                     false,
-                    "https://www.reducetarian.com",
+                    "https://www.poopstick.com",
                     275,
                     5,
                     "45 min"
@@ -33,7 +33,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 Recipe(
                     "Kraft mac n cheese",
                     true,
-                    "https://www.reducetarian.com",
+                    null,
                     400,
                     2,
                     "20 min"
@@ -41,7 +41,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 Recipe(
                     "Cauliflower Pizza",
                     true,
-                    "https://www.reducetarian.com",
+                    "https://www.google.com",
                     700,
                     1,
                     "20 min"
@@ -49,7 +49,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 Recipe(
                     "Papa John's",
                     false,
-                    "https://www.reducetarian.com",
+                    "https://www.yourmom.com",
                     1250,
                     1,
                     "1 hr"
@@ -57,7 +57,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 Recipe(
                     "Butter Chicken",
                     false,
-                    "https://www.reducetarian.com",
+                    "https://www.butterchicken.com",
                     650,
                     24,
                     "1 hr 10 min"
@@ -65,7 +65,7 @@ class RecipeRepositoryImpl @Inject constructor(
                 Recipe(
                     "Sunday WingDay",
                     true,
-                    "https://www.reducetarian.com",
+                    "https://www.sundayfunday.com",
                     400,
                     3,
                     "35 min"

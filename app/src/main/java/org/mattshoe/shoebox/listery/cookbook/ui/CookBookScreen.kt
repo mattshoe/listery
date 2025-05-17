@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,9 +69,10 @@ fun CookBookScreenPreview() {
 }
 
 @Composable
-fun CookBookScreen() {
-    val viewmodel: CookBookViewModel = hiltViewModel()
-    val state = viewmodel.state.collectAsState()
+fun CookBookScreen(
+    viewModel: CookBookViewModel = hiltViewModel()
+) {
+    val state = viewModel.state.collectAsState()
     val recipeList by remember {
         derivedStateOf {
             when (state.value) {
@@ -85,7 +87,7 @@ fun CookBookScreen() {
         bottomBar = { ListeryNavigationBar(BottomNavItem.Cookbook) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { viewmodel.handleUserIntent(UserIntent.NewRecipe) },
+                onClick = { viewModel.handleUserIntent(UserIntent.NewRecipe) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
@@ -115,10 +117,10 @@ fun CookBookScreen() {
                     it.ingredientCount,
                     it.prepTime,
                     onStarTap = {
-                        viewmodel.handleUserIntent(UserIntent.RecipeStarTapped(it))
+                        viewModel.handleUserIntent(UserIntent.RecipeStarTapped(it))
                     }
                 ) {
-                    viewmodel.handleUserIntent(UserIntent.RecipeTapped(it))
+                    viewModel.handleUserIntent(UserIntent.RecipeTapped(it))
                 }
             }
         }
@@ -208,7 +210,7 @@ fun SearchBar() {
 fun RecipeCard(
     name: String,
     starred: Boolean,
-    url: String,
+    url: String?,
     calories: Int,
     ingredientCount: Int,
     prepTime: String,
@@ -217,10 +219,10 @@ fun RecipeCard(
 ) {
     Card(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp)
             .fillMaxWidth()
             .wrapContentHeight(Alignment.Top),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 0.dp
@@ -236,14 +238,15 @@ fun RecipeCard(
         ) {
             Row(
                 modifier = Modifier
-                    .padding(top = 4.dp, bottom = 8.dp),
+                    .padding(top = 4.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     modifier = Modifier
                         .weight(1f),
                     text = name,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
                 IconButton(
                     onClick = { /*TODO*/ },
@@ -262,9 +265,10 @@ fun RecipeCard(
                     )
                 }
             }
-            ClickableLinkText(uri = url, modifier = Modifier.padding(0.dp))
-
-            Spacer(modifier = Modifier.height(8.dp))
+            url?.let {
+                ClickableLinkText(uri = it, modifier = Modifier.padding(0.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+            }
 
             Text(
                 text = "$calories calories",
@@ -284,6 +288,8 @@ fun RecipeCard(
                     color = MaterialTheme.colorScheme.outline
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }

@@ -3,16 +3,17 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "org.mattshoe.shoebox.listery"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "org.mattshoe.shoebox.listery"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 28
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 

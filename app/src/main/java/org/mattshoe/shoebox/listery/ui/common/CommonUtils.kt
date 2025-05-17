@@ -25,7 +25,7 @@ fun ClickableLinkText(
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                 context.startActivity(intent)
             },
-        style = MaterialTheme.typography.bodyMedium.copy(
+        style = MaterialTheme.typography.bodySmall.copy(
             textDecoration = TextDecoration.Underline
         )
     )
