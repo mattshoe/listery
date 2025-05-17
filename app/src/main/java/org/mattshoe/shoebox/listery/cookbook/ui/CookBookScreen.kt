@@ -1,8 +1,8 @@
 package org.mattshoe.shoebox.listery.cookbook.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,23 +15,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,7 +41,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,60 +48,40 @@ import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookState
 import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookViewModel
 import org.mattshoe.shoebox.listery.cookbook.viewmodel.UserIntent
+import org.mattshoe.shoebox.listery.landing.ListeryScaffold
+import org.mattshoe.shoebox.listery.navigation.NavigationHandler
 import org.mattshoe.shoebox.listery.ui.BottomNavItem
 import org.mattshoe.shoebox.listery.ui.common.ClickableLinkText
 import org.mattshoe.shoebox.listery.ui.common.Level1AppBar
-import org.mattshoe.shoebox.listery.ui.common.ListeryNavigationBar
-import org.mattshoe.shoebox.listery.ui.theme.ListeryTheme
+import org.mattshoe.shoebox.listery.ui.common.ListeryCard
 import org.mattshoe.shoebox.listery.util.bottomBorder
 
-@Preview(showBackground = true)
 @Composable
-fun CookBookScreenPreview() {
-    ListeryTheme {
-        CookBookScreen()
-    }
-}
-
-@Composable
-fun CookBookScreen(
+fun CookbookScreen(
     viewModel: CookBookViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state.collectAsState()
-    val recipeList by remember {
-        derivedStateOf {
-            when (state.value) {
-                is CookBookState.Success -> (state.value as CookBookState.Success).recipes
-                else -> emptyList()
-            }
-        }
+    NavigationHandler(viewModel)
+
+    val state by viewModel.state.collectAsState()
+    val recipeList = when (state) {
+        is CookBookState.Success -> (state as CookBookState.Success).recipes
+        else -> emptyList()
     }
 
-    Scaffold(
-        topBar = { Level1AppBar("Cookbook") },
-        bottomBar = { ListeryNavigationBar(BottomNavItem.Cookbook) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { viewModel.handleUserIntent(UserIntent.NewRecipe) },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_plus),
-                    contentDescription = "New Recipe",
-                    modifier = Modifier.size(14.dp)
-                )
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.surfaceVariant
+    ListeryScaffold(
+        topBar = { Level1AppBar("CookBook") },
+        BottomNavItem.Cookbook,
+        onFabClick =  { viewModel.handleIntent(UserIntent.NewRecipe) }
     ) { padding ->
+        val listState = rememberLazyListState()
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize(),
+            state = listState
         ) {
-            item {
-                SearchBar()
+            stickyHeader {
+                SearchBar(listState)
             }
             items(recipeList) {
                 RecipeCard(
@@ -117,10 +92,10 @@ fun CookBookScreen(
                     it.ingredientCount,
                     it.prepTime,
                     onStarTap = {
-                        viewModel.handleUserIntent(UserIntent.RecipeStarTapped(it))
+                        viewModel.handleIntent(UserIntent.RecipeStarTapped(it))
                     }
                 ) {
-                    viewModel.handleUserIntent(UserIntent.RecipeTapped(it))
+                    viewModel.handleIntent(UserIntent.RecipeTapped(it))
                 }
             }
         }
@@ -128,7 +103,7 @@ fun CookBookScreen(
 }
 
 @Composable
-fun SearchBar() {
+fun SearchBar(listState: LazyListState) {
     var searchText: String by remember { mutableStateOf("") }
     val interactionSource = remember { MutableInteractionSource() }
     var text by remember { mutableStateOf(TextFieldValue()) }
@@ -136,7 +111,12 @@ fun SearchBar() {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
+            .wrapContentHeight(),
+        shadowElevation = if (listState.isScrolledToTop()) {
+            0.dp
+        } else {
+            14.dp
+        }
     ) {
         Row(
             modifier = Modifier
@@ -217,24 +197,14 @@ fun RecipeCard(
     onStarTap: () -> Unit,
     onTap: () -> Unit
 ) {
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
-            .wrapContentHeight(Alignment.Top),
-        shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
-    ) {
+    ListeryCard {
         Column(
             modifier = Modifier
                 .wrapContentHeight()
                 .padding(horizontal = 16.dp, vertical = 4.dp)
+                .clickable(true) {
+                    onTap()
+                }
         ) {
             Row(
                 modifier = Modifier
@@ -249,7 +219,7 @@ fun RecipeCard(
                     fontWeight = FontWeight.Bold
                 )
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { onStarTap() },
                     modifier = Modifier
                         .padding(0.dp)
                         .size(24.dp)
@@ -294,6 +264,9 @@ fun RecipeCard(
     }
 }
 
+private fun LazyListState.isScrolledToTop(): Boolean {
+    return firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0
+}
 
 
 
