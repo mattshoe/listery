@@ -1,6 +1,7 @@
 package org.mattshoe.shoebox.listery.cookbook.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -17,6 +19,8 @@ import org.mattshoe.shoebox.listery.data.RecipeRepository
 import org.mattshoe.shoebox.listery.navigation.NavigationProvider
 import org.mattshoe.shoebox.listery.navigation.Route
 import javax.inject.Inject
+
+private const val TAG = "CookBookViewModel"
 
 @HiltViewModel
 class CookBookViewModel @Inject constructor(
@@ -34,57 +38,59 @@ class CookBookViewModel @Inject constructor(
     private val filterCriteria = MutableStateFlow(CookBookFilterCriteria("", filterOptions))
 
     init {
-        combine(
-            recipeRepository.recipes,
-            filterCriteria
-        ) { recipes, filters ->
-            val filteredRecipes = recipes
-                .filter { recipe ->
-                    val nameMatches = filters.text.isBlank() || recipe.name.contains(filters.text, ignoreCase = true)
-                    nameMatches && filters.filterOptions.all { filterOption ->
-                        if (filterOption.selectedValue == null) {
-                            return@all true
-                        } else {
-                            when (filterOption.title) {
-                                "Starred" -> recipe.starred == filterOption.selectedValue
-                                "Calories" -> {
-                                    recipe.calories == null || with (filterOption as FilterOption.IntRange) {
-                                        val matchesMin = filterOption.selectedValue.min == null || recipe.calories >= filterOption.selectedValue.min
-                                        val matchesMax = filterOption.selectedValue.max == null || recipe.calories <= filterOption.selectedValue.max
-                                        matchesMin && matchesMax
+        Log.d(TAG, "Initializing CookBookViewModel")
+
+        viewModelScope.launch {
+            delay(3000)
+
+            combine(
+                recipeRepository.recipes,
+                filterCriteria
+            ) { recipes, filters ->
+                Log.d(TAG, "Received ${recipes.size} recipes from repository")
+                val filteredRecipes = recipes
+                    .filter { recipe ->
+                        val nameMatches = filters.text.isBlank() || recipe.name.contains(filters.text, ignoreCase = true)
+                        nameMatches && filters.filterOptions.all { filterOption ->
+                            if (filterOption.selectedValue == null) {
+                                return@all true
+                            } else {
+                                when (filterOption.title) {
+                                    "Starred" -> recipe.starred == filterOption.selectedValue
+                                    "Calories" -> {
+                                        recipe.calories == null || with (filterOption as FilterOption.IntRange) {
+                                            val matchesMin = filterOption.selectedValue.min == null || recipe.calories >= filterOption.selectedValue.min
+                                            val matchesMax = filterOption.selectedValue.max == null || recipe.calories <= filterOption.selectedValue.max
+                                            matchesMin && matchesMax
+                                        }
                                     }
+                                    "Ingredients" -> {
+                                        recipe.ingredients.count() <= (filterOption.selectedValue as Int)
+                                    }
+                                    else -> true
                                 }
-                                "Ingredients" -> {
-                                    recipe.ingredients.count() <= (filterOption.selectedValue as Int)
-                                }
-                                else -> true
                             }
                         }
                     }
-                }
-
-                delay(4000)
 
                 _state.update {
                     CookBookState.Success(filteredRecipes, filters.filterOptions)
                 }
-            }
-            .onStart {
-                _state.emit(CookBookState.Loading)
-            }
-            .catch {
+            }.catch {
                 _state.update {
                     CookBookState.Error("Oops! Looks like the kitchen's under renovation. Try again soon.")
                 }
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
+        }
 
         viewModelScope.launch {
+            Log.d(TAG, "Fetching recipes from repository")
             recipeRepository.fetch()
         }
     }
 
     override fun handleIntent(intent: UserIntent) {
+        Log.d(TAG, "Handling intent: $intent")
         viewModelScope.launch {
             when (intent) {
                 is UserIntent.NewRecipe -> handleNewRecipe(intent)
@@ -138,7 +144,7 @@ class CookBookViewModel @Inject constructor(
 
 data class CookBookFilterCriteria(
     val text: String,
-    var filterOptions: List<FilterOption<*>>
+    val filterOptions: List<FilterOption<*>>
 )
 
 fun <T: Any> T?.ifNull(default: T): T = this ?: default

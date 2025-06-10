@@ -98,8 +98,6 @@ fun CookbookSuccessScreen(
     handleIntent: (UserIntent) -> Unit
 ) {
     val listState = rememberLazyListState()
-    val recipeList = remember { state.recipes }
-    val filterOptions = remember { state.filterOptions }
 
     LazyColumn(
         modifier = Modifier
@@ -110,7 +108,7 @@ fun CookbookSuccessScreen(
         stickyHeader {
             SearchBar(
                 listState,
-                filterOptions,
+                state.filterOptions,
                 onTextChange = {
                     handleIntent(
                         UserIntent.SearchUpdated(it)
@@ -122,9 +120,8 @@ fun CookbookSuccessScreen(
                     )
                 }
             )
-
         }
-        items(recipeList) {
+        items(state.recipes) {
             RecipeCard(
                 it.name,
                 it.starred,

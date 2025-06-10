@@ -9,7 +9,7 @@ import javax.inject.Inject
 class RecipeRepositoryImpl @Inject constructor(
 
 ): RecipeRepository {
-    val _recipes = MutableStateFlow<List<Recipe>>(TEMPORARY_RECIPES_STUBS)
+    val _recipes = MutableStateFlow(TEMPORARY_RECIPES_STUBS)
     override val recipes: Flow<List<Recipe>> = _recipes
 
     override suspend fun fetch() {
@@ -54,7 +54,7 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
-    fun <T> List<T>.removeFirst(predicate: (T) -> Boolean): List<T> {
+    private fun <T> List<T>.removeFirst(predicate: (T) -> Boolean): List<T> {
         val index = indexOfFirst(predicate)
         return if (index == -1) this else toMutableList().also { it.removeAt(index) }
     }
