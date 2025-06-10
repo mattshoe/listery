@@ -1,64 +1,59 @@
 package org.mattshoe.shoebox.listery.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.navigation.ModalBottomSheetLayout
+import androidx.compose.material.navigation.bottomSheet
+import androidx.compose.material.navigation.rememberBottomSheetNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.navigation.NavHostController
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import org.mattshoe.shoebox.listery.common.ListeryViewModel
 import org.mattshoe.shoebox.listery.cookbook.ui.CookbookScreen
+import org.mattshoe.shoebox.listery.recipe.create.ui.ChooseRecipeCreationMethodBottomSheet
+import org.mattshoe.shoebox.listery.recipe.create.ui.CreateRecipeManuallyBottomSheet
 import org.mattshoe.shoebox.listery.recipe.ui.RecipeScreen
 
-val LocalNavController = staticCompositionLocalOf<NavHostController> {
-    error("No NavController provided")
-}
-
-interface NavigateToRoute {
-    val route: Any
-}
-
 @Composable
-fun NavigationHandler(viewModel: ListeryViewModel<*, *>) {
-    val navController = LocalNavController.current
-
-    LaunchedEffect(viewModel) {
-        viewModel.navigationRoutes
-            .onEach {
-                if (it is NavigateToRoute) {
-                    navController.navigate(it.route)
-                }
-            }
-            .flowOn(Dispatchers.Main.immediate)
-            .launchIn(this)
-    }
-}
-
-@Composable
-fun ListeryNavGraph() {
-    val navController = rememberNavController()
+fun ListeryNavGraph(
+    navigationViewModel: NavigationViewModel = hiltViewModel()
+) {
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val navController = rememberNavController(bottomSheetNavigator)
+    navigationViewModel.handleIntent(navController)
 
     CompositionLocalProvider(LocalNavController provides navController) {
-        NavHost(
-            navController,
-            startDestination = Routes.CookBook
+        ModalBottomSheetLayout(
+            bottomSheetNavigator,
+            sheetShape = RoundedCornerShape(28.dp),
+            modifier = Modifier.fillMaxSize()
         ) {
-            composable<Routes.CookBook> {
-                CookbookScreen()
-            }
+            NavHost(
+                navController,
+                startDestination = Route.CookBook
+            ) {
+                composable<Route.CookBook> {
+                    CookbookScreen()
+                }
 
-            composable<Routes.Recipe> {
-                val navArg = it.toRoute<Routes.Recipe>()
-                RecipeScreen(recipeName = navArg.name)
+                composable<Route.Recipe> {
+                    val navArg = it.toRoute<Route.Recipe>()
+                    RecipeScreen(recipeName = navArg.name)
+                }
+
+                bottomSheet<Route.ChooseRecipeCreationMethodBottomSheet> {
+                    ChooseRecipeCreationMethodBottomSheet()
+                }
+
+                bottomSheet<Route.CreateRecipeManuallyBottomSheet> {
+                    CreateRecipeManuallyBottomSheet()
+                }
             }
         }
     }
-
 }

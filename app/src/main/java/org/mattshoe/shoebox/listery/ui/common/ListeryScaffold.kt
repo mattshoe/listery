@@ -1,4 +1,4 @@
-package org.mattshoe.shoebox.listery.landing
+package org.mattshoe.shoebox.listery.ui.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,7 +19,8 @@ import org.mattshoe.shoebox.listery.ui.BottomNavItem
 fun ListeryScaffold(
     topBar: @Composable () -> Unit = {},
     selectedNavItem: BottomNavItem,
-    onFabClick: () -> Unit,
+    showFab: Boolean = true,
+    onFabClick: (() -> Unit)? = null,
     content: @Composable (padding: PaddingValues) -> Unit
 ) {
     val navController = rememberNavController()
@@ -28,18 +29,20 @@ fun ListeryScaffold(
         topBar = { topBar() },
         bottomBar = { ListeryNavigationBar(selectedNavItem, navController) },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    onFabClick()
-                },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_plus),
-                    contentDescription = "",
-                    modifier = Modifier.size(14.dp)
-                )
+            if (showFab) {
+                FloatingActionButton(
+                    onClick = {
+                        onFabClick?.invoke()
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_plus),
+                        contentDescription = "",
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
             }
         },
         containerColor = MaterialTheme.colorScheme.surfaceVariant

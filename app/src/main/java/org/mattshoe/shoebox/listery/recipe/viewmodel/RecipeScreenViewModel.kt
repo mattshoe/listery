@@ -11,14 +11,14 @@ import javax.inject.Inject
 @HiltViewModel
 class RecipeScreenViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository
-): ListeryViewModel<ScreenState, UserIntent>(
-    ScreenState.Loading
+): ListeryViewModel<State, UserIntent>(
+    State.Loading
 ) {
 
     fun initialize(recipeName: String) = viewModelScope.launch {
         recipeRepository.fetch(recipeName)?.let { recipe ->
             _state.update {
-                ScreenState.Ready(recipe)
+                State.Ready(recipe)
             }
         }
     }

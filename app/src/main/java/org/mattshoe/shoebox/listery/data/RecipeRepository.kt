@@ -9,6 +9,7 @@ interface RecipeRepository {
     suspend fun fetch(name: String): Recipe?
     suspend fun upsert(recipe: Recipe)
     suspend fun remove(name: String)
+    suspend fun exists(name: String): Boolean
 }
 
 

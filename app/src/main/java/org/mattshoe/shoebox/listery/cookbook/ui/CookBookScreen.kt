@@ -2,11 +2,16 @@ package org.mattshoe.shoebox.listery.cookbook.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,15 +19,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,89 +37,193 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookState
 import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookViewModel
+import org.mattshoe.shoebox.listery.cookbook.viewmodel.FilterOption
 import org.mattshoe.shoebox.listery.cookbook.viewmodel.UserIntent
-import org.mattshoe.shoebox.listery.landing.ListeryScaffold
-import org.mattshoe.shoebox.listery.navigation.NavigationHandler
 import org.mattshoe.shoebox.listery.ui.BottomNavItem
 import org.mattshoe.shoebox.listery.ui.common.ClickableLinkText
+import org.mattshoe.shoebox.listery.ui.common.FilterMenu
 import org.mattshoe.shoebox.listery.ui.common.Level1AppBar
 import org.mattshoe.shoebox.listery.ui.common.ListeryCard
-import org.mattshoe.shoebox.listery.util.bottomBorder
+import org.mattshoe.shoebox.listery.ui.common.ListeryScaffold
+import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
+import org.mattshoe.shoebox.listery.ui.common.ListeryTile
+import org.mattshoe.shoebox.listery.ui.common.ShimmerPlaceholder
+import org.mattshoe.shoebox.listery.ui.common.SubduedText
 
 @Composable
 fun CookbookScreen(
     viewModel: CookBookViewModel = hiltViewModel()
 ) {
-    NavigationHandler(viewModel)
-
     val state by viewModel.state.collectAsState()
-    val recipeList = when (state) {
-        is CookBookState.Success -> (state as CookBookState.Success).recipes
-        else -> emptyList()
-    }
 
     ListeryScaffold(
         topBar = { Level1AppBar("CookBook") },
         BottomNavItem.Cookbook,
         onFabClick =  { viewModel.handleIntent(UserIntent.NewRecipe) }
-    ) { padding ->
-        val listState = rememberLazyListState()
-        LazyColumn(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize(),
-            state = listState
-        ) {
-            stickyHeader {
-                SearchBar(listState)
+    ) { insets ->
+        when (val currentState = state) {
+            is CookBookState.Success -> CookbookSuccessScreen(currentState, insets) {
+                viewModel.handleIntent(it)
             }
-            items(recipeList) {
-                RecipeCard(
-                    it.name,
-                    it.starred,
-                    it.url,
-                    it.calories,
-                    it.ingredientCount,
-                    it.prepTime,
-                    onStarTap = {
-                        viewModel.handleIntent(UserIntent.RecipeStarTapped(it))
-                    }
-                ) {
-                    viewModel.handleIntent(UserIntent.RecipeTapped(it))
+            is CookBookState.Loading -> CookbookLoadingScreen(insets)
+            is CookBookState.Error -> CookbookErrorScreen(currentState)
+        }
+    }
+}
+
+@Composable
+fun CookbookSuccessScreen(
+    state: CookBookState.Success,
+    insets: PaddingValues,
+    handleIntent: (UserIntent) -> Unit
+) {
+    val listState = rememberLazyListState()
+    val recipeList = remember { state.recipes }
+    val filterOptions = remember { state.filterOptions }
+
+    LazyColumn(
+        modifier = Modifier
+            .padding(insets)
+            .fillMaxSize(),
+        state = listState
+    ) {
+        stickyHeader {
+            SearchBar(
+                listState,
+                filterOptions,
+                onTextChange = {
+                    handleIntent(
+                        UserIntent.SearchUpdated(it)
+                    )
+                },
+                onFilterChange = { list, option ->
+                    handleIntent(
+                        UserIntent.FilterUpdated(list, option)
+                    )
                 }
+            )
+
+        }
+        items(recipeList) {
+            RecipeCard(
+                it.name,
+                it.starred,
+                it.url,
+                it.calories,
+                it.ingredients.count(),
+                it.prepTime,
+                onStarTap = {
+                    handleIntent(UserIntent.RecipeStarTapped(it))
+                }
+            ) {
+                handleIntent(UserIntent.RecipeTapped(it))
             }
         }
     }
 }
 
 @Composable
-fun SearchBar(listState: LazyListState) {
-    var searchText: String by remember { mutableStateOf("") }
-    val interactionSource = remember { MutableInteractionSource() }
+fun CookbookLoadingScreen(insets: PaddingValues) {
+    Column(
+        modifier = Modifier
+            .padding(insets)
+            .fillMaxSize()
+    ) {
+        // Search bar
+        SearchBar(
+            listState = rememberLazyListState(),
+            filterOptions = emptyList(),
+            onTextChange = { },
+            onFilterChange = { _, _ -> },
+            modifier = Modifier
+                .alpha(0.3f)
+                .gesturesDisabled()
+        )
+        
+        // Ghost cards
+        repeat(15) {
+            RecipeCardGhostLoader()
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
+
+@Composable
+fun CookbookErrorScreen(state: CookBookState.Error) {
+    Column(
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .aspectRatio(1f),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_crossed_silverware),
+                contentDescription = "Error",
+                tint = MaterialTheme.colorScheme.outline
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(36.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            SubduedText(
+                text = state.message,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
+            )
+        }
+
+    }
+}
+
+@Composable
+fun SearchBar(
+    listState: LazyListState,
+    filterOptions: List<FilterOption<*>>,
+    modifier: Modifier = Modifier,
+    onTextChange: (String) -> Unit,
+    onFilterChange: (List<FilterOption<*>>, FilterOption<*>) -> Unit
+) {
+    val localDensity = LocalDensity.current
+    var showFilters by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf(TextFieldValue()) }
 
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
-        shadowElevation = if (listState.isScrolledToTop()) {
-            0.dp
-        } else {
-            14.dp
-        }
+            .wrapContentHeight()
+            .then(modifier),
+        shadowElevation = if (listState.isScrolledToTop()) 0.dp else 14.dp
     ) {
         Row(
             modifier = Modifier
@@ -124,63 +231,84 @@ fun SearchBar(listState: LazyListState) {
                 .padding(0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                onClick = { /* Open filter options */ },
-                modifier = Modifier.padding(0.dp),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = MaterialTheme.colorScheme.outline
-                )
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),
-                    contentDescription = "Filter Options"
-                )
-            }
-            BasicTextField(
+            // Search Icon
+            Icon(
                 modifier = Modifier
-                    .bottomBorder(1.dp, Color.Gray)
-                    .width(250.dp)
-                    .padding(0.dp)
-                    .weight(1f),
+                    .padding(horizontal = 12.dp)
+                    .alpha(0.5f),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),
+                contentDescription = "Search"
+            )
+
+            ListeryTextInput(
+                modifier = Modifier.weight(1f),
                 value = text,
-                onValueChange = {
-                    text = it
-                },
-                textStyle = MaterialTheme.typography.labelLarge.copy(
-                    color = MaterialTheme.colorScheme.outline,
-                    lineHeight = 26.sp
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Search
-                ),
-                singleLine = true,
-                interactionSource = interactionSource,
-                decorationBox = { innerTextField ->
-                    if (text.text.isEmpty()) {
-                        Text(
-                            text = "Search",
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                color = MaterialTheme.colorScheme.outline,
-                                lineHeight = 26.sp
-                            )
-                        )
-                    }
-                    innerTextField()
-                }
-            )
-            Spacer(modifier = Modifier
-                .width(16.dp)
-            )
-            IconButton(
-                onClick = { /* Open filter options */ },
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = MaterialTheme.colorScheme.outline
-                )
+                placeholder = "Search",
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_filter),
-                    contentDescription = "Filter Options"
-                )
+                text = it
+                onTextChange(it.text)
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Filter Button + Popup
+            Box {
+                IconButton(
+                    onClick = { showFilters = !showFilters }
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_filter),
+                        contentDescription = "Filter Options"
+                    )
+                }
+
+                if (showFilters) {
+                    FilterPopup(
+                        offset = IntOffset(x = 0, y = with(localDensity) { 34.dp.roundToPx() }),
+                        filterOptions = filterOptions,
+                        onUpdated = { list, option ->
+                            onFilterChange(list, option)
+                        },
+                        onDismiss = {  showFilters = false }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun FilterPopup(
+    filterOptions: List<FilterOption<*>>,
+    modifier: Modifier = Modifier,
+    offset: IntOffset = IntOffset(0),
+    onUpdated: (List<FilterOption<*>>, FilterOption<*>) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    Popup(
+        offset = offset,
+        alignment = Alignment.TopEnd,
+        onDismissRequest = onDismiss,
+        properties = PopupProperties(
+            focusable = true,
+            dismissOnClickOutside = true,
+            dismissOnBackPress = true,
+            clippingEnabled = true
+        )
+    ) {
+        ListeryTile(
+            modifier = modifier
+                .padding(12.dp)
+                .wrapContentWidth(),
+            elevation = 12.dp
+        ) {
+            FilterMenu(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(.75f),
+                filterOptions = filterOptions
+            ) { list, option ->
+                onUpdated(list, option)
             }
         }
     }
@@ -191,9 +319,9 @@ fun RecipeCard(
     name: String,
     starred: Boolean,
     url: String?,
-    calories: Int,
+    calories: Int?,
     ingredientCount: Int,
-    prepTime: String,
+    prepTime: String?,
     onStarTap: () -> Unit,
     onTap: () -> Unit
 ) {
@@ -201,7 +329,7 @@ fun RecipeCard(
         Column(
             modifier = Modifier
                 .wrapContentHeight()
-                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .fillMaxWidth()
                 .clickable(true) {
                     onTap()
                 }
@@ -241,7 +369,7 @@ fun RecipeCard(
             }
 
             Text(
-                text = "$calories calories",
+                text = "${calories ?: "--"} calories",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.outline
             )
@@ -253,7 +381,7 @@ fun RecipeCard(
                     color = MaterialTheme.colorScheme.outline
                 )
                 Text(
-                    text = prepTime,
+                    text = prepTime ?: "--",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline
                 )
@@ -264,10 +392,85 @@ fun RecipeCard(
     }
 }
 
+@Composable
+private fun RecipeCardGhostLoader() {
+    ListeryCard {
+        Column(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            // Title row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ShimmerPlaceholder(
+                    modifier = Modifier.weight(1f),
+                    height = 24
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                ShimmerPlaceholder(
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // URL placeholder
+            ShimmerPlaceholder(
+                modifier = Modifier.fillMaxWidth(),
+                height = 16
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // Calories
+            ShimmerPlaceholder(
+                modifier = Modifier.width(120.dp),
+                height = 16
+            )
+            
+            Spacer(modifier = Modifier.height(4.dp))
+            
+            // Ingredients and prep time row
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ShimmerPlaceholder(
+                    modifier = Modifier.weight(1f),
+                    height = 16
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                ShimmerPlaceholder(
+                    modifier = Modifier.width(80.dp),
+                    height = 16
+                )
+            }
+        }
+    }
+}
+
 private fun LazyListState.isScrolledToTop(): Boolean {
     return firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0
 }
 
+fun Modifier.gesturesDisabled(disabled: Boolean = true) =
+    if (disabled) {
+        pointerInput(Unit) {
+            awaitPointerEventScope {
+                // we should wait for all new pointer events
+                while (true) {
+                    awaitPointerEvent(pass = PointerEventPass.Initial)
+                        .changes
+                        .forEach(PointerInputChange::consume)
+                }
+            }
+        }
+    } else {
+        this
+    }
 
 
 

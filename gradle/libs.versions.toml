@@ -38,6 +38,9 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "composeMaterial3" }
+indriya = { module = "tech.units:indriya", version = "2.2.3" }
+androidx-material-navigation = { module = "androidx.compose.material:material-navigation", version = "1.8.2" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

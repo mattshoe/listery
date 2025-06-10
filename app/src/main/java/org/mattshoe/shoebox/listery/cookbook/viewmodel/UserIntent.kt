@@ -8,4 +8,5 @@ sealed interface UserIntent {
     data class SearchUpdated(val searchText: String): UserIntent
     data object FilterIconTapped: UserIntent
     data class RecipeStarTapped(val recipe: Recipe): UserIntent
+    data class FilterUpdated(val list: List<FilterOption<*>>, val option: FilterOption<*>): UserIntent
 }
