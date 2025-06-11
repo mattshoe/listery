@@ -3,6 +3,8 @@ package org.mattshoe.shoebox.listery.data
 import org.mattshoe.shoebox.listery.model.Ingredient
 import org.mattshoe.shoebox.listery.model.Recipe
 import org.mattshoe.shoebox.listery.model.RecipeStep
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 val TEMPORARY_RECIPES_STUBS = listOf(
     Recipe(
@@ -22,7 +24,7 @@ val TEMPORARY_RECIPES_STUBS = listOf(
             Ingredient(name = "garlic powder", qty = 0.25f, unit = "tsp"),
             Ingredient(name = "everything bagel seasoning", qty = 1f, unit = "tbsp")
         ),
-        prepTime = "20 min",
+        prepTime = 20.minutes,
         notes = "I have some notes on this and here they are: ooga booga",
         steps = listOf(
             RecipeStep(instructions = "First, dance around the kitchen for good luck"),
@@ -48,7 +50,7 @@ val TEMPORARY_RECIPES_STUBS = listOf(
             Ingredient(name = "acorns", qty = 2f, unit = "whole"),
             Ingredient(name = "twigs", qty = 4f, unit = "pieces")
         ),
-        prepTime = "45 min",
+        prepTime = 45.minutes,
         notes = "DO NOT TRY THIS AT HOME. Or do, I'm not your mom. But seriously, this is just a joke recipe. Unless...? No, definitely just a joke. Unless...?",
         steps = listOf(
             RecipeStep(instructions = "Find the sturdiest stick in the forest"),
@@ -77,7 +79,7 @@ val TEMPORARY_RECIPES_STUBS = listOf(
             Ingredient(name = "breadcrumbs", qty = 0.25f, unit = "cup"),
             Ingredient(name = "parmesan cheese", qty = 2f, unit = "tbsp")
         ),
-        prepTime = "20 min",
+        prepTime = 20.minutes,
         notes = """The ultimate comfort food. I remember making this in college at 3am after studying for finals. The orange powder would get everywhere and stain everything, but it was worth it. One time my roommate walked in while I was eating it and said 'That's the most beautiful thing I've ever seen' and I think he was being serious. The power of Kraft Mac n Cheese, folks. It brings people together. Also, pro tip: add a splash of hot sauce and some garlic powder. It'll change your life. Or at least your 3am snack game.""",
         steps = listOf(
             RecipeStep(instructions = "Boil water like you're making a potion"),
@@ -109,7 +111,7 @@ val TEMPORARY_RECIPES_STUBS = listOf(
             Ingredient(name = "tomatoes", qty = 2f, unit = "whole"),
             Ingredient(name = "fresh basil", qty = 0.25f, unit = "cup")
         ),
-        prepTime = "20 min",
+        prepTime = 20.minutes,
         notes = "Note to self: hot dawg. Also, this is NOT pizza. It's a sad, sad attempt at pizza. But it's better than nothing when you're trying to be 'healthy'. The cauliflower will try to betray you at every step - stay strong. And for the love of all things holy, SQUEEZE OUT ALL THE WATER. I cannot stress this enough. Your future self will thank you.",
         steps = listOf(
             RecipeStep(instructions = "Grate cauliflower while pretending you're a professional chef"),
@@ -139,7 +141,7 @@ val TEMPORARY_RECIPES_STUBS = listOf(
             Ingredient(name = "pizza box", qty = 1f, unit = "whole"),
             Ingredient(name = "napkins", qty = 10f, unit = "pieces")
         ),
-        prepTime = "1 hr",
+        prepTime = 1.hours,
         notes = """mmmmm my fave. Also, here's a story: One time I ordered Papa John's and the delivery guy showed up with a flat tire. He had to walk the last two blocks. I felt so bad I gave him a huge tip and now we're best friends. Just kidding, I never saw him again. But the pizza was still hot! Magic.
 
 Also, pro tip: always order the garlic sauce. Always. Even if you're not getting breadsticks. Just... trust me on this one. Your breath will smell like garlic for days but your soul will be happy.""",
@@ -179,7 +181,7 @@ Also, pro tip: always order the garlic sauce. Always. Even if you're not getting
             Ingredient(name = "salt", qty = 1f, unit = "tsp"),
             Ingredient(name = "black pepper", qty = 0.5f, unit = "tsp")
         ),
-        prepTime = "1 hr 10 min",
+        prepTime = 1.hours + 10.minutes,
         notes = """This recipe is the result of my 3-year journey to recreate the butter chicken from that one Indian restaurant I went to that one time. I've made it 47 times. I'm getting closer, but I'm still not there. The restaurant won't give me their recipe (rude) so I've had to figure it out through trial and error. Mostly error.
 
 The key is to marinate the chicken for at least 4 hours, but overnight is better. Also, don't skimp on the butter. The name is literally 'Butter Chicken' - this is not the time to be counting calories. If you're worried about calories, maybe don't make butter chicken?
@@ -216,7 +218,7 @@ Fun fact: I once made this for a date and they proposed. I said no, but kept the
             Ingredient(name = "beer", qty = 6f, unit = "cans"),
             Ingredient(name = "football game", qty = 1f, unit = "whole")
         ),
-        prepTime = "35 min",
+        prepTime = 35.minutes,
         notes = "Kayla doesn't eat meat anymore :( But that's okay, more wings for me! This recipe is perfect for game day, or any day that ends in 'y'. The secret is in the sauce - I use a combination of three different hot sauces because I'm extra like that. Also, make sure to have plenty of napkins on hand. And maybe a fire extinguisher. Just in case.",
         steps = listOf(
             RecipeStep(instructions = "Defrost wings while watching football highlights"),
@@ -244,7 +246,7 @@ Fun fact: I once made this for a date and they proposed. I said no, but kept the
             Ingredient(name = "shame", qty = 1f, unit = "whole"),
             Ingredient(name = "pride", qty = 0f, unit = "whole")
         ),
-        prepTime = "5 min",
+        prepTime = 5.minutes,
         notes = """I'm not proud of this recipe, but I'm not ashamed either. Sometimes you just need a can of Spaghetti O's in your life. It's like a warm hug from your childhood, if your childhood was made of processed food and questionable nutritional value.
 
 I keep a can in my pantry at all times. It's my emergency food. My comfort food. My 'I'm too lazy to cook' food. My 'I'm too sad to cook' food. My 'I'm too happy to cook' food. Basically, it's my everything food.
@@ -283,7 +285,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
             Ingredient(name = "rain", qty = 1f, unit = "whole"),
             Ingredient(name = "newspaper", qty = 1f, unit = "sheet")
         ),
-        prepTime = "45 min",
+        prepTime = 45.minutes,
         notes = "The key to authentic fish and chips is to eat it while it's raining. I don't make the rules, I just follow them. Also, make sure to wrap it in newspaper for that authentic British experience. If you don't have a newspaper, just print out some random Wikipedia articles. The fish won't know the difference.",
         steps = listOf(
             RecipeStep(instructions = "Batter fish while pretending you're in a British pub"),
@@ -300,7 +302,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
         url = null,
         calories = 0,
         ingredients = emptyList(),
-        prepTime = "0 min",
+        prepTime = null,
         notes = null,
         steps = emptyList()
     ),
@@ -310,7 +312,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
         url = "https://www.example.com/recipe",
         calories = 0,
         ingredients = emptyList(),
-        prepTime = "0 min",
+        prepTime = null,
         notes = null,
         steps = emptyList()
     ),
@@ -320,7 +322,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
         url = null,
         calories = 0,
         ingredients = emptyList(),
-        prepTime = "0 min",
+        prepTime = null,
         notes = "This recipe exists only to test notes",
         steps = emptyList()
     ),
@@ -334,7 +336,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
             Ingredient(name = "regret", qty = 1f, unit = "whole"),
             Ingredient(name = "determination", qty = 1f, unit = "whole")
         ),
-        prepTime = "5 min",
+        prepTime = 5.minutes,
         notes = "The only breakfast that matters",
         steps = listOf(
             RecipeStep(instructions = "Brew coffee"),
@@ -351,7 +353,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
             Ingredient(name = "frozen burrito", qty = 1f, unit = "whole"),
             Ingredient(name = "hope", qty = 1f, unit = "whole")
         ),
-        prepTime = "3 min",
+        prepTime = 3.minutes,
         notes = "Sometimes you just need a burrito",
         steps = listOf(
             RecipeStep(instructions = "Remove plastic"),
@@ -370,7 +372,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
             Ingredient(name = "mint", qty = 3f, unit = "leaves"),
             Ingredient(name = "pretentiousness", qty = 1f, unit = "whole")
         ),
-        prepTime = "2 min",
+        prepTime = 2.minutes,
         notes = "It's just water, but make it fancy",
         steps = listOf(
             RecipeStep(instructions = "Fill glass with water"),
@@ -388,7 +390,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
             Ingredient(name = "crackers", qty = 1f, unit = "sleeve"),
             Ingredient(name = "tears", qty = 1f, unit = "cup")
         ),
-        prepTime = "1 min",
+        prepTime = 1.minutes,
         notes = "Sometimes you just need to cry into your crackers",
         steps = listOf(
             RecipeStep(instructions = "Open crackers"),
@@ -406,7 +408,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
             Ingredient(name = "shame", qty = 1f, unit = "whole"),
             Ingredient(name = "darkness", qty = 1f, unit = "whole")
         ),
-        prepTime = "2 min",
+        prepTime = 2.minutes,
         notes = "The best meals are eaten in the dark",
         steps = listOf(
             RecipeStep(instructions = "Open fridge"),
@@ -425,7 +427,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
             Ingredient(name = "hot sauce", qty = 1f, unit = "bottle"),
             Ingredient(name = "desperation", qty = 1f, unit = "whole")
         ),
-        prepTime = "10 min",
+        prepTime = 10.minutes,
         notes = "Now with flavor!",
         steps = listOf(
             RecipeStep(instructions = "Boil water"),
@@ -443,7 +445,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
             Ingredient(name = "chocolate", qty = 1f, unit = "bar"),
             Ingredient(name = "emergency", qty = 1f, unit = "whole")
         ),
-        prepTime = "0 min",
+        prepTime = 0.minutes,
         notes = "For emergency use only",
         steps = listOf(
             RecipeStep(instructions = "Open chocolate"),
@@ -457,7 +459,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
         url = null,
         calories = 0,
         ingredients = emptyList(),
-        prepTime = "0 min",
+        prepTime = null,
         notes = "The most important ingredient in any recipe",
         steps = emptyList()
     ),
@@ -467,7 +469,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
         url = null,
         calories = 0,
         ingredients = emptyList(),
-        prepTime = "0 min",
+        prepTime = null,
         notes = "This recipe has no name",
         steps = emptyList()
     ),
@@ -479,7 +481,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
         ingredients = listOf(
             Ingredient(name = "ingredient", qty = 1f, unit = "whole")
         ),
-        prepTime = "0 min",
+        prepTime = null,
         notes = "This recipe has no steps",
         steps = emptyList()
     ),
@@ -489,7 +491,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
         url = null,
         calories = 0,
         ingredients = emptyList(),
-        prepTime = "0 min",
+        prepTime = null,
         notes = "This recipe has no ingredients",
         steps = listOf(
             RecipeStep(instructions = "Step 1"),
@@ -504,7 +506,7 @@ The best way to eat it is straight from the can, standing in your kitchen at 2am
         ingredients = listOf(
             Ingredient(name = "ingredient", qty = 1f, unit = "whole")
         ),
-        prepTime = "1 hr",
+        prepTime = 1.hours,
         notes = "This recipe has everything",
         steps = listOf(
             RecipeStep(instructions = "Step 1"),

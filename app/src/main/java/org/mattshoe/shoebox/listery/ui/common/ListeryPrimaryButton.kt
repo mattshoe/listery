@@ -10,7 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.mattshoe.shoebox.listery.ui.theme.ListeryTheme
 
 @Composable
 fun ListeryPrimaryButton(
@@ -32,6 +34,29 @@ fun ListeryPrimaryButton(
             text = text,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+@Preview(name = "Enabled Button", showBackground = true)
+@Composable
+private fun PreviewListeryPrimaryButtonEnabled() {
+    ListeryTheme {
+        ListeryPrimaryButton(
+            text = "Click Me",
+            onClick = {}
+        )
+    }
+}
+
+@Preview(name = "Disabled Button", showBackground = true)
+@Composable
+private fun PreviewListeryPrimaryButtonDisabled() {
+    ListeryTheme {
+        ListeryPrimaryButton(
+            text = "Disabled",
+            enabled = false,
+            onClick = {}
         )
     }
 }

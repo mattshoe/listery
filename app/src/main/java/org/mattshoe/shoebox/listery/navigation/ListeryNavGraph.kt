@@ -17,6 +17,7 @@ import androidx.navigation.toRoute
 import org.mattshoe.shoebox.listery.cookbook.ui.CookbookScreen
 import org.mattshoe.shoebox.listery.recipe.create.ui.ChooseRecipeCreationMethodBottomSheet
 import org.mattshoe.shoebox.listery.recipe.create.ui.CreateRecipeManuallyBottomSheet
+import org.mattshoe.shoebox.listery.recipe.edit.overview.ui.EditRecipeOverviewBottomSheet
 import org.mattshoe.shoebox.listery.recipe.ui.RecipeScreen
 
 @Composable
@@ -52,6 +53,11 @@ fun ListeryNavGraph(
 
                 bottomSheet<Route.CreateRecipeManuallyBottomSheet> {
                     CreateRecipeManuallyBottomSheet()
+                }
+
+                bottomSheet<Route.EditRecipeOverviewBottomSheet> {
+                    val navArg = it.toRoute<Route.EditRecipeOverviewBottomSheet>()
+                    EditRecipeOverviewBottomSheet(recipeName = navArg.name)
                 }
             }
         }

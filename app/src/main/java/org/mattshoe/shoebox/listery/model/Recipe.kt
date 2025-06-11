@@ -1,12 +1,14 @@
 package org.mattshoe.shoebox.listery.model
 
+import kotlin.time.Duration
+
 data class Recipe(
     val name: String,
     val starred: Boolean,
     val url: String?,
     val calories: Int?,
     val ingredients: List<Ingredient>,
-    val prepTime: String?,
+    val prepTime: Duration?,
     val notes: String?,
     val steps: List<RecipeStep>
 )

@@ -2,6 +2,8 @@ package org.mattshoe.shoebox.listery.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import org.mattshoe.shoebox.listery.model.Recipe
 import javax.inject.Inject
@@ -40,6 +42,14 @@ class RecipeRepositoryImpl @Inject constructor(
 
     override suspend fun exists(name: String): Boolean {
         return _recipes.value.any { it.name == name }
+    }
+
+    override fun observe(name: String): Flow<Recipe?> {
+        return recipes.map { recipeList ->
+            recipeList.firstOrNull { recipe ->
+                recipe.name == name
+            }
+        }.distinctUntilChanged()
     }
 
     private inline fun <T> List<T>.upsert(

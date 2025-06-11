@@ -23,4 +23,7 @@ sealed interface Route {
     @Serializable
     data object CreateRecipeFromWebsiteBottomSheet: Route
 
+    @Serializable
+    data class EditRecipeOverviewBottomSheet(val name: String): Route
+
 }

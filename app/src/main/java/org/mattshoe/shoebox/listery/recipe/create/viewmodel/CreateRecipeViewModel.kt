@@ -75,7 +75,7 @@ class CreateRecipeViewModel @Inject constructor(
                     url = null,
                     calories = null,
                     ingredients = listOf(),
-                    prepTime = "",
+                    prepTime = null,
                     notes = null,
                     steps = listOf()
                 )

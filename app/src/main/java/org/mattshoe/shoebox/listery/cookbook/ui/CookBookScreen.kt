@@ -69,6 +69,7 @@ import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
 import org.mattshoe.shoebox.listery.ui.common.ListeryTile
 import org.mattshoe.shoebox.listery.ui.common.ShimmerPlaceholder
 import org.mattshoe.shoebox.listery.ui.common.SubduedText
+import kotlin.time.Duration
 
 @Composable
 fun CookbookScreen(
@@ -318,7 +319,7 @@ fun RecipeCard(
     url: String?,
     calories: Int?,
     ingredientCount: Int,
-    prepTime: String?,
+    prepTime: Duration?,
     onStarTap: () -> Unit,
     onTap: () -> Unit
 ) {
@@ -377,10 +378,9 @@ fun RecipeCard(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline
                 )
-                Text(
-                    text = prepTime ?: "--",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
+                SubduedText(
+                    text = prepTime.prettyPrint(),
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
 
@@ -470,4 +470,20 @@ fun Modifier.gesturesDisabled(disabled: Boolean = true) =
     }
 
 
+fun Duration?.prettyPrint(): String {
+    return this?.toComponents { hours, minutes, _, _ ->
+        when {
+            hours > 0 -> "$hours hr $minutes min"
+            minutes > 0 -> "$minutes min"
+            else -> "--"
+        }
+    } ?: "--"
+}
 
+fun Duration?.prettyHours(placeHolder: String = "--"): String {
+    return this?.inWholeHours?.toString() ?: placeHolder
+}
+
+fun Duration?.prettyMinutes(placeHolder: String = "--"): String {
+    return this?.inWholeMinutes?.toString() ?: placeHolder
+}

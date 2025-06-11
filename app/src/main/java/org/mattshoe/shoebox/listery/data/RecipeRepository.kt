@@ -10,6 +10,8 @@ interface RecipeRepository {
     suspend fun upsert(recipe: Recipe)
     suspend fun remove(name: String)
     suspend fun exists(name: String): Boolean
+
+    fun observe(name: String): Flow<Recipe?>
 }
 
 

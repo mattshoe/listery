@@ -1,7 +1,9 @@
 package org.mattshoe.shoebox.listery.recipe.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +24,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -29,14 +33,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.mattshoe.shoebox.listery.R
+import org.mattshoe.shoebox.listery.cookbook.ui.prettyPrint
 import org.mattshoe.shoebox.listery.ui.common.ListeryScaffold
 import org.mattshoe.shoebox.listery.recipe.viewmodel.RecipeScreenViewModel
 import org.mattshoe.shoebox.listery.recipe.viewmodel.State
+import org.mattshoe.shoebox.listery.recipe.viewmodel.UserIntent
 import org.mattshoe.shoebox.listery.ui.BottomNavItem
 import org.mattshoe.shoebox.listery.ui.common.ClickableLinkText
 import org.mattshoe.shoebox.listery.ui.common.Level2AppBar
 import org.mattshoe.shoebox.listery.ui.common.ListeryCard
+import org.mattshoe.shoebox.listery.ui.common.ShimmerPlaceholder
 import org.mattshoe.shoebox.listery.ui.common.SubduedText
 import org.mattshoe.shoebox.listery.ui.common.TopBarIcon
 
@@ -51,15 +59,206 @@ fun RecipeScreen(
 
     val viewModelState: State by viewModel.state.collectAsState()
     when (viewModelState) {
-        is State.Loading -> Unit
+        is State.Loading -> RecipeLoadingScreen()
         is State.Error -> Unit
-        is State.Ready -> RecipeSuccessScreen(viewModelState as State.Ready)
+        is State.Ready -> RecipeSuccessScreen(viewModelState as State.Ready) {
+            viewModel.handleIntent(it)
+        }
     }
-
 }
 
 @Composable
-private fun RecipeSuccessScreen(state: State.Ready) {
+private fun RecipeLoadingScreen() {
+    ListeryScaffold(
+        topBar = {
+            Level2AppBar(
+                actions = listOf(
+                    TopBarIcon(
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_hollow_star),
+                        contentDescription = "",
+                        onClick = { }
+                    ),
+                    TopBarIcon(
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_add_to_shopping_list),
+                        contentDescription = "",
+                        onClick = { }
+                    ),
+                    TopBarIcon(
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_trash),
+                        contentDescription = "",
+                        onClick = { }
+                    ),
+                )
+            )
+        },
+        selectedNavItem = BottomNavItem.Cookbook,
+        showFab = false
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.padding(padding),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            item {
+                RecipeOverviewTileGhost()
+            }
+            item {
+                IngredientsTileGhost()
+            }
+            item {
+                DirectionsTileGhost()
+            }
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecipeOverviewTileGhost() {
+    RecipeScreenTile(
+        title = "",
+        titleStyle = MaterialTheme.typography.titleLarge,
+        icon = {
+            ShimmerPlaceholder(
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    ) {
+        Column {
+            // URL placeholder
+            ShimmerPlaceholder(
+                modifier = Modifier.fillMaxWidth(),
+                height = 16
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // Notes placeholder
+            ShimmerPlaceholder(
+                modifier = Modifier.fillMaxWidth(),
+                height = 16
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // Stats row
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ShimmerPlaceholder(
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    ShimmerPlaceholder(
+                        modifier = Modifier.width(80.dp),
+                        height = 16
+                    )
+                }
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ShimmerPlaceholder(
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    ShimmerPlaceholder(
+                        modifier = Modifier.width(60.dp),
+                        height = 16
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun IngredientsTileGhost() {
+    RecipeScreenTile(
+        title = "Ingredients",
+        contentTopMargin = 12.dp,
+        titleColor = MaterialTheme.colorScheme.surfaceVariant,
+        icon = {
+            ShimmerPlaceholder(
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    ) {
+        repeat(3) { index ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ShimmerPlaceholder(
+                    modifier = Modifier.weight(1f),
+                    height = 16
+                )
+                ShimmerPlaceholder(
+                    modifier = Modifier.width(40.dp),
+                    height = 16
+                )
+                ShimmerPlaceholder(
+                    modifier = Modifier.width(60.dp),
+                    height = 16
+                )
+            }
+            if (index != 2) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 6.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.surfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DirectionsTileGhost() {
+    RecipeScreenTile(
+        title = "Directions",
+        contentTopMargin = 12.dp,
+        titleColor = MaterialTheme.colorScheme.surfaceVariant,
+        icon = {
+            ShimmerPlaceholder(
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            repeat(3) { index ->
+                Column {
+                    ShimmerPlaceholder(
+                        modifier = Modifier.width(80.dp),
+                        height = 16
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ShimmerPlaceholder(
+                        modifier = Modifier.fillMaxWidth(),
+                        height = 24
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecipeSuccessScreen(
+    state: State.Ready,
+    handleIntent: (UserIntent) -> Unit
+) {
     ListeryScaffold(
         topBar = {
             Level2AppBar(
@@ -99,7 +298,7 @@ private fun RecipeSuccessScreen(state: State.Ready) {
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
-                RecipeOverviewTile(state)
+                RecipeOverviewTile(state, handleIntent)
             }
             item {
                 IngredientsTile(state)
@@ -116,7 +315,8 @@ private fun RecipeSuccessScreen(state: State.Ready) {
 
 @Composable
 fun RecipeOverviewTile(
-    state: State.Ready
+    state: State.Ready,
+    handleIntent: (UserIntent) -> Unit
 ) {
     RecipeScreenTile(
         title = state.data.name,
@@ -126,11 +326,13 @@ fun RecipeOverviewTile(
                 modifier = Modifier
                     .size(20.dp)
                     .clickable {
-
+                        handleIntent(
+                            UserIntent.EditRecipeOverview
+                        )
                     },
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit),
                 tint = MaterialTheme.colorScheme.outline,
-                contentDescription = "Edit recipe name."
+                contentDescription = "Edit recipe details."
             )
         }
     ) {
@@ -164,7 +366,7 @@ fun RecipeOverviewTile(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 SubduedText(
-                    text = state.data.prepTime ?: "--",
+                    text = state.data.prepTime.prettyPrint(),
                     style = MaterialTheme.typography.labelMedium
                 )
             }
@@ -294,6 +496,7 @@ fun RecipeScreenTile(
     title: String,
     icon: @Composable () -> Unit,
     titleStyle: TextStyle = MaterialTheme.typography.titleMedium,
+    titleColor: Color = Color.Unspecified,
     contentTopMargin: Dp = 4.dp,
     content: @Composable () -> Unit
 ) {
@@ -311,6 +514,7 @@ fun RecipeScreenTile(
                         .weight(1f),
                     text = title,
                     style = titleStyle,
+                    color = titleColor,
                     fontWeight = FontWeight.Bold
                 )
                 icon()

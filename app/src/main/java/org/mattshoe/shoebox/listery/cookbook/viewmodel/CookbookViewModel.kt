@@ -41,7 +41,7 @@ class CookBookViewModel @Inject constructor(
         Log.d(TAG, "Initializing CookBookViewModel")
 
         viewModelScope.launch {
-            delay(3000)
+            delay(2000)
 
             combine(
                 recipeRepository.recipes,
