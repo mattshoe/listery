@@ -36,8 +36,7 @@ fun CreateRecipeManuallyBottomSheet(
 
     ListeryBottomSheet {
         Column(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(modifier = Modifier.padding(8.dp)) {

@@ -30,11 +30,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.mattshoe.shoebox.listery.R
+import org.mattshoe.shoebox.listery.cookbook.ui.gesturesDisabled
 import org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel.EditRecipeViewModel
 import org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel.UserIntent
 import org.mattshoe.shoebox.listery.ui.common.ListeryBottomSheet
 import org.mattshoe.shoebox.listery.ui.common.ListeryPrimaryButton
 import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
+import androidx.compose.ui.draw.alpha
 
 @Composable
 fun EditRecipeOverviewBottomSheet(
@@ -56,7 +58,11 @@ fun EditRecipeOverviewBottomSheet(
 
     ListeryBottomSheet {
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .gesturesDisabled(state.loading)
+                .alpha(if (state.loading) 0.5f else 1f)
         ) {
             Row {
                 Column {
@@ -164,7 +170,7 @@ fun EditRecipeOverviewBottomSheet(
                     ListeryTextInput(
                         value = notesTextFieldValue,
                         placeholder = "Enter some notes about your recipe",
-                        maxLines = 8,
+                        maxLines = 5,
                         modifier = Modifier.fillMaxWidth(),
                         onValueChange = {
                             notesTextFieldValue = it
