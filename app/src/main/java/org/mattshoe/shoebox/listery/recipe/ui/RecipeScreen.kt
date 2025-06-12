@@ -12,14 +12,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.cookbook.ui.prettyPrint
-import org.mattshoe.shoebox.listery.ui.common.ListeryScaffold
 import org.mattshoe.shoebox.listery.recipe.viewmodel.RecipeScreenViewModel
 import org.mattshoe.shoebox.listery.recipe.viewmodel.State
 import org.mattshoe.shoebox.listery.recipe.viewmodel.UserIntent
@@ -40,6 +44,7 @@ import org.mattshoe.shoebox.listery.ui.BottomNavItem
 import org.mattshoe.shoebox.listery.ui.common.ClickableLinkText
 import org.mattshoe.shoebox.listery.ui.common.Level2AppBar
 import org.mattshoe.shoebox.listery.ui.common.ListeryCard
+import org.mattshoe.shoebox.listery.ui.common.ListeryScaffold
 import org.mattshoe.shoebox.listery.ui.common.ShimmerPlaceholder
 import org.mattshoe.shoebox.listery.ui.common.SubduedText
 import org.mattshoe.shoebox.listery.ui.common.TopBarIcon
@@ -255,6 +260,33 @@ private fun RecipeSuccessScreen(
     state: State.Ready,
     handleIntent: (UserIntent) -> Unit
 ) {
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+
+    if (showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = { Text("Delete Recipe") },
+            text = { Text("Are you sure you want to delete this recipe? This action cannot be undone.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteConfirmation = false
+                        handleIntent(UserIntent.DeleteRecipe)
+                    }
+                ) {
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteConfirmation = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     ListeryScaffold(
         topBar = {
             Level2AppBar(
@@ -264,21 +296,21 @@ private fun RecipeSuccessScreen(
                             id = if (state.data.starred) R.drawable.ic_filled_star else R.drawable.ic_hollow_star
                         ),
                         contentDescription = "",
-                        onClick = { /* Your action here */ }
+                        onClick = { handleIntent(UserIntent.ToggleStarred) }
                     ),
                     TopBarIcon(
                         icon = ImageVector.vectorResource(
                             id = R.drawable.ic_add_to_shopping_list
                         ),
                         contentDescription = "",
-                        onClick = { /* Your action here */ }
+                        onClick = { handleIntent(UserIntent.AddToShoppingList) }
                     ),
                     TopBarIcon(
                         icon = ImageVector.vectorResource(
                             id = R.drawable.ic_trash
                         ),
-                        contentDescription = "",
-                        onClick = { /* Your action here */ }
+                        contentDescription = "Delete recipe",
+                        onClick = { showDeleteConfirmation = true }
                     ),
                 )
             )

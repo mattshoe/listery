@@ -21,7 +21,6 @@ class RecipeScreenViewModel @Inject constructor(
 ): ListeryViewModel<State, UserIntent>(
     State.Loading
 ) {
-
     private val recipe = MutableStateFlow<Recipe?>(null)
 
     init {
@@ -71,11 +70,10 @@ class RecipeScreenViewModel @Inject constructor(
     }
 
     private fun handleToggleStarred(intent: UserIntent.ToggleStarred) = viewModelScope.launch {
-        val currentState = _state.value
-        if (currentState is State.Ready) {
-            val updatedRecipe = currentState.data.copy(starred = !currentState.data.starred)
+        recipe.value?.let {
+            _state.update { State.Loading }
+            val updatedRecipe = it.copy(starred = !it.starred)
             recipeRepository.upsert(updatedRecipe)
-            _state.update { State.Ready(updatedRecipe) }
         }
     }
 
@@ -85,9 +83,10 @@ class RecipeScreenViewModel @Inject constructor(
 
     private fun handleDeleteRecipe(intent: UserIntent.DeleteRecipe) = viewModelScope.launch {
         recipe.value?.let {
+            _state.update { State.Loading }
             recipeRepository.remove(it.name)
+            navigationProvider.navController.popBackStack()
         }
-        navigationProvider.navController.popBackStack()
     }
 }
 
