@@ -2,9 +2,7 @@ package org.mattshoe.shoebox.listery.cookbook.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
@@ -362,7 +359,7 @@ fun RecipeCard(
                 }
             }
             url?.let {
-                ClickableLinkText(uri = it, modifier = Modifier.padding(0.dp))
+                ClickableLinkText(url = it, modifier = Modifier.padding(0.dp))
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
@@ -470,20 +467,24 @@ fun Modifier.gesturesDisabled(disabled: Boolean = true) =
     }
 
 
-fun Duration?.prettyPrint(): String {
+fun Duration?.prettyPrint(placeHolder: String = "--"): String {
     return this?.toComponents { hours, minutes, _, _ ->
         when {
             hours > 0 -> "$hours hr $minutes min"
             minutes > 0 -> "$minutes min"
-            else -> "--"
+            else -> placeHolder
         }
-    } ?: "--"
+    } ?: placeHolder
 }
 
 fun Duration?.prettyHours(placeHolder: String = "--"): String {
-    return this?.inWholeHours?.toString() ?: placeHolder
+    return this?.toComponents { hours, _, _, _ ->
+        hours.toString()
+    } ?: placeHolder
 }
 
 fun Duration?.prettyMinutes(placeHolder: String = "--"): String {
-    return this?.inWholeMinutes?.toString() ?: placeHolder
+    return this?.toComponents { _, minutes, _, _ ->
+        minutes.toString()
+    } ?: placeHolder
 }

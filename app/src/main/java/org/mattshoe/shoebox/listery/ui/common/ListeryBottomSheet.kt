@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +24,7 @@ import org.mattshoe.shoebox.listery.navigation.LocalNavController
 fun ListeryBottomSheet(
     modifier: Modifier = Modifier,
     onDismissRequest: (() -> Unit)? = null,
+    canDismiss: () -> Boolean = { true },
     content: @Composable () -> Unit,
 ) {
     var showBottomSheet by remember { mutableStateOf(true) }
@@ -37,7 +39,13 @@ fun ListeryBottomSheet(
         },
         sheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true,
-            confirmValueChange = { true }
+            confirmValueChange = { state ->
+                if (state == SheetValue.Hidden) {
+                    canDismiss()
+                } else {
+                    true
+                }
+            }
         )
     ) {
         Column(

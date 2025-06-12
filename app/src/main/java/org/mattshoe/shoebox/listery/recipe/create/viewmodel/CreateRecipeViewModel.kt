@@ -9,91 +9,123 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
 import org.mattshoe.shoebox.listery.data.RecipeRepository
+import org.mattshoe.shoebox.listery.model.EditableField
 import org.mattshoe.shoebox.listery.model.Recipe
 import org.mattshoe.shoebox.listery.navigation.NavigationProvider
 import org.mattshoe.shoebox.listery.navigation.Route
+import org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel.RecipeOverviewState
+import org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel.toHours
+import org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel.toMinutes
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateRecipeViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     private val navigationProvider: NavigationProvider
-): ListeryViewModel<State, UserIntent>(State()) {
+): ListeryViewModel<RecipeOverviewState, UserIntent>(RecipeOverviewState(loading = false)) {
+
 
     override fun handleIntent(intent: UserIntent) {
         viewModelScope.launch(Dispatchers.Default) {
             when (intent) {
                 is UserIntent.NameUpdated -> handleNameUpdated(intent)
+                is UserIntent.WebsiteUpdated -> handleWebsiteUpdated(intent)
+                is UserIntent.HoursUpdated -> handleHoursUpdated(intent)
+                is UserIntent.MinutesUpdated -> handleMinutesUpdated(intent)
+                is UserIntent.CaloriesUpdated -> handleCaloriesUpdated(intent)
+                is UserIntent.NotesUpdated -> handleNotesUpdated(intent)
                 is UserIntent.Submit -> handleSubmit(intent)
             }
         }
     }
 
     private suspend fun handleNameUpdated(intent: UserIntent.NameUpdated) {
-        when {
-            intent.name.isBlank() -> _state
-                .update {
-                    it.copy(
-                        recipeName = intent.name,
-                        validName = false,
-                        invalidityReason = null,
-                        loading = false
-                    )
-                }
-            recipeRepository.exists(intent.name) -> _state
-                .update {
-                    it.copy(
-                        recipeName = intent.name,
-                        validName = false,
-                        invalidityReason = "This recipe already exists",
-                        loading = false
-                    )
-                }
-            else -> _state
-                .update {
-                    it.copy(
-                        recipeName = intent.name,
-                        validName = true,
-                        invalidityReason = null,
-                        loading = false
-                    )
-                }
+        _state.update {
+            it.copy(
+                allowSubmit = intent.value.isNotBlank(),
+                name = EditableField(intent.value)
+            )
         }
+    }
 
+    private suspend fun handleWebsiteUpdated(intent: UserIntent.WebsiteUpdated) {
+        _state.update {
+            it.copy(
+                website = EditableField(intent.value)
+            )
+        }
+    }
+
+    private suspend fun handleHoursUpdated(intent: UserIntent.HoursUpdated) {
+        _state.update {
+            it.copy(
+                hours = EditableField(intent.value)
+            )
+        }
+    }
+
+    private suspend fun handleMinutesUpdated(intent: UserIntent.MinutesUpdated) {
+        _state.update {
+            it.copy(
+                minutes = EditableField(intent.value)
+            )
+        }
+    }
+
+    private suspend fun handleCaloriesUpdated(intent: UserIntent.CaloriesUpdated) {
+        _state.update {
+            it.copy(
+                calories = EditableField(intent.value)
+            )
+        }
+    }
+
+    private suspend fun handleNotesUpdated(intent: UserIntent.NotesUpdated) {
+        _state.update {
+            it.copy(
+                notes = EditableField(intent.value)
+            )
+        }
     }
 
     private suspend fun handleSubmit(intent: UserIntent.Submit) {
-        if (!recipeRepository.exists(intent.name)) {
-            _state.update {
-                it.copy(loading = true)
-            }
-            delay(2000)
-            recipeRepository.upsert(
-                Recipe(
-                    name = intent.name,
-                    starred = false,
-                    url = null,
-                    calories = null,
-                    ingredients = listOf(),
-                    prepTime = null,
-                    notes = null,
-                    steps = listOf()
-                )
-            )
-            _state.update {
-                State()
-            }
-            withContext(Dispatchers.Main) {
-                navigationProvider.navController.navigate(Route.Recipe(intent.name))
-            }
-        } else {
-            _state.update {
+        _state.update {
+            it.copy(loading = true)
+        }
+
+        when {
+            intent.state.name.value.isNullOrBlank() -> _state.update {
                 it.copy(
-                    recipeName = intent.name,
-                    validName = false,
-                    invalidityReason = "This recipe already exists",
-                    loading = false
+                    loading = false,
+                    allowSubmit = false
                 )
+            }
+            recipeRepository.exists(intent.state.name.value) -> {
+                _state.update {
+                    it.copy(
+                        loading = false,
+                        allowSubmit = false,
+                        name = it.name.copy(error = "This recipe already exists")
+                    )
+                }
+            }
+            else -> {
+                delay(2000)
+                recipeRepository.upsert(
+                    Recipe(
+                        name = intent.state.name.value,
+                        starred = false,
+                        url = intent.state.website.value,
+                        calories = intent.state.calories.value?.toIntOrNull(),
+                        ingredients = listOf(),
+                        prepTime = intent.state.hours.value.toHours() + intent.state.minutes.value.toMinutes(),
+                        notes = intent.state.notes.value,
+                        steps = listOf()
+                    )
+                )
+                withContext(Dispatchers.Main) {
+                    navigationProvider.navController.navigate(Route.Recipe(intent.state.name.value))
+                }
             }
         }
     }

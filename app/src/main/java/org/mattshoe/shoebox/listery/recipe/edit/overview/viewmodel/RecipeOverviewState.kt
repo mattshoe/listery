@@ -2,10 +2,10 @@ package org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel
 
 import org.mattshoe.shoebox.listery.model.EditableField
 
-data class State(
+data class RecipeOverviewState(
     val loading: Boolean,
-    val pageError: String? = null,
-    val name: String? = null,
+    val allowSubmit: Boolean = false,
+    val name: EditableField<String?> = EditableField(null),
     val website: EditableField<String?> = EditableField(null),
     val hours: EditableField<String?> = EditableField(null),
     val minutes: EditableField<String?> = EditableField(null),

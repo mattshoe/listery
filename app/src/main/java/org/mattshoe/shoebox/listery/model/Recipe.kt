@@ -22,3 +22,4 @@ data class Ingredient(
 data class RecipeStep(
     val instructions: String
 )
+

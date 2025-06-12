@@ -7,5 +7,5 @@ sealed interface UserIntent {
     data class CaloriesUpdated(val value: String): UserIntent
     data class NotesUpdated(val value: String): UserIntent
 
-    data class Submit(val state: State): UserIntent
+    data class Submit(val state: RecipeOverviewState): UserIntent
 }

@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
+import org.mattshoe.shoebox.listery.cookbook.ui.prettyHours
+import org.mattshoe.shoebox.listery.cookbook.ui.prettyMinutes
 import org.mattshoe.shoebox.listery.data.RecipeRepository
 import org.mattshoe.shoebox.listery.model.EditableField
 import org.mattshoe.shoebox.listery.model.Recipe
@@ -20,12 +22,11 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
-
 @HiltViewModel
-class EditRecipeViewModel @Inject constructor(
+class EditRecipeOverviewViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     private val navigationProvider: NavigationProvider
-): ListeryViewModel<State, UserIntent>(State(loading = true)) {
+): ListeryViewModel<RecipeOverviewState, UserIntent>(RecipeOverviewState(loading = true)) {
 
     private lateinit var recipeName: String
     private val recipeStream = MutableSharedFlow<Recipe>(replay = 1)
@@ -36,11 +37,11 @@ class EditRecipeViewModel @Inject constructor(
                 _state.update { currentState ->
                     currentState.copy(
                         loading = false,
-                        pageError = null,
-                        name = recipeName,
+                        allowSubmit = true,
+                        name = EditableField(recipeName, enabled = false),
                         website = EditableField(recipe.url),
-                        hours = EditableField(recipe.prepTime?.inWholeHours?.toString()),
-                        minutes = EditableField(recipe.prepTime?.inWholeMinutes?.toString()),
+                        hours = EditableField(recipe.prepTime.prettyHours()),
+                        minutes = EditableField(recipe.prepTime.prettyMinutes()),
                         calories = EditableField(recipe.calories?.toString()),
                         notes = EditableField(recipe.notes)
                     )
@@ -49,7 +50,7 @@ class EditRecipeViewModel @Inject constructor(
     }
 
     fun init(recipeName: String) {
-        this@EditRecipeViewModel.recipeName = recipeName
+        this.recipeName = recipeName
         recipeRepository.observe(recipeName)
             .onEach { recipe ->
                 recipe?.let {
