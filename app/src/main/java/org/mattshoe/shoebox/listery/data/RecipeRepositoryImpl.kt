@@ -1,8 +1,16 @@
 package org.mattshoe.shoebox.listery.data
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import org.mattshoe.shoebox.listery.data.db.IngredientDao
 import org.mattshoe.shoebox.listery.data.db.RecipeDao
 import org.mattshoe.shoebox.listery.data.db.RecipeEntity
@@ -10,6 +18,7 @@ import org.mattshoe.shoebox.listery.data.db.RecipeIngredientDao
 import org.mattshoe.shoebox.listery.data.db.RecipeIngredientCrossRef
 import org.mattshoe.shoebox.listery.data.db.RecipeStepDao
 import org.mattshoe.shoebox.listery.data.db.RecipeStepEntity
+import org.mattshoe.shoebox.listery.logging.log
 import org.mattshoe.shoebox.listery.model.Ingredient
 import org.mattshoe.shoebox.listery.model.Recipe
 import org.mattshoe.shoebox.listery.model.RecipeStep
@@ -22,12 +31,31 @@ class RecipeRepositoryImpl @Inject constructor(
     private val recipeIngredientDao: RecipeIngredientDao,
     private val recipeStepDao: RecipeStepDao
 ) : RecipeRepository {
-    override val recipes: Flow<List<Recipe>> = recipeDao.getAllRecipes().map { entities ->
-        entities.map { it.toRecipe() }
-    }
 
-    override suspend fun fetch() {
-        // No-op as we're using Room's Flow
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
+
+    override val recipes: Flow<List<Recipe>> = _recipes.asStateFlow()
+
+    init {
+        recipes.onEach {
+            log("RecipeRepository.recipes updated with ${it.count()} recipes")
+        }.launchIn(scope)
+
+        recipeDao.getAllRecipes()
+            .map { entities ->
+                log("List of recipes updated!! ${entities.count()} recipes now.")
+                entities.map {
+                    it.toRecipe()
+                }
+            }
+            .onEach { recipes ->
+                log("Emitting ${recipes.count()} recipes to RecipeRepository.recipes")
+                _recipes.update {
+                    recipes
+                }
+            }
+            .launchIn(scope)
     }
 
     override suspend fun fetch(name: String): Recipe? {

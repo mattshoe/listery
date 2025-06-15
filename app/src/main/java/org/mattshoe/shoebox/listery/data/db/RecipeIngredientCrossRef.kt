@@ -19,6 +19,9 @@ import androidx.room.ForeignKey
             childColumns = ["ingredientId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        androidx.room.Index(value = ["ingredientId"])
     ]
 )
 data class RecipeIngredientCrossRef(

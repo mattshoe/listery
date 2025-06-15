@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
 import org.mattshoe.shoebox.listery.data.RecipeRepository
+import org.mattshoe.shoebox.listery.logging.log
+import org.mattshoe.shoebox.listery.logging.loge
 import org.mattshoe.shoebox.listery.navigation.NavigationProvider
 import org.mattshoe.shoebox.listery.navigation.Route
 import javax.inject.Inject
@@ -38,16 +40,17 @@ class CookBookViewModel @Inject constructor(
     private val filterCriteria = MutableStateFlow(CookBookFilterCriteria("", filterOptions))
 
     init {
-        Log.d(TAG, "Initializing CookBookViewModel")
+        log("Initializing CookBookViewModel")
 
         viewModelScope.launch {
             delay(2000)
 
+            log("Combining recipes and filter criteria")
             combine(
                 recipeRepository.recipes,
                 filterCriteria
             ) { recipes, filters ->
-                Log.d(TAG, "Received ${recipes.size} recipes from repository")
+                log("Received ${recipes.size} recipes from repository")
                 val filteredRecipes = recipes
                     .filter { recipe ->
                         val nameMatches = filters.text.isBlank() || recipe.name.contains(filters.text, ignoreCase = true)
@@ -73,24 +76,22 @@ class CookBookViewModel @Inject constructor(
                         }
                     }
 
+                log("Filtered recipes count: ${filteredRecipes.count()}")
+
                 _state.update {
                     CookBookState.Success(filteredRecipes, filters.filterOptions)
                 }
             }.catch {
+                loge(it.stackTraceToString())
                 _state.update {
                     CookBookState.Error("Oops! Looks like the kitchen's under renovation. Try again soon.")
                 }
             }.launchIn(viewModelScope)
         }
-
-        viewModelScope.launch {
-            Log.d(TAG, "Fetching recipes from repository")
-            recipeRepository.fetch()
-        }
     }
 
     override fun handleIntent(intent: UserIntent) {
-        Log.d(TAG, "Handling intent: $intent")
+        log("Handling intent: $intent")
         viewModelScope.launch {
             when (intent) {
                 is UserIntent.NewRecipe -> handleNewRecipe(intent)
