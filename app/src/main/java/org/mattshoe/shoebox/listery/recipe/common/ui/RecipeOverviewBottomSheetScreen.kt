@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel.RecipeOverviewState
+import org.mattshoe.shoebox.listery.ui.common.ListeryNumberInput
 import org.mattshoe.shoebox.listery.ui.common.ListeryPrimaryButton
 import org.mattshoe.shoebox.listery.ui.common.ListeryTextFieldValue
 import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
@@ -50,7 +51,7 @@ fun RecipeOverviewBottomSheetScreen(
     var hoursTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.hours.value)) }
     var minutesTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.minutes.value)) }
     var caloriesTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.calories.value)) }
-    var notesTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.notes.value)) }
+    var notesTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.notes.value, 0)) }
 
     if (state.name.value != nameTextFieldValue.text)
         nameTextFieldValue = nameTextFieldValue.copy(text = state.name.value ?: "")
@@ -118,12 +119,11 @@ fun RecipeOverviewBottomSheetScreen(
             contentDescription = "Prep time"
         )
         Spacer(modifier = Modifier.width(8.dp))
-        ListeryTextInput(
+        ListeryNumberInput(
             value = hoursTextFieldValue,
             enabled = state.hours.enabled,
             placeholder = "----",
-            textAlign = TextAlign.End,
-            modifier = Modifier.width(32.dp).padding(horizontal = 4.dp),
+            modifier = Modifier.width(50.dp).padding(horizontal = 4.dp),
             onValueChange = {
                 hoursTextFieldValue = it
                 onHoursUpdated(it.text)
@@ -135,12 +135,11 @@ fun RecipeOverviewBottomSheetScreen(
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.width(8.dp))
-        ListeryTextInput(
+        ListeryNumberInput(
             value = minutesTextFieldValue,
             enabled = state.minutes.enabled,
             placeholder = "----",
-            textAlign = TextAlign.End,
-            modifier = Modifier.width(32.dp).padding(horizontal = 4.dp),
+            modifier = Modifier.width(50.dp).padding(horizontal = 4.dp),
             onValueChange = {
                 minutesTextFieldValue = it
                 onMinutesUpdated(it.text)
@@ -165,11 +164,10 @@ fun RecipeOverviewBottomSheetScreen(
             contentDescription = "Calories"
         )
         Spacer(modifier = Modifier.width(8.dp))
-        ListeryTextInput(
+        ListeryNumberInput(
             value = caloriesTextFieldValue,
             enabled = state.calories.enabled,
             placeholder = "----",
-            textAlign = TextAlign.End,
             modifier = Modifier.width(50.dp).padding(horizontal = 4.dp),
             onValueChange = {
                 caloriesTextFieldValue = it

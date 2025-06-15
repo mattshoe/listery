@@ -42,6 +42,7 @@ import org.mattshoe.shoebox.listery.recipe.viewmodel.State
 import org.mattshoe.shoebox.listery.recipe.viewmodel.UserIntent
 import org.mattshoe.shoebox.listery.ui.BottomNavItem
 import org.mattshoe.shoebox.listery.ui.common.ClickableLinkText
+import org.mattshoe.shoebox.listery.ui.common.GenericErrorScreen
 import org.mattshoe.shoebox.listery.ui.common.Level2AppBar
 import org.mattshoe.shoebox.listery.ui.common.ListeryCard
 import org.mattshoe.shoebox.listery.ui.common.ListeryScaffold
@@ -59,199 +60,12 @@ fun RecipeScreen(
     }
 
     val viewModelState: State by viewModel.state.collectAsState()
-    when (viewModelState) {
-        is State.Loading -> RecipeLoadingScreen()
-        is State.Error -> Unit
-        is State.Ready -> RecipeSuccessScreen(viewModelState as State.Ready) {
+    when (val state = viewModelState) {
+        is State.Ready -> RecipeSuccessScreen(state) {
             viewModel.handleIntent(it)
         }
-    }
-}
-
-@Composable
-private fun RecipeLoadingScreen() {
-    ListeryScaffold(
-        topBar = {
-            Level2AppBar(
-                actions = listOf(
-                    TopBarIcon(
-                        icon = ImageVector.vectorResource(id = R.drawable.ic_hollow_star),
-                        contentDescription = "",
-                        onClick = { }
-                    ),
-                    TopBarIcon(
-                        icon = ImageVector.vectorResource(id = R.drawable.ic_add_to_shopping_list),
-                        contentDescription = "",
-                        onClick = { }
-                    ),
-                    TopBarIcon(
-                        icon = ImageVector.vectorResource(id = R.drawable.ic_trash),
-                        contentDescription = "",
-                        onClick = { }
-                    ),
-                )
-            )
-        },
-        selectedNavItem = BottomNavItem.Cookbook,
-        showFab = false
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.padding(padding),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-            item {
-                RecipeOverviewTileGhost()
-            }
-            item {
-                IngredientsTileGhost()
-            }
-            item {
-                DirectionsTileGhost()
-            }
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-    }
-}
-
-@Composable
-private fun RecipeOverviewTileGhost() {
-    RecipeScreenTile(
-        title = "",
-        titleStyle = MaterialTheme.typography.titleLarge,
-        icon = {
-            ShimmerPlaceholder(
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    ) {
-        Column {
-            // URL placeholder
-            ShimmerPlaceholder(
-                modifier = Modifier.fillMaxWidth(),
-                height = 16
-            )
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // Notes placeholder
-            ShimmerPlaceholder(
-                modifier = Modifier.fillMaxWidth(),
-                height = 16
-            )
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // Stats row
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ShimmerPlaceholder(
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    ShimmerPlaceholder(
-                        modifier = Modifier.width(80.dp),
-                        height = 16
-                    )
-                }
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ShimmerPlaceholder(
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    ShimmerPlaceholder(
-                        modifier = Modifier.width(60.dp),
-                        height = 16
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun IngredientsTileGhost() {
-    RecipeScreenTile(
-        title = "Ingredients",
-        contentTopMargin = 12.dp,
-        titleColor = MaterialTheme.colorScheme.surfaceVariant,
-        icon = {
-            ShimmerPlaceholder(
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    ) {
-        repeat(3) { index ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ShimmerPlaceholder(
-                    modifier = Modifier.weight(1f),
-                    height = 16
-                )
-                ShimmerPlaceholder(
-                    modifier = Modifier.width(40.dp),
-                    height = 16
-                )
-                ShimmerPlaceholder(
-                    modifier = Modifier.width(60.dp),
-                    height = 16
-                )
-            }
-            if (index != 2) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 6.dp),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.surfaceVariant
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun DirectionsTileGhost() {
-    RecipeScreenTile(
-        title = "Directions",
-        contentTopMargin = 12.dp,
-        titleColor = MaterialTheme.colorScheme.surfaceVariant,
-        icon = {
-            ShimmerPlaceholder(
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            repeat(3) { index ->
-                Column {
-                    ShimmerPlaceholder(
-                        modifier = Modifier.width(80.dp),
-                        height = 16
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    ShimmerPlaceholder(
-                        modifier = Modifier.fillMaxWidth(),
-                        height = 24
-                    )
-                }
-            }
-        }
+        is State.Loading -> RecipeLoadingScreen()
+        is State.Error -> GenericErrorScreen(state)
     }
 }
 
@@ -520,6 +334,193 @@ fun DirectionsTile(
 }
 
 @Composable
+private fun RecipeLoadingScreen() {
+    ListeryScaffold(
+        topBar = {
+            Level2AppBar(
+                actions = listOf(
+                    TopBarIcon(
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_hollow_star),
+                        contentDescription = "",
+                        onClick = { }
+                    ),
+                    TopBarIcon(
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_add_to_shopping_list),
+                        contentDescription = "",
+                        onClick = { }
+                    ),
+                    TopBarIcon(
+                        icon = ImageVector.vectorResource(id = R.drawable.ic_trash),
+                        contentDescription = "",
+                        onClick = { }
+                    ),
+                )
+            )
+        },
+        selectedNavItem = BottomNavItem.Cookbook,
+        showFab = false
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.padding(padding),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            item {
+                RecipeOverviewTileGhost()
+            }
+            item {
+                IngredientsTileGhost()
+            }
+            item {
+                DirectionsTileGhost()
+            }
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecipeOverviewTileGhost() {
+    RecipeScreenTile(
+        title = "",
+        titleStyle = MaterialTheme.typography.titleLarge,
+        icon = {
+            ShimmerPlaceholder(
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    ) {
+        Column {
+            // URL placeholder
+            ShimmerPlaceholder(
+                modifier = Modifier.fillMaxWidth(),
+                height = 16
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Notes placeholder
+            ShimmerPlaceholder(
+                modifier = Modifier.fillMaxWidth(),
+                height = 16
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Stats row
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ShimmerPlaceholder(
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    ShimmerPlaceholder(
+                        modifier = Modifier.width(80.dp),
+                        height = 16
+                    )
+                }
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ShimmerPlaceholder(
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    ShimmerPlaceholder(
+                        modifier = Modifier.width(60.dp),
+                        height = 16
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun IngredientsTileGhost() {
+    RecipeScreenTile(
+        title = "Ingredients",
+        contentTopMargin = 12.dp,
+        titleColor = MaterialTheme.colorScheme.surfaceVariant,
+        icon = {
+            ShimmerPlaceholder(
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    ) {
+        repeat(3) { index ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ShimmerPlaceholder(
+                    modifier = Modifier.weight(1f),
+                    height = 16
+                )
+                ShimmerPlaceholder(
+                    modifier = Modifier.width(40.dp),
+                    height = 16
+                )
+                ShimmerPlaceholder(
+                    modifier = Modifier.width(60.dp),
+                    height = 16
+                )
+            }
+            if (index != 2) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 6.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.surfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DirectionsTileGhost() {
+    RecipeScreenTile(
+        title = "Directions",
+        contentTopMargin = 12.dp,
+        titleColor = MaterialTheme.colorScheme.surfaceVariant,
+        icon = {
+            ShimmerPlaceholder(
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            repeat(3) { index ->
+                Column {
+                    ShimmerPlaceholder(
+                        modifier = Modifier.width(80.dp),
+                        height = 16
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ShimmerPlaceholder(
+                        modifier = Modifier.fillMaxWidth(),
+                        height = 24
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun RecipeScreenTile(
     title: String,
     icon: @Composable () -> Unit,
@@ -552,3 +553,4 @@ fun RecipeScreenTile(
         }
     }
 }
+

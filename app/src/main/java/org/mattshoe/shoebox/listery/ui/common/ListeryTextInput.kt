@@ -1,24 +1,53 @@
 package org.mattshoe.shoebox.listery.ui.common
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.mattshoe.shoebox.listery.util.bottomBorder
+
+@Composable
+fun ListeryNumberInput(
+    value: TextFieldValue,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    fullBorder: Boolean = false,
+    maxLines: Int = 1,
+    textAlign: TextAlign = TextAlign.End,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    onValueChange: (TextFieldValue) -> Unit
+) {
+    ListeryTextInput(
+        value,
+        placeholder,
+        modifier,
+        enabled,
+        fullBorder,
+        maxLines,
+        textAlign,
+        keyboardOptions.copy(
+            keyboardType = KeyboardType.Number
+        )
+    ) {
+        onValueChange(
+            it.copy(
+                text = it.text.trim().removeLeadingZeros()
+            )
+        )
+    }
+}
 
 @Composable
 fun ListeryTextInput(
@@ -36,6 +65,7 @@ fun ListeryTextInput(
 ) {
     BasicTextField(
         modifier = Modifier
+            .widthIn(min = 48.dp)
             .bottomBorder(1.dp, Color.Gray)
             .apply {
                 if (fullBorder)
@@ -66,4 +96,10 @@ fun ListeryTextInput(
             innerTextField()
         }
     )
+}
+
+private fun String.removeLeadingZeros(): String {
+    return if (isEmpty()) this
+    else if (startsWith("-")) "-" + substring(1).removeLeadingZeros()
+    else trimStart('0').ifEmpty { "0" }
 }

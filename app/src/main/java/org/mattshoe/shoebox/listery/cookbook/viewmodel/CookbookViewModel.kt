@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
 import org.mattshoe.shoebox.listery.data.RecipeRepository
 import org.mattshoe.shoebox.listery.logging.log
@@ -84,7 +85,7 @@ class CookBookViewModel @Inject constructor(
             }.catch {
                 loge(it.stackTraceToString())
                 _state.update {
-                    CookBookState.Error("Oops! Looks like the kitchen's under renovation. Try again soon.")
+                    CookBookState.Error(R.drawable.ic_crossed_silverware, "Oops! Looks like the kitchen's under renovation. Try again soon.")
                 }
             }.launchIn(viewModelScope)
         }

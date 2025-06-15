@@ -2,12 +2,16 @@ package org.mattshoe.shoebox.listery.recipe.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
+import org.mattshoe.shoebox.listery.cookbook.viewmodel.CookBookState
 import org.mattshoe.shoebox.listery.data.RecipeRepository
 import org.mattshoe.shoebox.listery.model.Recipe
 import org.mattshoe.shoebox.listery.navigation.NavigationProvider
@@ -19,18 +23,25 @@ class RecipeScreenViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     private val navigationProvider: NavigationProvider
 ): ListeryViewModel<State, UserIntent>(
-    State.Loading
+    State.Error()
 ) {
     private val recipe = MutableStateFlow<Recipe?>(null)
 
     init {
-        recipe.onEach { recipe ->
-            recipe?.let {
-                _state.update {
-                    State.Ready(data = recipe)
+        recipe
+            .onEach { recipe ->
+                recipe?.let {
+                    _state.update {
+                        State.Ready(data = recipe)
+                    }
                 }
             }
-        }.launchIn(viewModelScope)
+            .catch {
+                _state.update {
+                    State.Error()
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun initialize(recipeName: String) {

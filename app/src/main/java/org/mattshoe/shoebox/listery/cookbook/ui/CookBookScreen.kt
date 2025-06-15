@@ -3,13 +3,11 @@ package org.mattshoe.shoebox.listery.cookbook.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,7 +27,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +43,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -60,6 +56,7 @@ import org.mattshoe.shoebox.listery.cookbook.viewmodel.UserIntent
 import org.mattshoe.shoebox.listery.ui.BottomNavItem
 import org.mattshoe.shoebox.listery.ui.common.ClickableLinkText
 import org.mattshoe.shoebox.listery.ui.common.FilterMenu
+import org.mattshoe.shoebox.listery.ui.common.GenericErrorScreen
 import org.mattshoe.shoebox.listery.ui.common.Level1AppBar
 import org.mattshoe.shoebox.listery.ui.common.ListeryCard
 import org.mattshoe.shoebox.listery.ui.common.ListeryScaffold
@@ -85,7 +82,7 @@ fun CookbookScreen(
                 viewModel.handleIntent(it)
             }
             is CookBookState.Loading -> CookbookLoadingScreen(insets)
-            is CookBookState.Error -> CookbookErrorScreen(currentState)
+            is CookBookState.Error -> GenericErrorScreen(currentState)
         }
     }
 }
@@ -165,44 +162,6 @@ fun CookbookLoadingScreen(insets: PaddingValues) {
             RecipeCardGhostLoader()
             Spacer(modifier = Modifier.height(8.dp))
         }
-    }
-}
-
-@Composable
-fun CookbookErrorScreen(state: CookBookState.Error) {
-    Column(
-        Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .aspectRatio(1f),
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_crossed_silverware),
-                contentDescription = "Error",
-                tint = MaterialTheme.colorScheme.outline
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(36.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            SubduedText(
-                text = state.message,
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
-            )
-        }
-
     }
 }
 
