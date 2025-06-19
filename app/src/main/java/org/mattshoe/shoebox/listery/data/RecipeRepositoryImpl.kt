@@ -99,7 +99,8 @@ class RecipeRepositoryImpl @Inject constructor(
                 RecipeStepEntity(
                     recipeId = recipeId,
                     stepNumber = index + 1,
-                    instructions = step.instructions
+                    instructions = step.instructions,
+                    key = step.key
                 )
             }
             recipeStepDao.updateRecipeSteps(recipeId, stepEntities)
@@ -135,7 +136,10 @@ class RecipeRepositoryImpl @Inject constructor(
             )
         }
         val steps = recipeStepDao.getStepsForRecipe(overview.id).map {
-            RecipeStep(instructions = it.instructions)
+            RecipeStep(
+                key = it.key,
+                instructions = it.instructions
+            )
         }
         return Recipe(
             name = overview.name,

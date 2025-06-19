@@ -79,7 +79,11 @@ class RecipeScreenViewModel @Inject constructor(
     }
 
     private fun handleEditDirections(intent: UserIntent.EditDirections) = viewModelScope.launch {
-        // TODO: Navigate to edit directions screen
+        recipe.value?.let {
+            navigationProvider.navController.navigate(
+                Routes.EditDirectionsBottomSheet(it.name)
+            )
+        }
     }
 
     private fun handleToggleStarred(intent: UserIntent.ToggleStarred) = viewModelScope.launch {

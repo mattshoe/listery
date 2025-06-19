@@ -1,5 +1,6 @@
 package org.mattshoe.shoebox.listery.model
 
+import java.util.UUID
 import kotlin.time.Duration
 
 data class Recipe(
@@ -20,6 +21,7 @@ data class Ingredient(
 )
 
 data class RecipeStep(
-    val instructions: String
+    val instructions: String,
+    val key: String = UUID.randomUUID().toString()
 )
 

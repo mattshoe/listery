@@ -1,6 +1,7 @@
 package org.mattshoe.shoebox.listery.recipe.edit.directions.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -13,6 +14,7 @@ import org.mattshoe.shoebox.listery.model.RecipeStep
 import org.mattshoe.shoebox.listery.navigation.NavigationProvider
 import javax.inject.Inject
 
+@HiltViewModel
 class EditDirectionsViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     private val navigationProvider: NavigationProvider
@@ -31,8 +33,8 @@ class EditDirectionsViewModel @Inject constructor(
 
     fun initialize(recipeName: String) = viewModelScope.launch {
         recipeRepository.observe(recipeName)
-            .onEach {
-                recipe.update { it }
+            .onEach { newRecipe ->
+                recipe.update { newRecipe }
             }.launchIn(viewModelScope)
     }
 
@@ -48,7 +50,7 @@ class EditDirectionsViewModel @Inject constructor(
         recipe.value?.let { recipe ->
             recipeRepository.upsert(
                 recipe.copy(
-                    steps = recipe.steps + RecipeStep(intent.instructions)
+                    steps = recipe.steps + RecipeStep(instructions = intent.instructions)
                 )
             )
         }

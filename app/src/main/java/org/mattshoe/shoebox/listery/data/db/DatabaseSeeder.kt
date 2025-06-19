@@ -62,7 +62,8 @@ class DatabaseSeeder @Inject constructor(
                                             RecipeStepEntity(
                                                 recipeId = recipeId,
                                                 stepNumber = index + 1,
-                                                instructions = step.instructions
+                                                instructions = step.instructions,
+                                                key = step.key
                                             )
                                         )
                                     }

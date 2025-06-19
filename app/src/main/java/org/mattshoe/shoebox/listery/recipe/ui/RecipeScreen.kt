@@ -156,7 +156,7 @@ private fun RecipeSuccessScreen(
                 IngredientsTile(state, handleIntent)
             }
             item {
-                DirectionsTile(state)
+                DirectionsTile(state, handleIntent)
             }
             item {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -319,7 +319,8 @@ fun IngredientsTile(
 
 @Composable
 fun DirectionsTile(
-    state: State.Ready
+    state: State.Ready,
+    handleIntent: (UserIntent) -> Unit
 ) {
     RecipeScreenTile(
         title = "Directions",
@@ -329,7 +330,7 @@ fun DirectionsTile(
                 modifier = Modifier
                     .size(20.dp)
                     .clickable {
-
+                        handleIntent(UserIntent.EditDirections)
                     },
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit),
                 tint = MaterialTheme.colorScheme.outline,

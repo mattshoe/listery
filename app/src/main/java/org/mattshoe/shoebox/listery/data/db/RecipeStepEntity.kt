@@ -22,6 +22,7 @@ import androidx.room.PrimaryKey
 data class RecipeStepEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+    val key: String,
     val recipeId: Long,
     val stepNumber: Int,
     val instructions: String
