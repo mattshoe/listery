@@ -1,7 +1,6 @@
 package org.mattshoe.shoebox.listery.cookbook.viewmodel
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -10,8 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.mattshoe.shoebox.listery.R
@@ -20,7 +17,7 @@ import org.mattshoe.shoebox.listery.data.RecipeRepository
 import org.mattshoe.shoebox.listery.logging.log
 import org.mattshoe.shoebox.listery.logging.loge
 import org.mattshoe.shoebox.listery.navigation.NavigationProvider
-import org.mattshoe.shoebox.listery.navigation.Route
+import org.mattshoe.shoebox.listery.navigation.Routes
 import javax.inject.Inject
 
 private const val TAG = "CookBookViewModel"
@@ -106,12 +103,12 @@ class CookBookViewModel @Inject constructor(
     }
 
     private suspend fun handleNewRecipe(intent: UserIntent.NewRecipe) {
-        navigationProvider.navController.navigate(Route.ChooseRecipeCreationMethodBottomSheet)
+        navigationProvider.navController.navigate(Routes.ChooseRecipeCreationMethodBottomSheet)
     }
 
     private suspend fun handleRecipeTapped(intent: UserIntent.RecipeTapped) {
         navigationProvider.navController.navigate(
-            Route.Recipe(intent.recipe.name)
+            Routes.Recipe(intent.recipe.name)
         )
     }
 

@@ -23,7 +23,7 @@ interface RecipeIngredientDao {
         FROM ingredients i
         INNER JOIN recipe_ingredients ri ON i.id = ri.ingredientId
         WHERE ri.recipeId = :recipeId
-        ORDER BY i.name
+        ORDER BY i.name COLLATE NOCASE
     """)
     suspend fun getIngredientsForRecipe(recipeId: Long): List<IngredientWithQuantity>
 

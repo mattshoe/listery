@@ -12,7 +12,7 @@ import org.mattshoe.shoebox.listery.data.RecipeRepository
 import org.mattshoe.shoebox.listery.model.EditableField
 import org.mattshoe.shoebox.listery.model.Recipe
 import org.mattshoe.shoebox.listery.navigation.NavigationProvider
-import org.mattshoe.shoebox.listery.navigation.Route
+import org.mattshoe.shoebox.listery.navigation.Routes
 import org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel.RecipeOverviewState
 import org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel.toHours
 import org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel.toMinutes
@@ -124,7 +124,7 @@ class CreateRecipeViewModel @Inject constructor(
                     )
                 )
                 withContext(Dispatchers.Main) {
-                    navigationProvider.navController.navigate(Route.Recipe(intent.state.name.value))
+                    navigationProvider.navController.navigate(Routes.Recipe(intent.state.name.value))
                 }
             }
         }

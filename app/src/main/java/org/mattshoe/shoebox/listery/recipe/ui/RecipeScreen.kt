@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -34,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
@@ -252,16 +254,24 @@ fun IngredientsTile(
         title = "Ingredients",
         contentTopMargin = 12.dp,
         icon = {
-            Icon(
+            Box(
                 modifier = Modifier
-                    .size(20.dp)
+                    .clip(CircleShape)
+                    .size(24.dp)
+                    .background(MaterialTheme.colorScheme.tertiary)
                     .clickable {
-                        handleIntent(UserIntent.EditIngredients)
+                        handleIntent(UserIntent.AddIngredient)
                     },
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit),
-                tint = MaterialTheme.colorScheme.outline,
-                contentDescription = "Edit ingredients."
-            )
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(8.dp),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_plus),
+                    tint = MaterialTheme.colorScheme.onTertiary,
+                    contentDescription = "Add ingredient."
+                )
+            }
+
         }
     ) {
         state.data.ingredients.forEachIndexed { index, ingredient ->

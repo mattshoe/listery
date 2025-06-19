@@ -5,7 +5,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.navigation.ModalBottomSheetLayout
 import androidx.compose.material.navigation.bottomSheet
 import androidx.compose.material.navigation.rememberBottomSheetNavigator
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -18,6 +17,7 @@ import androidx.navigation.toRoute
 import org.mattshoe.shoebox.listery.cookbook.ui.CookbookScreen
 import org.mattshoe.shoebox.listery.recipe.create.ui.ChooseRecipeCreationMethodBottomSheet
 import org.mattshoe.shoebox.listery.recipe.create.ui.CreateRecipeManuallyBottomSheet
+import org.mattshoe.shoebox.listery.recipe.edit.ingredient.ui.EditIngredientsScreen
 import org.mattshoe.shoebox.listery.recipe.edit.overview.ui.EditRecipeOverviewBottomSheet
 import org.mattshoe.shoebox.listery.recipe.ui.RecipeScreen
 
@@ -37,28 +37,33 @@ fun ListeryNavGraph(
         ) {
             NavHost(
                 navController,
-                startDestination = Route.CookBook
+                startDestination = Routes.CookBook
             ) {
-                composable<Route.CookBook> {
+                composable<Routes.CookBook> {
                     CookbookScreen()
                 }
 
-                composable<Route.Recipe> {
-                    val navArg = it.toRoute<Route.Recipe>()
+                composable<Routes.Recipe> {
+                    val navArg = it.toRoute<Routes.Recipe>()
                     RecipeScreen(recipeName = navArg.name)
                 }
 
-                bottomSheet<Route.ChooseRecipeCreationMethodBottomSheet> {
+                bottomSheet<Routes.ChooseRecipeCreationMethodBottomSheet> {
                     ChooseRecipeCreationMethodBottomSheet()
                 }
 
-                bottomSheet<Route.CreateRecipeManuallyBottomSheet> {
+                bottomSheet<Routes.CreateRecipeManuallyBottomSheet> {
                     CreateRecipeManuallyBottomSheet()
                 }
 
-                bottomSheet<Route.EditRecipeOverviewBottomSheet> {
-                    val navArg = it.toRoute<Route.EditRecipeOverviewBottomSheet>()
+                bottomSheet<Routes.EditRecipeOverviewBottomSheet> {
+                    val navArg = it.toRoute<Routes.EditRecipeOverviewBottomSheet>()
                     EditRecipeOverviewBottomSheet(recipeName = navArg.name)
+                }
+
+                bottomSheet<Routes.EditIngredientsBottomSheet> {
+                    val navArg = it.toRoute<Routes.EditIngredientsBottomSheet>()
+                    EditIngredientsScreen(recipeName = navArg.recipeName)
                 }
             }
         }

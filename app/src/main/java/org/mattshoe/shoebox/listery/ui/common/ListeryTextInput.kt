@@ -1,6 +1,5 @@
 package org.mattshoe.shoebox.listery.ui.common
 
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +11,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.mattshoe.shoebox.listery.util.bottomBorder
@@ -23,7 +21,6 @@ fun ListeryNumberInput(
     placeholder: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    fullBorder: Boolean = false,
     maxLines: Int = 1,
     textAlign: TextAlign = TextAlign.End,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -34,7 +31,6 @@ fun ListeryNumberInput(
         placeholder,
         modifier,
         enabled,
-        fullBorder,
         maxLines,
         textAlign,
         keyboardOptions.copy(
@@ -55,7 +51,6 @@ fun ListeryTextInput(
     placeholder: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    fullBorder: Boolean = false,
     maxLines: Int = 1,
     textAlign: TextAlign = TextAlign.Start,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(
@@ -65,12 +60,7 @@ fun ListeryTextInput(
 ) {
     BasicTextField(
         modifier = Modifier
-            .widthIn(min = 48.dp)
             .bottomBorder(1.dp, Color.Gray)
-            .apply {
-                if (fullBorder)
-                    bottomBorder(1.dp, Color.Gray)
-            }
             .then(modifier),
         value = value,
         onValueChange = onValueChange,
