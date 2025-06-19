@@ -8,12 +8,15 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import org.mattshoe.shoebox.listery.data.RecipeEntity
 
 @Dao
 interface RecipeDao {
+    @Transaction
     @Query("SELECT * FROM recipes")
     fun getAllRecipes(): Flow<List<RecipeEntity>>
 
+    @Transaction
     @Query("SELECT * FROM recipes WHERE name = :name")
     suspend fun getRecipeByName(name: String): RecipeEntity?
 
@@ -21,25 +24,25 @@ interface RecipeDao {
     suspend fun recipeExists(name: String): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRecipe(recipe: RecipeEntity): Long
+    suspend fun insertRecipeOverview(recipe: RecipeOverviewEntity): Long
 
     @Update
-    suspend fun updateRecipe(recipe: RecipeEntity)
+    suspend fun updateRecipeOverview(recipe: RecipeOverviewEntity)
 
     @Delete
-    suspend fun deleteRecipe(recipe: RecipeEntity)
+    suspend fun deleteRecipeOverview(recipe: RecipeOverviewEntity)
 
     @Query("DELETE FROM recipes WHERE name = :name")
-    suspend fun deleteRecipeByName(name: String)
+    suspend fun deleteRecipeOverviewByName(name: String)
 
     @Transaction
-    suspend fun upsertRecipe(recipe: RecipeEntity): Long {
+    suspend fun upsertRecipeOverview(recipe: RecipeOverviewEntity): Long {
         val existingRecipe = getRecipeByName(recipe.name)
         return if (existingRecipe != null) {
-            updateRecipe(recipe.copy(id = existingRecipe.id))
-            existingRecipe.id
+            updateRecipeOverview(recipe.copy(id = existingRecipe.overview.id))
+            existingRecipe.overview.id
         } else {
-            insertRecipe(recipe)
+            insertRecipeOverview(recipe)
         }
     }
 } 

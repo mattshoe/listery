@@ -7,4 +7,5 @@ sealed interface UserIntent {
     data object ToggleStarred : UserIntent
     data object AddToShoppingList : UserIntent
     data object DeleteRecipe : UserIntent
+    data class DeleteIngredient(val index: Int) : UserIntent
 }

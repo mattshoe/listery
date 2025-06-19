@@ -25,7 +25,6 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(
-        @ApplicationContext context: Context,
         seeder: DatabaseSeeder
     ): ListeryDatabase {
         return seeder.createInitialDatabase()

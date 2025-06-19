@@ -61,6 +61,7 @@ class RecipeScreenViewModel @Inject constructor(
             is UserIntent.ToggleStarred -> handleToggleStarred(intent)
             is UserIntent.AddToShoppingList -> handleAddToShoppingList(intent)
             is UserIntent.DeleteRecipe -> handleDeleteRecipe(intent)
+            is UserIntent.DeleteIngredient -> handleDeleteIngredient(intent)
         }
     }
 
@@ -97,6 +98,16 @@ class RecipeScreenViewModel @Inject constructor(
             _state.update { State.Loading }
             recipeRepository.remove(it.name)
             navigationProvider.navController.popBackStack()
+        }
+    }
+
+    private fun handleDeleteIngredient(intent: UserIntent.DeleteIngredient) = viewModelScope.launch {
+        recipe.value?.let { currentRecipe ->
+            val updatedIngredients = currentRecipe.ingredients.toMutableList().apply {
+                removeAt(intent.index)
+            }
+            val updatedRecipe = currentRecipe.copy(ingredients = updatedIngredients)
+            recipeRepository.upsert(updatedRecipe)
         }
     }
 }

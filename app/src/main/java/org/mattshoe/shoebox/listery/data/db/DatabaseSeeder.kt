@@ -2,16 +2,12 @@ package org.mattshoe.shoebox.listery.data.db
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.mattshoe.shoebox.listery.data.TEMPORARY_RECIPES_STUBS
-import org.mattshoe.shoebox.listery.data.toEntity
+import org.mattshoe.shoebox.listery.data.toOverviewEntity
 import org.mattshoe.shoebox.listery.logging.log
 import org.mattshoe.shoebox.listery.logging.loge
 import javax.inject.Inject
@@ -44,7 +40,7 @@ class DatabaseSeeder @Inject constructor(
                             TEMPORARY_RECIPES_STUBS.forEach { recipe ->
                                 val recipeExists = database.recipeDao().recipeExists(recipe.name)
                                 if (!recipeExists) {
-                                    val recipeId = database.recipeDao().insertRecipe(recipe.toEntity())
+                                    val recipeId = database.recipeDao().insertRecipeOverview(recipe.toOverviewEntity())
 
                                     // Insert ingredients
                                     recipe.ingredients.forEach { ingredient ->

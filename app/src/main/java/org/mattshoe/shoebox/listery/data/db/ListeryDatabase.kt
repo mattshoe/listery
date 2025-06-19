@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [
-        RecipeEntity::class,
+        RecipeOverviewEntity::class,
         IngredientEntity::class,
         RecipeIngredientCrossRef::class,
         RecipeStepEntity::class

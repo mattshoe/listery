@@ -1,10 +1,14 @@
 package org.mattshoe.shoebox.listery.recipe.ui
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,8 +20,11 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -143,7 +151,7 @@ private fun RecipeSuccessScreen(
                 RecipeOverviewTile(state, handleIntent)
             }
             item {
-                IngredientsTile(state)
+                IngredientsTile(state, handleIntent)
             }
             item {
                 DirectionsTile(state)
@@ -237,7 +245,8 @@ fun RecipeOverviewTile(
 
 @Composable
 fun IngredientsTile(
-    state: State.Ready
+    state: State.Ready,
+    handleIntent: (UserIntent) -> Unit
 ) {
     RecipeScreenTile(
         title = "Ingredients",
@@ -247,7 +256,7 @@ fun IngredientsTile(
                 modifier = Modifier
                     .size(20.dp)
                     .clickable {
-
+                        handleIntent(UserIntent.EditIngredients)
                     },
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit),
                 tint = MaterialTheme.colorScheme.outline,
@@ -256,32 +265,44 @@ fun IngredientsTile(
         }
     ) {
         state.data.ingredients.forEachIndexed { index, ingredient ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            SwipeBox(
+                onDelete = {
+                    handleIntent(UserIntent.DeleteIngredient(index))
+                }
             ) {
-                SubduedText(
-                    text = ingredient.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f)
-                )
-                SubduedText(
-                    text = ingredient.qty.toString(),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                SubduedText(
-                    text = ingredient.unit,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            if (index != state.data.ingredients.lastIndex) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 6.dp),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceContainer),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(top = if (index == 0) 0.dp else 6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        SubduedText(
+                            text = ingredient.name,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        SubduedText(
+                            text = ingredient.qty.toString(),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        SubduedText(
+                            text = ingredient.unit,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
 
+                    if (index != state.data.ingredients.lastIndex) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(top = 6.dp),
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -554,3 +575,49 @@ fun RecipeScreenTile(
     }
 }
 
+@Composable
+private fun SwipeBox(
+    modifier: Modifier = Modifier,
+    onDelete: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    val swipeState = rememberSwipeToDismissBoxState(
+        positionalThreshold = with(LocalDensity.current) { { 32.dp.toPx() } }
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()// Fixed width for the delete button
+            .background(MaterialTheme.colorScheme.error)
+    ) {
+
+
+        // Content that can be swiped
+        SwipeToDismissBox(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize(),
+            state = swipeState,
+            enableDismissFromEndToStart = true,
+            enableDismissFromStartToEnd = false,
+            backgroundContent = { }
+        ) {
+            content()
+        }
+    }
+
+    when (swipeState.currentValue) {
+        SwipeToDismissBoxValue.EndToStart -> {
+            onDelete()
+            LaunchedEffect(swipeState) {
+                swipeState.snapTo(SwipeToDismissBoxValue.Settled)
+            }
+        }
+        SwipeToDismissBoxValue.StartToEnd -> {
+            LaunchedEffect(swipeState) {
+                swipeState.snapTo(SwipeToDismissBoxValue.Settled)
+            }
+        }
+        SwipeToDismissBoxValue.Settled -> {}
+    }
+}
