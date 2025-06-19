@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
@@ -40,7 +39,7 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     private suspend fun handleNameUpdated(intent: UserIntent.NameUpdated) {
-        _state.update {
+        updateState {
             it.copy(
                 allowSubmit = intent.value.isNotBlank(),
                 name = EditableField(intent.value)
@@ -49,7 +48,7 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     private suspend fun handleWebsiteUpdated(intent: UserIntent.WebsiteUpdated) {
-        _state.update {
+        updateState {
             it.copy(
                 website = EditableField(intent.value)
             )
@@ -57,7 +56,7 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     private suspend fun handleHoursUpdated(intent: UserIntent.HoursUpdated) {
-        _state.update {
+        updateState {
             it.copy(
                 hours = EditableField(intent.value)
             )
@@ -65,7 +64,7 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     private suspend fun handleMinutesUpdated(intent: UserIntent.MinutesUpdated) {
-        _state.update {
+        updateState {
             it.copy(
                 minutes = EditableField(intent.value)
             )
@@ -73,7 +72,7 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     private suspend fun handleCaloriesUpdated(intent: UserIntent.CaloriesUpdated) {
-        _state.update {
+        updateState {
             it.copy(
                 calories = EditableField(intent.value)
             )
@@ -81,7 +80,7 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     private suspend fun handleNotesUpdated(intent: UserIntent.NotesUpdated) {
-        _state.update {
+        updateState {
             it.copy(
                 notes = EditableField(intent.value)
             )
@@ -89,19 +88,19 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     private suspend fun handleSubmit(intent: UserIntent.Submit) {
-        _state.update {
+        updateState {
             it.copy(loading = true)
         }
 
         when {
-            intent.state.name.value.isNullOrBlank() -> _state.update {
+            intent.state.name.value.isNullOrBlank() -> updateState {
                 it.copy(
                     loading = false,
                     allowSubmit = false
                 )
             }
             recipeRepository.exists(intent.state.name.value) -> {
-                _state.update {
+                updateState {
                     it.copy(
                         loading = false,
                         allowSubmit = false,

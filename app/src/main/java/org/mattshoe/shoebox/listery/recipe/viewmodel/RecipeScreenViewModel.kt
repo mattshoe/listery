@@ -28,13 +28,13 @@ class RecipeScreenViewModel @Inject constructor(
         recipe
             .onEach { recipe ->
                 recipe?.let {
-                    _state.update {
+                    updateState {
                         State.Ready(data = recipe)
                     }
                 }
             }
             .catch {
-                _state.update {
+                updateState {
                     State.Error()
                 }
             }
@@ -84,7 +84,7 @@ class RecipeScreenViewModel @Inject constructor(
 
     private fun handleToggleStarred(intent: UserIntent.ToggleStarred) = viewModelScope.launch {
         recipe.value?.let {
-            _state.update { State.Loading }
+            updateState { State.Loading }
             val updatedRecipe = it.copy(starred = !it.starred)
             recipeRepository.upsert(updatedRecipe)
         }
@@ -96,7 +96,7 @@ class RecipeScreenViewModel @Inject constructor(
 
     private fun handleDeleteRecipe(intent: UserIntent.DeleteRecipe) = viewModelScope.launch {
         recipe.value?.let {
-            _state.update { State.Loading }
+            updateState { State.Loading }
             recipeRepository.remove(it.name)
             navigationProvider.navController.popBackStack()
         }

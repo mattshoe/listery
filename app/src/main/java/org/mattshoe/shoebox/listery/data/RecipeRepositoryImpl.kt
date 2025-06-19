@@ -53,8 +53,10 @@ class RecipeRepositoryImpl @Inject constructor(
         recipeDao.getAllRecipes()
             .map { entities ->
                 log("List of recipes updated!! ${entities.count()} recipes now.")
-                entities.map {
-                    it.toRecipe()
+                db.withTransaction {
+                    entities.map {
+                        it.toRecipe()
+                    }
                 }
             }
             .onEach { recipes ->
@@ -70,8 +72,10 @@ class RecipeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetch(name: String): Recipe? {
-        val recipeEntity = recipeDao.getRecipeByName(name) ?: return null
-        return recipeEntity.toRecipe()
+        return db.withTransaction {
+            val recipeEntity = recipeDao.getRecipeByName(name) ?: return@withTransaction null
+            recipeEntity.toRecipe()
+        }
     }
 
     override suspend fun upsert(recipe: Recipe) {

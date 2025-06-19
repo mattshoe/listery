@@ -7,7 +7,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
@@ -34,7 +33,7 @@ class EditRecipeOverviewViewModel @Inject constructor(
     init {
         recipeStream
             .onEach { recipe ->
-                _state.update { currentState ->
+                updateState { currentState ->
                     currentState.copy(
                         loading = false,
                         allowSubmit = true,
@@ -73,37 +72,37 @@ class EditRecipeOverviewViewModel @Inject constructor(
     }
 
     private suspend fun handleHoursUpdated(intent: UserIntent.HoursUpdated) {
-        _state.update {
+        updateState {
             it.copy(hours = EditableField(intent.value))
         }
     }
 
     private suspend fun handleMinutesUpdated(intent: UserIntent.MinutesUpdated) {
-        _state.update {
+        updateState {
             it.copy(minutes = EditableField(intent.value))
         }
     }
 
     private suspend fun handleCaloriesUpdated(intent: UserIntent.CaloriesUpdated) {
-        _state.update {
+        updateState {
             it.copy(calories = EditableField(intent.value))
         }
     }
 
     private suspend fun handleWebsiteUpdated(intent: UserIntent.WebsiteUpdated) {
-        _state.update {
+        updateState {
             it.copy(website = EditableField(intent.value))
         }
     }
 
     private suspend fun handleNotesUpdated(intent: UserIntent.NotesUpdated) {
-        _state.update {
+        updateState {
             it.copy(notes = EditableField(intent.value))
         }
     }
 
     private suspend fun handleSubmit(intent: UserIntent.Submit) {
-        _state.update {
+        updateState {
             it.copy(loading = true)
         }
         delay(2000)

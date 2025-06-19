@@ -3,31 +3,14 @@ package org.mattshoe.shoebox.listery.recipe.edit.ingredient.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
 import org.mattshoe.shoebox.listery.data.RecipeRepository
 import org.mattshoe.shoebox.listery.logging.loge
-import org.mattshoe.shoebox.listery.model.EditableField
 import org.mattshoe.shoebox.listery.model.Ingredient
 import org.mattshoe.shoebox.listery.navigation.NavigationProvider
 import javax.inject.Inject
 import kotlin.text.isNullOrBlank
-
-data class State(
-    val loading: Boolean = false,
-    val allowSubmit: Boolean = false,
-    val name: EditableField<String?> = EditableField(null),
-    val quantity: EditableField<String> = EditableField("1.0"),
-    val unit: EditableField<String> = EditableField("whole")
-)
-
-sealed interface UserIntent {
-    data class NameUpdated(val value: String?): UserIntent
-    data class QuantityUpdated(val value: String): UserIntent
-    data class UnitUpdated(val value: String): UserIntent
-    data class Submit(val state: State): UserIntent
-}
 
 @HiltViewModel
 class EditIngredientsViewModel @Inject constructor(
@@ -51,7 +34,7 @@ class EditIngredientsViewModel @Inject constructor(
     }
 
     fun handleNameUpdated(intent: UserIntent.NameUpdated) = viewModelScope.launch {
-        _state.update {
+        updateState {
             it.copy(
                 allowSubmit = !intent.value.isNullOrBlank(),
                 name = it.name.copy(
@@ -63,7 +46,7 @@ class EditIngredientsViewModel @Inject constructor(
     }
 
     fun handleQuantityUpdated(intent: UserIntent.QuantityUpdated) = viewModelScope.launch {
-        _state.update {
+        updateState {
             it.copy(
                 quantity = it.quantity.copy(
                     value = intent.value,
@@ -74,7 +57,7 @@ class EditIngredientsViewModel @Inject constructor(
     }
 
     fun handleUnitUpdated(intent: UserIntent.UnitUpdated) = viewModelScope.launch {
-        _state.update {
+        updateState {
             it.copy(
                 unit = it.unit.copy(
                     value = intent.value,
@@ -86,7 +69,7 @@ class EditIngredientsViewModel @Inject constructor(
 
     fun handleSubmit(intent: UserIntent.Submit) = viewModelScope.launch {
         if (intent.state.name.value.isNullOrBlank()) {
-            _state.update {
+            updateState {
                 it.copy(
                     name = it.name.copy(
                         error = "Ingredient must have a name."
@@ -95,7 +78,7 @@ class EditIngredientsViewModel @Inject constructor(
             }
         } else {
             recipeName?.let { recipeName ->
-                _state.update { it.copy(loading = true) }
+                updateState { it.copy(loading = true) }
                 delay(1000)
                 try {
                     recipeRepository.fetch(recipeName)?.let { recipe ->

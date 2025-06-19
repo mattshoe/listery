@@ -76,12 +76,12 @@ class CookBookViewModel @Inject constructor(
 
                 log("Filtered recipes count: ${filteredRecipes.count()}")
 
-                _state.update {
+                updateState {
                     CookBookState.Success(filteredRecipes, filters.filterOptions)
                 }
             }.catch {
                 loge(it.stackTraceToString())
-                _state.update {
+                updateState {
                     CookBookState.Error(R.drawable.ic_crossed_silverware, "Oops! Looks like the kitchen's under renovation. Try again soon.")
                 }
             }.launchIn(viewModelScope)
