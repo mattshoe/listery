@@ -43,6 +43,8 @@ class EditDirectionsViewModel @Inject constructor(
             is UserIntent.AddStep -> handleAddStep(intent)
             is UserIntent.MoveStep -> handleMoveStep(intent)
             is UserIntent.DeleteStep -> handleDeleteStep(intent)
+            is UserIntent.StartEdit -> handleStartEdit(intent)
+            is UserIntent.UpdateStep -> handleUpdateStep(intent)
         }
     }
 
@@ -81,6 +83,34 @@ class EditDirectionsViewModel @Inject constructor(
                     steps = newList
                 )
             )
+        }
+        updateState {
+            it.copy(activeEditIndex = null)
+        }
+    }
+
+    private fun handleStartEdit(intent: UserIntent.StartEdit) = viewModelScope.launch {
+        updateState {
+            it.copy(
+                activeEditIndex = intent.index
+            )
+        }
+    }
+
+    private fun handleUpdateStep(intent: UserIntent.UpdateStep) = viewModelScope.launch {
+        recipe.value?.let { recipe ->
+            val newList = recipe.steps.toMutableList().apply {
+                removeAt(intent.index)
+                add(intent.index, RecipeStep(instructions = intent.instructions))
+            }
+            recipeRepository.upsert(
+                recipe.copy(
+                    steps = newList
+                )
+            )
+        }
+        updateState {
+            it.copy(activeEditIndex = null)
         }
     }
 }
