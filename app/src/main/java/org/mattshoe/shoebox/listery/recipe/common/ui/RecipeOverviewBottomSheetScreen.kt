@@ -184,6 +184,7 @@ fun RecipeOverviewBottomSheetScreen(
                 enabled = state.notes.enabled,
                 placeholder = "Add some notes about your recipe (optional)",
                 maxLines = 6,
+                highlightOnFocus = false,
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = {
                     notesTextFieldValue = it
