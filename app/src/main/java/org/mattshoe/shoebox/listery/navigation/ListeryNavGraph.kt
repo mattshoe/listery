@@ -21,6 +21,7 @@ import org.mattshoe.shoebox.listery.recipe.edit.directions.ui.EditDirectionsScre
 import org.mattshoe.shoebox.listery.recipe.edit.ingredient.ui.EditIngredientsScreen
 import org.mattshoe.shoebox.listery.recipe.edit.overview.ui.EditRecipeOverviewBottomSheet
 import org.mattshoe.shoebox.listery.recipe.ui.RecipeScreen
+import org.mattshoe.shoebox.listery.login.ui.LoginScreen
 
 @Composable
 fun ListeryNavGraph(
@@ -38,7 +39,7 @@ fun ListeryNavGraph(
         ) {
             NavHost(
                 navController,
-                startDestination = Routes.CookBook
+                startDestination = Routes.Login
             ) {
                 composable<Routes.CookBook> {
                     CookbookScreen()
@@ -70,6 +71,10 @@ fun ListeryNavGraph(
                 bottomSheet<Routes.EditDirectionsBottomSheet> {
                     val navArg = it.toRoute<Routes.EditDirectionsBottomSheet>()
                     EditDirectionsScreen(recipeName = navArg.recipeName)
+                }
+
+                composable<Routes.Login> {
+                    LoginScreen()
                 }
             }
         }

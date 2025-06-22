@@ -32,4 +32,7 @@ sealed interface Routes {
     @Serializable
     data class EditDirectionsBottomSheet(val recipeName: String): Routes
 
+    @Serializable
+    data object Login: Routes
+
 }

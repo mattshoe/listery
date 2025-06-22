@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.indriya)
+    implementation(libs.androidx.material.icons.extended)
 
     testImplementation(libs.junit)
 
