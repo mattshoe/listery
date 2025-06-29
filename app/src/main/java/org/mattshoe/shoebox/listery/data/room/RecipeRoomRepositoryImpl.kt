@@ -72,16 +72,17 @@ class RecipeRoomRepositoryImpl @Inject constructor(
             .launchIn(scope)
     }
 
-    override suspend fun fetch(name: String): Recipe? {
+    override suspend fun fetch(id: String): Recipe? {
         return db.withTransaction {
-            val recipeEntity = recipeDao.getRecipeByName(name) ?: return@withTransaction null
+            val recipeEntity = recipeDao.getRecipeByName(id) ?: return@withTransaction null
             recipeEntity.toRecipe()
         }
     }
 
-    override suspend fun upsert(recipe: Recipe) {
+    override suspend fun upsert(recipe: Recipe): String {
+        var recipeId = 0L
         db.withTransaction {
-            val recipeId = recipeDao.upsertRecipeOverview(recipe.toOverviewEntity())
+            recipeId = recipeDao.upsertRecipeOverview(recipe.toOverviewEntity())
 
             // Update ingredients
             val ingredientCrossRefs = recipe.ingredients.map { ingredient ->
@@ -107,24 +108,25 @@ class RecipeRoomRepositoryImpl @Inject constructor(
             recipeStepDao.updateRecipeSteps(recipeId, stepEntities)
         }
 
+        return recipeId.toString()
     }
 
-    override suspend fun remove(name: String) {
+    override suspend fun remove(id: String) {
         db.withTransaction {
-            recipeDao.getRecipeByName(name)?.let { recipe ->
+            recipeDao.getRecipeByName(id)?.let { recipe ->
                 recipeDao.deleteRecipeOverviewByName(recipe.overview.name)
                 recipeIngredientDao.updateRecipeIngredients(recipe.overview.id, emptyList())
             }
         }
     }
 
-    override suspend fun exists(name: String): Boolean {
-        return recipeDao.recipeExists(name)
+    override suspend fun exists(id: String): Boolean {
+        return recipeDao.recipeExists(id)
     }
 
-    override fun observe(name: String): Flow<Recipe?> {
+    override fun observe(id: String): Flow<Recipe?> {
         return userRecipes.map { recipeList ->
-            recipeList.firstOrNull { it.name == name }
+            recipeList.firstOrNull { it.name == id }
         }
     }
 

@@ -99,18 +99,8 @@ class CreateRecipeViewModel @Inject constructor(
                     allowSubmit = false
                 )
             }
-            recipeRepository.exists(intent.state.name.value) -> {
-                updateState {
-                    it.copy(
-                        loading = false,
-                        allowSubmit = false,
-                        name = it.name.copy(error = "This recipe already exists")
-                    )
-                }
-            }
             else -> {
-                delay(2000)
-                recipeRepository.upsert(
+                val id = recipeRepository.upsert(
                     Recipe(
                         name = intent.state.name.value,
                         starred = false,
@@ -123,7 +113,7 @@ class CreateRecipeViewModel @Inject constructor(
                     )
                 )
                 withContext(Dispatchers.Main) {
-                    navigationProvider.navController.navigate(Routes.Recipe(intent.state.name.value))
+                    navigationProvider.navController.navigate(Routes.Recipe(id))
                 }
             }
         }

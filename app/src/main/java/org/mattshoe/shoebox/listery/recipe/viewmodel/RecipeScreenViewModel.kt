@@ -20,7 +20,7 @@ class RecipeScreenViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     private val navigationProvider: NavigationProvider
 ): ListeryViewModel<State, UserIntent>(
-    State.Error()
+    State.Loading
 ) {
     private val recipe = MutableStateFlow<Recipe?>(null)
 
@@ -41,8 +41,8 @@ class RecipeScreenViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun initialize(recipeName: String) {
-        recipeRepository.observe(recipeName)
+    fun initialize(recipeId: String) {
+        recipeRepository.observe(recipeId)
             .onEach { updatedRecipe ->
                 recipe.update {
                     updatedRecipe
@@ -65,7 +65,7 @@ class RecipeScreenViewModel @Inject constructor(
     private fun handleEditRecipeOverview(intent: UserIntent.EditRecipeOverview) = viewModelScope.launch {
         recipe.value?.let {
             navigationProvider.navController.navigate(
-                Routes.EditRecipeOverviewBottomSheet(it.name)
+                Routes.EditRecipeOverviewBottomSheet(it.id)
             )
         }
     }
@@ -73,7 +73,7 @@ class RecipeScreenViewModel @Inject constructor(
     private fun handleEditIngredients(intent: UserIntent.AddIngredient) = viewModelScope.launch {
         recipe.value?.let {
             navigationProvider.navController.navigate(
-                Routes.EditIngredientsBottomSheet(it.name)
+                Routes.EditIngredientsBottomSheet(it.id)
             )
         }
     }
@@ -81,7 +81,7 @@ class RecipeScreenViewModel @Inject constructor(
     private fun handleEditDirections(intent: UserIntent.EditDirections) = viewModelScope.launch {
         recipe.value?.let {
             navigationProvider.navController.navigate(
-                Routes.EditDirectionsBottomSheet(it.name)
+                Routes.EditDirectionsBottomSheet(it.id)
             )
         }
     }
@@ -101,7 +101,7 @@ class RecipeScreenViewModel @Inject constructor(
     private fun handleDeleteRecipe(intent: UserIntent.DeleteRecipe) = viewModelScope.launch {
         recipe.value?.let {
             updateState { State.Loading }
-            recipeRepository.remove(it.name)
+            recipeRepository.remove(it.id)
             navigationProvider.navController.popBackStack()
         }
     }

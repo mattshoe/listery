@@ -62,17 +62,17 @@ fun ListeryNavGraph(
 
                 bottomSheet<Routes.EditRecipeOverviewBottomSheet> {
                     val navArg = it.toRoute<Routes.EditRecipeOverviewBottomSheet>()
-                    EditRecipeOverviewBottomSheet(recipeName = navArg.name)
+                    EditRecipeOverviewBottomSheet(recipeId = navArg.id)
                 }
 
                 bottomSheet<Routes.EditIngredientsBottomSheet> {
                     val navArg = it.toRoute<Routes.EditIngredientsBottomSheet>()
-                    EditIngredientsScreen(recipeName = navArg.recipeName)
+                    EditIngredientsScreen(recipeId = navArg.recipeId)
                 }
 
                 bottomSheet<Routes.EditDirectionsBottomSheet> {
                     val navArg = it.toRoute<Routes.EditDirectionsBottomSheet>()
-                    EditDirectionsScreen(recipeName = navArg.recipeName)
+                    EditDirectionsScreen(recipeId = navArg.recipeId)
                 }
 
                 composable<Routes.Login> {

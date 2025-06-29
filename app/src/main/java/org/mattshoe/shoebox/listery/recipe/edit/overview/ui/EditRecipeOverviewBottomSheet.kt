@@ -20,10 +20,10 @@ import org.mattshoe.shoebox.listery.recipe.common.ui.RecipeOverviewBottomSheetSc
 @Composable
 fun EditRecipeOverviewBottomSheet(
     viewModel: EditRecipeOverviewViewModel = hiltViewModel(),
-    recipeName: String
+    recipeId: String
 ) {
     LaunchedEffect(viewModel) {
-        viewModel.init(recipeName)
+        viewModel.init(recipeId)
     }
 
     val state by viewModel.state.collectAsState()

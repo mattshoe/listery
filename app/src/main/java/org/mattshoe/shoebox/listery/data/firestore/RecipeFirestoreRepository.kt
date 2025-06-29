@@ -50,14 +50,15 @@ class RecipeFirestoreRepository @Inject constructor(
         }
     }
 
-    override suspend fun upsert(recipe: Recipe) {
+    override suspend fun upsert(recipe: Recipe): String {
+        val recipeId = if (recipe.id.isBlank()) UUID.randomUUID().toString() else recipe.id
         sessionRepository.currentUser?.id?.let { userId ->
-            val recipeId = if (recipe.id.isBlank()) UUID.randomUUID().toString() else recipe.id
             firestore
                 .document("users/${userId}/recipes/$recipeId")
                 .set(recipe.toFirestoreModel())
                 .await()
         }
+        return recipeId
     }
 
     override suspend fun remove(id: String) {
@@ -69,13 +70,13 @@ class RecipeFirestoreRepository @Inject constructor(
         }
     }
 
-    override suspend fun exists(name: String): Boolean {
-        return _recipes.value.any { it.name == name }
+    override suspend fun exists(id: String): Boolean {
+        return _recipes.value.any { it.name == id }
     }
 
-    override fun observe(name: String): Flow<Recipe?> {
+    override fun observe(id: String): Flow<Recipe?> {
         return _recipes.map { recipes ->
-            recipes.firstOrNull { it.name == name }
+            recipes.firstOrNull { it.id == id }
         }
     }
 

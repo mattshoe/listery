@@ -41,9 +41,6 @@ class CookBookViewModel @Inject constructor(
         log("Initializing CookBookViewModel")
 
         viewModelScope.launch {
-            delay(2000)
-
-            log("Combining recipes and filter criteria")
             combine(
                 recipeRepository.userRecipes,
                 filterCriteria
@@ -108,7 +105,7 @@ class CookBookViewModel @Inject constructor(
 
     private suspend fun handleRecipeTapped(intent: UserIntent.RecipeTapped) {
         navigationProvider.navController.navigate(
-            Routes.Recipe(intent.recipe.name)
+            Routes.Recipe(intent.recipe.id)
         )
     }
 

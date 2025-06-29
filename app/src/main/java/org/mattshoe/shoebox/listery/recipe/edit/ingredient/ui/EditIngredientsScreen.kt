@@ -31,11 +31,11 @@ import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
 
 @Composable
 fun EditIngredientsScreen(
-    recipeName: String,
+    recipeId: String,
     viewModel: EditIngredientsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    viewModel.initialize(recipeName)
+    viewModel.initialize(recipeId)
 
     ListeryBottomSheet(
         canDismiss = { !state.loading }
@@ -103,7 +103,7 @@ fun EditIngredientsScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     ListeryTextInput(
-                        value = state.unit,
+                        value = state.unit.value,
                         placeholder = "",
                         textAlign = TextAlign.End,
                         modifier = Modifier

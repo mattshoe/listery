@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -41,7 +42,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import org.mattshoe.shoebox.listery.authentication.login.ui.ErrorText
 import org.mattshoe.shoebox.listery.model.EditableField
@@ -90,7 +90,9 @@ fun ListeryTextInput(
     leadingIcon: (@Composable (() -> Unit))? = null,
     onValueChange: (String) -> Unit,
 ) {
-    Column {
+    Column(
+        modifier = Modifier.wrapContentSize()
+    ) {
         ListeryTextInput(
             value.value?.toString() ?: "",
             placeholder,

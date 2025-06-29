@@ -18,7 +18,7 @@ class EditIngredientsViewModel @Inject constructor(
     private val navigationProvider: NavigationProvider
 ): ListeryViewModel<State, UserIntent>(State()) {
 
-    private var recipeName: String? = null
+    private var recipeId: String? = null
 
     override fun handleIntent(intent: UserIntent) {
         when (intent) {
@@ -29,8 +29,8 @@ class EditIngredientsViewModel @Inject constructor(
         }
     }
 
-    fun initialize(recipeName: String) {
-        this.recipeName = recipeName
+    fun initialize(recipeId: String) {
+        this.recipeId = recipeId
     }
 
     fun handleNameUpdated(intent: UserIntent.NameUpdated) = viewModelScope.launch {
@@ -77,9 +77,8 @@ class EditIngredientsViewModel @Inject constructor(
                 )
             }
         } else {
-            recipeName?.let { recipeName ->
+            recipeId?.let { recipeName ->
                 updateState { it.copy(loading = true) }
-                delay(1000)
                 try {
                     recipeRepository.fetch(recipeName)?.let { recipe ->
                         recipeRepository.upsert(

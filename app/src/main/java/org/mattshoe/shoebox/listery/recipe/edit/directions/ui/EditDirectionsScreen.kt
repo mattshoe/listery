@@ -50,11 +50,11 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun EditDirectionsScreen(
-    recipeName: String,
+    recipeId: String,
     viewModel: EditDirectionsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    viewModel.initialize(recipeName)
+    viewModel.initialize(recipeId)
 
     var newStep by remember { mutableStateOf(TextFieldValue("")) }
     var editedStep by remember(state.isEditInProgress()) {

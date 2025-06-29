@@ -27,7 +27,7 @@ class EditRecipeOverviewViewModel @Inject constructor(
     private val navigationProvider: NavigationProvider
 ): ListeryViewModel<RecipeOverviewState, UserIntent>(RecipeOverviewState(loading = true)) {
 
-    private lateinit var recipeName: String
+    private lateinit var recipeId: String
     private val recipeStream = MutableSharedFlow<Recipe>(replay = 1)
 
     init {
@@ -37,7 +37,7 @@ class EditRecipeOverviewViewModel @Inject constructor(
                     currentState.copy(
                         loading = false,
                         allowSubmit = true,
-                        name = EditableField(recipeName, enabled = false),
+                        name = EditableField(recipe.name, enabled = false),
                         website = EditableField(recipe.url),
                         hours = EditableField(recipe.prepTime.prettyHours()),
                         minutes = EditableField(recipe.prepTime.prettyMinutes()),
@@ -48,9 +48,9 @@ class EditRecipeOverviewViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
-    fun init(recipeName: String) {
-        this.recipeName = recipeName
-        recipeRepository.observe(recipeName)
+    fun init(recipeId: String) {
+        this.recipeId = recipeId
+        recipeRepository.observe(recipeId)
             .onEach { recipe ->
                 recipe?.let {
                     recipeStream.emit(it)
@@ -105,11 +105,10 @@ class EditRecipeOverviewViewModel @Inject constructor(
         updateState {
             it.copy(loading = true)
         }
-        delay(2000)
 
-        recipeRepository.fetch(name = recipeName)?.let { existingRecipe ->
+        recipeRepository.fetch(id = recipeId)?.let { existingRecipe ->
             val updatedRecipe = existingRecipe.copy(
-                name = recipeName,
+                name = existingRecipe.name,
                 url = intent.state.website.value,
                 calories = intent.state.calories.value?.toIntOrNull(),
                 prepTime = intent.state.hours.value.toHours() + intent.state.minutes.value.toMinutes(),

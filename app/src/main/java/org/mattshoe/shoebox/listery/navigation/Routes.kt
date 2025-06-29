@@ -24,13 +24,13 @@ sealed interface Routes {
     data object CreateRecipeFromWebsiteBottomSheet: Routes
 
     @Serializable
-    data class EditRecipeOverviewBottomSheet(val name: String): Routes
+    data class EditRecipeOverviewBottomSheet(val id: String): Routes
 
     @Serializable
-    data class EditIngredientsBottomSheet(val recipeName: String): Routes
+    data class EditIngredientsBottomSheet(val recipeId: String): Routes
 
     @Serializable
-    data class EditDirectionsBottomSheet(val recipeName: String): Routes
+    data class EditDirectionsBottomSheet(val recipeId: String): Routes
 
     @Serializable
     data object Login: Routes
