@@ -85,7 +85,7 @@ fun ResetPasswordBottomSheet(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(32.dp))
-                EmailInput(state.email.value) {
+                EmailInput(state.email) {
                     viewModel.handleIntent(UserIntent.EmailUpdated(it))
                 }
                 Spacer(modifier = Modifier.height(20.dp))

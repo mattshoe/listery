@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.mattshoe.shoebox.listery.R
+import org.mattshoe.shoebox.listery.authentication.common.ui.CredentialsInput
 import org.mattshoe.shoebox.listery.authentication.common.ui.EmailInput
 import org.mattshoe.shoebox.listery.authentication.common.ui.PasswordInput
 import org.mattshoe.shoebox.listery.authentication.login.viewmodel.LoginIntent
@@ -36,6 +37,7 @@ import org.mattshoe.shoebox.listery.ui.common.ListeryPrimaryButton
 import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
 import org.mattshoe.shoebox.listery.ui.common.SubduedText
 import org.mattshoe.shoebox.listery.ui.common.TextDivider
+import org.mattshoe.shoebox.listery.ui.theme.onPrimaryDark
 
 @Composable
 fun LoginScreen(
@@ -75,13 +77,17 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            EmailInput(state.email.value) {
-                viewModel.handleIntent(LoginIntent.EmailChanged(it))
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            PasswordInput(state.password.value) {
-                viewModel.handleIntent(LoginIntent.PasswordChanged(it))
-            }
+
+            CredentialsInput(
+                email = state.email,
+                password = state.password,
+                onEmailUpdated = {
+                    viewModel.handleIntent(LoginIntent.EmailChanged(it))
+                },
+                onPasswordUpdated = {
+                    viewModel.handleIntent(LoginIntent.PasswordChanged(it))
+                }
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
             Row(

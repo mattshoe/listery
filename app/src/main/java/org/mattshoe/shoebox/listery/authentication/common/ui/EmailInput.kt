@@ -16,11 +16,12 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import org.mattshoe.shoebox.listery.R
+import org.mattshoe.shoebox.listery.model.EditableField
 import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
 
 @Composable
 fun EmailInput(
-    value: String,
+    value: EditableField<String>,
     onValueChange: (String) ->  Unit,
 ) {
     ListeryTextInput(
@@ -29,9 +30,7 @@ fun EmailInput(
         keyboardOptions = KeyboardOptions.Default.copy(
             capitalization = KeyboardCapitalization.None
         ),
-        onValueChange = {
-            onValueChange(it)
-        },
+        onValueChange = onValueChange,
         leadingIcon = {
             Image(
                 painter = painterResource(id = R.drawable.ic_account),
