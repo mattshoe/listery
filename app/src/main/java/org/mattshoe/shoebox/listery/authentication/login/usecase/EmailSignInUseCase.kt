@@ -1,9 +1,8 @@
-package org.mattshoe.shoebox.listery.authentication
+package org.mattshoe.shoebox.listery.authentication.login.usecase
 
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
 import org.mattshoe.shoebox.listery.authentication.model.LoginResult
-import org.mattshoe.shoebox.listery.authentication.model.User
 import org.mattshoe.shoebox.listery.authentication.util.toUser
 import org.mattshoe.shoebox.listery.logging.logd
 import javax.inject.Inject

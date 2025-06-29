@@ -26,6 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.mattshoe.shoebox.listery.R
+import org.mattshoe.shoebox.listery.authentication.common.ui.EmailInput
+import org.mattshoe.shoebox.listery.authentication.common.ui.PasswordInput
 import org.mattshoe.shoebox.listery.authentication.login.viewmodel.LoginIntent
 import org.mattshoe.shoebox.listery.authentication.login.viewmodel.LoginViewModel
 import org.mattshoe.shoebox.listery.cookbook.ui.gesturesDisabled
@@ -40,11 +42,7 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    var emailTextFieldValue by remember { mutableStateOf(TextFieldValue(state.email.value)) }
     var passwordTextFieldValue by remember { mutableStateOf(TextFieldValue(state.password.value)) }
-
-    if (state.email.value != emailTextFieldValue.text)
-        emailTextFieldValue = emailTextFieldValue.copy(text = state.email.value)
 
     if (state.password.value != passwordTextFieldValue.text)
         passwordTextFieldValue = passwordTextFieldValue.copy(text = state.password.value)
@@ -77,48 +75,13 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            ListeryTextInput(
-                value = emailTextFieldValue,
-                placeholder = "Email",
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    capitalization = KeyboardCapitalization.None
-                ),
-                onValueChange = {
-                    emailTextFieldValue = it
-                    viewModel.handleIntent(LoginIntent.EmailChanged(it.text))
-                },
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_account),
-                        contentDescription = "Email Icon",
-                        modifier = Modifier.size(20.dp),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outline)
-                    )
-                }
-            )
+            EmailInput(state.email.value) {
+                viewModel.handleIntent(LoginIntent.EmailChanged(it))
+            }
             Spacer(modifier = Modifier.height(16.dp))
-            ListeryTextInput(
-                value = passwordTextFieldValue,
-                placeholder = "Password",
-                password = true,
-                onValueChange = {
-                    passwordTextFieldValue = it
-                    viewModel.handleIntent(LoginIntent.PasswordChanged(it.text))
-                },
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_lock),
-                        contentDescription = "Password Icon",
-                        modifier = Modifier.size(20.dp),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outline)
-                    )
-                },
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    autoCorrectEnabled = false,
-                    keyboardType = KeyboardType.Password
-                )
-            )
+            PasswordInput(state.password.value) {
+                viewModel.handleIntent(LoginIntent.PasswordChanged(it))
+            }
 
             Spacer(modifier = Modifier.height(12.dp))
             Row(
@@ -146,8 +109,8 @@ fun LoginScreen(
                 onClick = {
                     viewModel.handleIntent(
                         LoginIntent.SignIn(
-                            emailTextFieldValue.text,
-                            passwordTextFieldValue.text
+                            state.email.value,
+                            state.password.value
                         )
                     )
                 }

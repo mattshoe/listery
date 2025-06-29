@@ -1,4 +1,4 @@
-package org.mattshoe.shoebox.listery.authentication
+package org.mattshoe.shoebox.listery.authentication.login.usecase
 
 import android.content.Context
 import androidx.credentials.CredentialManager
@@ -17,7 +17,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.authentication.model.LoginResult
-import org.mattshoe.shoebox.listery.authentication.model.User
 import org.mattshoe.shoebox.listery.authentication.util.toUser
 import org.mattshoe.shoebox.listery.logging.loge
 import org.mattshoe.shoebox.listery.util.ActivityProvider

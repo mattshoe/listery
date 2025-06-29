@@ -1,4 +1,4 @@
-package org.mattshoe.shoebox.listery.authentication
+package org.mattshoe.shoebox.listery.authentication.data
 
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -7,6 +7,8 @@ import kotlinx.coroutines.launch
 import org.mattshoe.shoebox.listery.authentication.model.AuthRequest
 import org.mattshoe.shoebox.listery.authentication.model.LoginResult
 import org.mattshoe.shoebox.listery.authentication.login.usecase.LoginUseCase
+import org.mattshoe.shoebox.listery.authentication.util.isValidEmail
+import org.mattshoe.shoebox.listery.authentication.util.isValidPassword
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
 import org.mattshoe.shoebox.listery.model.EditableField
 import org.mattshoe.shoebox.listery.navigation.NavigationProvider
@@ -61,7 +63,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun handleResetPassword(intent: LoginIntent.ResetPassword) = viewModelScope.launch {
-
+        navigationProvider.navController.navigate(Routes.ResetPassword)
     }
 
     private fun handleGoogleSignIn(intent: LoginIntent.GoogleSignIn) = viewModelScope.launch {
@@ -95,12 +97,5 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun String.isValidPassword(): Boolean {
-        return length >= 8 && any { !it.isLetter() }
-    }
-
-    private fun String.isValidEmail(): Boolean {
-        return this.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
-    }
 }
 

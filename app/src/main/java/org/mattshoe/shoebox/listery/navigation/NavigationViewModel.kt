@@ -2,7 +2,7 @@ package org.mattshoe.shoebox.listery.navigation
 
 import androidx.navigation.NavController
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.mattshoe.shoebox.listery.authentication.SessionRepository
+import org.mattshoe.shoebox.listery.authentication.data.SessionRepository
 import org.mattshoe.shoebox.listery.authentication.model.SessionState
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
 import javax.inject.Inject

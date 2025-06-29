@@ -1,7 +1,7 @@
 package org.mattshoe.shoebox.listery.authentication.login.usecase
 
-import org.mattshoe.shoebox.listery.authentication.EmailSignInUseCase
-import org.mattshoe.shoebox.listery.authentication.GoogleSignInUseCase
+import org.mattshoe.shoebox.listery.authentication.login.usecase.EmailSignInUseCase
+import org.mattshoe.shoebox.listery.authentication.login.usecase.GoogleSignInUseCase
 import org.mattshoe.shoebox.listery.authentication.RegistrationSignInUseCase
 import org.mattshoe.shoebox.listery.authentication.model.AuthRequest
 import org.mattshoe.shoebox.listery.authentication.model.LoginResult
