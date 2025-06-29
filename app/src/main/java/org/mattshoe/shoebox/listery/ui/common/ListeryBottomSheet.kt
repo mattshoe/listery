@@ -53,7 +53,6 @@ fun ListeryBottomSheet(
         ) {
             Box(
                 modifier = Modifier
-                    .wrapContentSize()
                     .padding(horizontal = 16.dp)
             ) {
                 content()
