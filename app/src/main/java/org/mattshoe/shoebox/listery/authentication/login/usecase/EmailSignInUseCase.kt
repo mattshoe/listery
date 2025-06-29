@@ -12,11 +12,14 @@ class EmailSignInUseCase @Inject constructor(
 ) {
     suspend fun execute(email: String, password: String): LoginResult {
         return try {
-            val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            result.credential
-            result.user?.let { firebaseUser ->
-                LoginResult.Success(firebaseUser.toUser())
-            } ?: LoginResult.Error("Authentication failed")
+            firebaseAuth
+                .signInWithEmailAndPassword(email, password)
+                .await()
+                ?.user
+                ?.let { firebaseUser ->
+                    LoginResult.Success(firebaseUser.toUser())
+                }
+                ?: LoginResult.Error("Invalid email or password. Please check and try again.")
         } catch (e: Throwable) {
             logd("Email sign in failed: $e")
             LoginResult.Error("Invalid email or password. Please check and try again.")

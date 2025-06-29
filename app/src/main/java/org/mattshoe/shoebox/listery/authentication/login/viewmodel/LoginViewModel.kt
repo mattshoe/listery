@@ -1,10 +1,10 @@
 package org.mattshoe.shoebox.listery.authentication.login.viewmodel
 
-import android.util.Patterns
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import org.mattshoe.shoebox.listery.authentication.model.AuthRequest
+import org.mattshoe.shoebox.listery.authentication.model.LoginRequest
 import org.mattshoe.shoebox.listery.authentication.model.LoginResult
 import org.mattshoe.shoebox.listery.authentication.login.usecase.LoginUseCase
 import org.mattshoe.shoebox.listery.authentication.util.isValidEmail
@@ -43,12 +43,10 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun handlePasswordChanged(intent: LoginIntent.PasswordChanged) = viewModelScope.launch {
-        val isValidPassword = intent.value.isValidPassword()
-        val error = if (isValidPassword) null else "You password must be at least 8 characters and contain at least 1 non-alphabetic character."
         updateState {
             it.copy(
-                password = EditableField(value = intent.value, error = error),
-                allowSignIn = it.email.value.isValidEmail() && isValidPassword
+                password = EditableField(value = intent.value),
+                allowSignIn = it.email.value.isValidEmail() && intent.value.isValidPassword()
             )
         }
     }
@@ -59,7 +57,7 @@ class LoginViewModel @Inject constructor(
                 password = EditableField("")
             )
         }
-        login(AuthRequest.Email(intent.email, intent.password))
+        login(LoginRequest.Email(intent.email, intent.password))
     }
 
     private fun handleResetPassword(intent: LoginIntent.ResetPassword) = viewModelScope.launch {
@@ -67,24 +65,28 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun handleGoogleSignIn(intent: LoginIntent.GoogleSignIn) = viewModelScope.launch {
-        login(AuthRequest.GoogleSignIn)
+        login(LoginRequest.GoogleSignIn)
     }
 
     private fun handleFacebookSignIn(intent: LoginIntent.FacebookSignIn) = viewModelScope.launch {
-        login(AuthRequest.FacebookSignIn)
+        login(LoginRequest.FacebookSignIn)
     }
 
     private fun handleRegister(intent: LoginIntent.Register) = viewModelScope.launch {
-
+        navigationProvider.navController.navigate(Routes.Register) {
+            popUpTo(0) { inclusive = true }
+        }
     }
 
-    private suspend fun login(request: AuthRequest) {
+    private suspend fun login(request: LoginRequest) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         val result = loginUseCase.execute(request)
         when (result) {
             is LoginResult.Success -> {
-                navigationProvider.navController.navigate(Routes.CookBook)
+                navigationProvider.navController.navigate(Routes.CookBook) {
+                    popUpTo(0) { inclusive = true }
+                }
             }
             is LoginResult.Error -> {
                 updateState {

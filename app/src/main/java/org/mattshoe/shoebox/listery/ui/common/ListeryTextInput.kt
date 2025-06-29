@@ -2,8 +2,11 @@ package org.mattshoe.shoebox.listery.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import org.mattshoe.shoebox.listery.authentication.login.ui.ErrorText
 import org.mattshoe.shoebox.listery.model.EditableField
 import org.mattshoe.shoebox.listery.util.bottomBorder
 
@@ -86,19 +90,30 @@ fun ListeryTextInput(
     leadingIcon: (@Composable (() -> Unit))? = null,
     onValueChange: (String) -> Unit,
 ) {
-    ListeryTextInput(
-        value.value?.toString() ?: "",
-        placeholder,
-        modifier,
-        value.enabled,
-        maxLines,
-        highlightOnFocus,
-        password,
-        textAlign,
-        keyboardOptions,
-        leadingIcon,
-        onValueChange
-    )
+    Column {
+        ListeryTextInput(
+            value.value?.toString() ?: "",
+            placeholder,
+            modifier,
+            value.enabled,
+            maxLines,
+            highlightOnFocus,
+            password,
+            textAlign,
+            keyboardOptions,
+            leadingIcon,
+            onValueChange
+        )
+        value.error?.let { errorMessage ->
+            Spacer(modifier = Modifier.height(4.dp))
+            ErrorText(
+                text = errorMessage,
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+
 }
 
 @Composable

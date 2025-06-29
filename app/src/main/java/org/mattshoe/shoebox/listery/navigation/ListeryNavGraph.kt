@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.mattshoe.shoebox.listery.cookbook.ui.CookbookScreen
 import org.mattshoe.shoebox.listery.authentication.login.ui.LoginScreen
+import org.mattshoe.shoebox.listery.authentication.register.ui.RegisterBottomSheet
 import org.mattshoe.shoebox.listery.authentication.resetpassword.ui.ResetPasswordBottomSheet
 import org.mattshoe.shoebox.listery.recipe.create.ui.ChooseRecipeCreationMethodBottomSheet
 import org.mattshoe.shoebox.listery.recipe.create.ui.CreateRecipeManuallyBottomSheet
@@ -80,6 +81,10 @@ fun ListeryNavGraph(
 
                 bottomSheet<Routes.ResetPassword> {
                     ResetPasswordBottomSheet()
+                }
+
+                bottomSheet<Routes.Register> {
+                    RegisterBottomSheet()
                 }
             }
         }

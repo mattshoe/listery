@@ -1,6 +1,9 @@
 package org.mattshoe.shoebox.listery.authentication.common.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.mattshoe.shoebox.listery.R
+import org.mattshoe.shoebox.listery.authentication.login.ui.ErrorText
 import org.mattshoe.shoebox.listery.model.EditableField
 import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
 
