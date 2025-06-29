@@ -15,13 +15,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.mattshoe.shoebox.listery.cookbook.ui.CookbookScreen
+import org.mattshoe.shoebox.listery.authentication.login.ui.LoginScreen
 import org.mattshoe.shoebox.listery.recipe.create.ui.ChooseRecipeCreationMethodBottomSheet
 import org.mattshoe.shoebox.listery.recipe.create.ui.CreateRecipeManuallyBottomSheet
 import org.mattshoe.shoebox.listery.recipe.edit.directions.ui.EditDirectionsScreen
 import org.mattshoe.shoebox.listery.recipe.edit.ingredient.ui.EditIngredientsScreen
 import org.mattshoe.shoebox.listery.recipe.edit.overview.ui.EditRecipeOverviewBottomSheet
 import org.mattshoe.shoebox.listery.recipe.ui.RecipeScreen
-import org.mattshoe.shoebox.listery.login.ui.LoginScreen
 
 @Composable
 fun ListeryNavGraph(
@@ -39,7 +39,7 @@ fun ListeryNavGraph(
         ) {
             NavHost(
                 navController,
-                startDestination = Routes.Login
+                startDestination =  navigationViewModel.landingPage
             ) {
                 composable<Routes.CookBook> {
                     CookbookScreen()

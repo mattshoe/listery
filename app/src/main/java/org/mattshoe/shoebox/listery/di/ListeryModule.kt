@@ -1,11 +1,18 @@
 package org.mattshoe.shoebox.listery.di
 
-import androidx.navigation.NavController
-import dagger.Binds
+import dagger.Module
 import dagger.Provides
-import org.mattshoe.shoebox.listery.navigation.NavigationProvider
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import org.mattshoe.shoebox.listery.util.ActivityProvider
 
+@Module
+@InstallIn(SingletonComponent::class)
 interface AppModule {
 
+    companion object {
+        @Provides
+        fun providesActivityProvider(): ActivityProvider = ActivityProvider
+    }
 
 }

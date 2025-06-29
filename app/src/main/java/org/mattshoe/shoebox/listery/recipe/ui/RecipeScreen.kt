@@ -190,7 +190,7 @@ fun RecipeOverviewTile(
     ) {
         Row {
             state.data.url?.let {
-                ClickableLinkText(url = it, modifier = Modifier.padding(0.dp))
+                ClickableLinkText(text = it, modifier = Modifier.padding(0.dp))
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }

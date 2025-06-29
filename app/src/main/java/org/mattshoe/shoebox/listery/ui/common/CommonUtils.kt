@@ -9,33 +9,38 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.net.toUri
 
 @Composable
 fun ClickableLinkText(
-    url: String,
-    modifier: Modifier = Modifier
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle = MaterialTheme.typography.bodySmall,
+    onclick: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     Text(
-        text = url,
+        text = text,
         color = Color.Blue,
         modifier = modifier
             .clickable {
                 try {
-                    var uri = url
-                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        uri = "http://$url"
+                    onclick?.invoke() ?: run {
+                        var uri = text
+                        if (!text.startsWith("http://") && !text.startsWith("https://")) {
+                            uri = "http://$text"
+                        }
+                        val intent = Intent(Intent.ACTION_VIEW, uri.toUri())
+                        context.startActivity(intent)
                     }
-                    val intent = Intent(Intent.ACTION_VIEW, uri.toUri())
-                    context.startActivity(intent)
                 } catch (e: Throwable) {
                     Toast.makeText(context, "Unable to open this link", Toast.LENGTH_SHORT).show()
                 }
 
             },
-        style = MaterialTheme.typography.bodySmall.copy(
+        style = style.copy(
             textDecoration = TextDecoration.Underline
         )
     )
