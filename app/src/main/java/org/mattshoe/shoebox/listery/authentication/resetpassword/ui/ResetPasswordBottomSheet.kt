@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.mattshoe.shoebox.listery.R
+import org.mattshoe.shoebox.listery.authentication.common.ui.EmailInput
 import org.mattshoe.shoebox.listery.authentication.login.ui.ErrorText
 import org.mattshoe.shoebox.listery.authentication.login.viewmodel.LoginIntent
 import org.mattshoe.shoebox.listery.authentication.login.viewmodel.LoginViewModel
@@ -84,25 +85,9 @@ fun ResetPasswordBottomSheet(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(32.dp))
-                ListeryTextInput(
-                    value = emailTextFieldValue,
-                    placeholder = "Email",
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        capitalization = KeyboardCapitalization.None
-                    ),
-                    onValueChange = {
-                        emailTextFieldValue = it
-                        viewModel.handleIntent(UserIntent.EmailUpdated(it.text))
-                    },
-                    leadingIcon = {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_account),
-                            contentDescription = "Email Icon",
-                            modifier = Modifier.size(20.dp),
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.outline)
-                        )
-                    }
-                )
+                EmailInput(state.email.value) {
+                    viewModel.handleIntent(UserIntent.EmailUpdated(it))
+                }
                 Spacer(modifier = Modifier.height(20.dp))
                 ListeryPrimaryButton(
                     text = "Send email to reset password",

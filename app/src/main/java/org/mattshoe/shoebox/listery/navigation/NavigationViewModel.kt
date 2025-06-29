@@ -13,10 +13,11 @@ class NavigationViewModel @Inject constructor(
     private val sessionRepository: SessionRepository
 ): ListeryViewModel<Unit, NavController>(Unit) {
 
-    val landingPage: Any = when (sessionRepository.session.value) {
-        is SessionState.LoggedIn -> Routes.CookBook
-        is SessionState.Anonymous -> Routes.Login
-    }
+    val landingPage: Any =
+        when (sessionRepository.session.value) {
+            is SessionState.LoggedIn -> Routes.CookBook
+            is SessionState.Anonymous -> Routes.Login
+        }
 
     override fun handleIntent(intent: NavController) {
         navigationProvider.setNavController(intent)

@@ -23,21 +23,14 @@ fun EmailInput(
     value: String,
     onValueChange: (String) ->  Unit,
 ) {
-
-    var emailTextFieldValue by remember { mutableStateOf(TextFieldValue(value)) }
-
-    if (value != emailTextFieldValue.text)
-        emailTextFieldValue = emailTextFieldValue.copy(text = value)
-
     ListeryTextInput(
-        value = emailTextFieldValue,
+        value = value,
         placeholder = "Email",
         keyboardOptions = KeyboardOptions.Default.copy(
             capitalization = KeyboardCapitalization.None
         ),
         onValueChange = {
-            emailTextFieldValue = it
-            onValueChange(it.text)
+            onValueChange(it)
         },
         leadingIcon = {
             Image(

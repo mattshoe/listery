@@ -13,23 +13,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.recipe.edit.overview.viewmodel.RecipeOverviewState
 import org.mattshoe.shoebox.listery.ui.common.ListeryNumberInput
 import org.mattshoe.shoebox.listery.ui.common.ListeryPrimaryButton
-import org.mattshoe.shoebox.listery.ui.common.ListeryTextFieldValue
 import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
 
 @Composable
@@ -45,43 +39,15 @@ fun RecipeOverviewBottomSheetScreen(
     onSubmit: (RecipeOverviewState) -> Unit
 ) {
 
-
-    var nameTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.name.value)) }
-    var webPageTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.website.value)) }
-    var hoursTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.hours.value)) }
-    var minutesTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.minutes.value)) }
-    var caloriesTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.calories.value)) }
-    var notesTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.notes.value, 0)) }
-
-    if (state.name.value != nameTextFieldValue.text)
-        nameTextFieldValue = nameTextFieldValue.copy(text = state.name.value ?: "")
-
-    if (state.website.value != webPageTextFieldValue.text)
-        webPageTextFieldValue = webPageTextFieldValue.copy(text = state.website.value ?: "")
-
-    if (state.hours.value != hoursTextFieldValue.text)
-        hoursTextFieldValue = hoursTextFieldValue.copy(text = state.hours.value ?: "")
-
-    if (state.minutes.value != minutesTextFieldValue.text)
-        minutesTextFieldValue = minutesTextFieldValue.copy(text = state.minutes.value ?: "")
-
-    if (state.calories.value != caloriesTextFieldValue.text)
-        caloriesTextFieldValue = caloriesTextFieldValue.copy(text = state.calories.value ?: "")
-
-    if (state.notes.value != notesTextFieldValue.text)
-        notesTextFieldValue = notesTextFieldValue.copy(text = state.notes.value ?: "")
-
     Row {
         Column {
             BottomSheetTextSectionTitle("Recipe Name")
             ListeryTextInput(
-                value = nameTextFieldValue,
+                value = state.name,
                 placeholder = "Give your recipe a name (required)",
-                enabled = state.name.enabled,
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = {
-                    nameTextFieldValue = it
-                    onNameUpdated(it.text)
+                    onNameUpdated(it)
                 }
             )
         }
@@ -91,16 +57,14 @@ fun RecipeOverviewBottomSheetScreen(
         Column {
             BottomSheetTextSectionTitle("Web page")
             ListeryTextInput(
-                value = webPageTextFieldValue,
+                value = state.website,
                 placeholder = "Enter the website for this recipe (optional)",
-                enabled = state.website.enabled,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     capitalization = KeyboardCapitalization.None
                 ),
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = {
-                    webPageTextFieldValue = it
-                    onWebsiteUpdated(it.text)
+                    onWebsiteUpdated(it)
                 }
             )
         }
@@ -120,13 +84,12 @@ fun RecipeOverviewBottomSheetScreen(
         )
         Spacer(modifier = Modifier.width(8.dp))
         ListeryNumberInput(
-            value = hoursTextFieldValue,
+            value = state.hours.value,
             enabled = state.hours.enabled,
             placeholder = "----",
             modifier = Modifier.width(50.dp).padding(horizontal = 4.dp),
             onValueChange = {
-                hoursTextFieldValue = it
-                onHoursUpdated(it.text)
+                onHoursUpdated(it)
             }
         )
         Spacer(modifier = Modifier.width(4.dp))
@@ -136,13 +99,12 @@ fun RecipeOverviewBottomSheetScreen(
         )
         Spacer(modifier = Modifier.width(8.dp))
         ListeryNumberInput(
-            value = minutesTextFieldValue,
+            value = state.minutes.value,
             enabled = state.minutes.enabled,
             placeholder = "----",
             modifier = Modifier.width(50.dp).padding(horizontal = 4.dp),
             onValueChange = {
-                minutesTextFieldValue = it
-                onMinutesUpdated(it.text)
+                onMinutesUpdated(it)
             }
         )
         Spacer(modifier = Modifier.width(4.dp))
@@ -165,13 +127,12 @@ fun RecipeOverviewBottomSheetScreen(
         )
         Spacer(modifier = Modifier.width(8.dp))
         ListeryNumberInput(
-            value = caloriesTextFieldValue,
+            value = state.calories.value,
             enabled = state.calories.enabled,
             placeholder = "----",
             modifier = Modifier.width(50.dp).padding(horizontal = 4.dp),
             onValueChange = {
-                caloriesTextFieldValue = it
-                onCaloriesUpdated(it.text)
+                onCaloriesUpdated(it)
             }
         )
     }
@@ -180,15 +141,13 @@ fun RecipeOverviewBottomSheetScreen(
         Column {
             BottomSheetTextSectionTitle("Notes")
             ListeryTextInput(
-                value = notesTextFieldValue,
-                enabled = state.notes.enabled,
+                value = state.notes,
                 placeholder = "Add some notes about your recipe (optional)",
                 maxLines = 6,
                 highlightOnFocus = false,
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = {
-                    notesTextFieldValue = it
-                    onNotesUpdated(it.text)
+                    onNotesUpdated(it)
                 }
             )
         }

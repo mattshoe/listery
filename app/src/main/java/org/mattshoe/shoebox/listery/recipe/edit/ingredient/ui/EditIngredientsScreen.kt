@@ -13,9 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -30,7 +27,6 @@ import org.mattshoe.shoebox.listery.recipe.edit.ingredient.viewmodel.UserIntent
 import org.mattshoe.shoebox.listery.ui.common.ListeryBottomSheet
 import org.mattshoe.shoebox.listery.ui.common.ListeryNumberInput
 import org.mattshoe.shoebox.listery.ui.common.ListeryPrimaryButton
-import org.mattshoe.shoebox.listery.ui.common.ListeryTextFieldValue
 import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
 
 @Composable
@@ -51,31 +47,16 @@ fun EditIngredientsScreen(
                 .gesturesDisabled(state.loading)
                 .alpha(if (state.loading) 0.5f else 1f)
         ) {
-            var nameTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.name.value)) }
-            var quantityTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.quantity.value.toString())) }
-            var unitTextFieldValue by remember { mutableStateOf(ListeryTextFieldValue(state.unit.value)) }
-
-            if (state.name.value != nameTextFieldValue.text)
-                nameTextFieldValue = nameTextFieldValue.copy(text = state.name.value ?: "")
-
-            if (state.quantity.value != quantityTextFieldValue.text)
-                quantityTextFieldValue = quantityTextFieldValue.copy(text = state.quantity.value.toString())
-
-            if (state.unit.value != unitTextFieldValue.text)
-                unitTextFieldValue = unitTextFieldValue.copy(text = state.unit.value)
-
             Row {
                 Column {
                     BottomSheetTextSectionTitle("Ingredient Name")
                     ListeryTextInput(
-                        value = nameTextFieldValue,
+                        value = state.name,
                         placeholder = "Give your ingredient a name (required)",
-                        enabled = state.name.enabled,
                         modifier = Modifier.fillMaxWidth(),
                         onValueChange = {
-                            nameTextFieldValue = it
                             viewModel.handleIntent(
-                                UserIntent.NameUpdated(it.text)
+                                UserIntent.NameUpdated(it)
                             )
                         }
                     )
@@ -97,16 +78,15 @@ fun EditIngredientsScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     ListeryNumberInput(
-                        value = quantityTextFieldValue,
+                        value = state.quantity.value,
                         placeholder = "",
                         enabled = state.quantity.enabled,
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 4.dp),
                         onValueChange = {
-                            quantityTextFieldValue = it
                             viewModel.handleIntent(
-                                UserIntent.QuantityUpdated(it.text)
+                                UserIntent.QuantityUpdated(it)
                             )
                         }
                     )
@@ -123,17 +103,15 @@ fun EditIngredientsScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     ListeryTextInput(
-                        value = unitTextFieldValue,
+                        value = state.unit,
                         placeholder = "",
-                        enabled = state.unit.enabled,
                         textAlign = TextAlign.End,
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 4.dp),
                         onValueChange = {
-                            unitTextFieldValue = it
                             viewModel.handleIntent(
-                                UserIntent.UnitUpdated(it.text)
+                                UserIntent.UnitUpdated(it)
                             )
                         }
                     )

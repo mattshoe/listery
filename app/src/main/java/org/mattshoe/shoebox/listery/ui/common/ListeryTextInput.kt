@@ -1,11 +1,19 @@
 package org.mattshoe.shoebox.listery.ui.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,36 +29,30 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import org.mattshoe.shoebox.listery.util.bottomBorder
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.sp
+import org.mattshoe.shoebox.listery.model.EditableField
+import org.mattshoe.shoebox.listery.util.bottomBorder
 
 @Composable
 fun ListeryNumberInput(
-    value: TextFieldValue,
+    value: String?,
     placeholder: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     highlightOnFocus: Boolean = true,
     textAlign: TextAlign = TextAlign.End,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    onValueChange: (TextFieldValue) -> Unit
+    onValueChange: (String) -> Unit
 ) {
     ListeryTextInput(
         value,
@@ -64,11 +67,74 @@ fun ListeryNumberInput(
             keyboardType = KeyboardType.Number
         )
     ) {
-        onValueChange(
-            it.copy(
-                text = it.text.trim().removeLeadingZeros()
-            )
-        )
+        onValueChange(it)
+    }
+}
+
+@Composable
+fun ListeryTextInput(
+    value: EditableField<out Any?>,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    maxLines: Int = 1,
+    highlightOnFocus: Boolean = true,
+    password: Boolean = false,
+    textAlign: TextAlign = TextAlign.Start,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(
+        capitalization = KeyboardCapitalization.Sentences
+    ),
+    leadingIcon: (@Composable (() -> Unit))? = null,
+    onValueChange: (String) -> Unit,
+) {
+    ListeryTextInput(
+        value.value?.toString() ?: "",
+        placeholder,
+        modifier,
+        value.enabled,
+        maxLines,
+        highlightOnFocus,
+        password,
+        textAlign,
+        keyboardOptions,
+        leadingIcon,
+        onValueChange
+    )
+}
+
+@Composable
+fun ListeryTextInput(
+    value: String?,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    maxLines: Int = 1,
+    highlightOnFocus: Boolean = true,
+    password: Boolean = false,
+    textAlign: TextAlign = TextAlign.Start,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(
+        capitalization = KeyboardCapitalization.Sentences
+    ),
+    leadingIcon: (@Composable (() -> Unit))? = null,
+    onValueChange: (String) -> Unit,
+) {
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(value ?: "")) }
+    if (value != textFieldValue.text)
+        textFieldValue = textFieldValue.copy(text = value ?: "")
+
+    ListeryTextInput(
+        textFieldValue,
+        placeholder,
+        modifier,
+        enabled,
+        maxLines,
+        highlightOnFocus,
+        password,
+        textAlign,
+        keyboardOptions,
+        leadingIcon
+    ) {
+        textFieldValue = it
+        onValueChange(it.text)
     }
 }
 
@@ -91,18 +157,16 @@ fun ListeryTextInput(
     var isFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    
+
     LaunchedEffect(isFocused) {
         if (isFocused && value.text.isNotEmpty() && highlightOnFocus) {
             // Select all text when focused
-            onValueChange(
-                value.copy(
-                    selection = androidx.compose.ui.text.TextRange(value.text.length, 0)
-                )
+            value.copy(
+                selection = TextRange(value.text.length, 0)
             )
         }
     }
-    
+
     BasicTextField(
         modifier = Modifier
             .bottomBorder(1.dp, Color.Gray)
@@ -166,7 +230,7 @@ private fun String.removeLeadingZeros(): String {
 @Composable
 private fun PreviewListeryTextInputWithIcon() {
     ListeryTextInput(
-        value = TextFieldValue(""),
+        value = "Sample text",
         placeholder = "Email",
         onValueChange = {},
         leadingIcon = {
