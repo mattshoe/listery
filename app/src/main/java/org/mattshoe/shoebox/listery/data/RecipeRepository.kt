@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import org.mattshoe.shoebox.listery.model.Recipe
 
 interface RecipeRepository {
-    val recipes: Flow<List<Recipe>>
+    val userRecipes: Flow<List<Recipe>>
 
     suspend fun fetch(name: String): Recipe?
     suspend fun upsert(recipe: Recipe)

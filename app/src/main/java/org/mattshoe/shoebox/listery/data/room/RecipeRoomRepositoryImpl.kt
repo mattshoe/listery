@@ -1,4 +1,4 @@
-package org.mattshoe.shoebox.listery.data
+package org.mattshoe.shoebox.listery.data.room
 
 import androidx.room.Embedded
 import androidx.room.Junction
@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import org.mattshoe.shoebox.listery.data.RecipeRepository
 import org.mattshoe.shoebox.listery.data.db.IngredientDao
 import org.mattshoe.shoebox.listery.data.db.IngredientEntity
 import org.mattshoe.shoebox.listery.data.db.ListeryDatabase
@@ -32,7 +33,7 @@ import org.mattshoe.shoebox.listery.model.RecipeStep
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.minutes
 
-class RecipeRepositoryImpl @Inject constructor(
+class RecipeRoomRepositoryImpl @Inject constructor(
     private val db: ListeryDatabase,
     private val recipeDao: RecipeDao,
     private val ingredientDao: IngredientDao,
@@ -43,10 +44,10 @@ class RecipeRepositoryImpl @Inject constructor(
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
 
-    override val recipes: Flow<List<Recipe>> = _recipes.asStateFlow()
+    override val userRecipes: Flow<List<Recipe>> = _recipes.asStateFlow()
 
     init {
-        recipes.onEach {
+        userRecipes.onEach {
             log("RecipeRepository.recipes updated with ${it.count()} recipes")
         }.launchIn(scope)
 
@@ -122,7 +123,7 @@ class RecipeRepositoryImpl @Inject constructor(
     }
 
     override fun observe(name: String): Flow<Recipe?> {
-        return recipes.map { recipeList ->
+        return userRecipes.map { recipeList ->
             recipeList.firstOrNull { it.name == name }
         }
     }

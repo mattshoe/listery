@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.mattshoe.shoebox.listery.data.TEMPORARY_RECIPES_STUBS
-import org.mattshoe.shoebox.listery.data.toOverviewEntity
+import org.mattshoe.shoebox.listery.data.room.toOverviewEntity
 import org.mattshoe.shoebox.listery.logging.log
 import org.mattshoe.shoebox.listery.logging.loge
 import javax.inject.Inject

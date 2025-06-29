@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.mattshoe.shoebox.listery.authentication.model.SessionState
+import org.mattshoe.shoebox.listery.authentication.model.User
 import org.mattshoe.shoebox.listery.authentication.util.toSessionState
 import javax.inject.Inject
 
@@ -16,6 +17,11 @@ class SessionRepository @Inject constructor(
         firebaseAuth.currentUser.toSessionState()
     )
     val session: StateFlow<SessionState> = _session.asStateFlow()
+    val currentUser: User?
+        get() = when (val session = _session.value) {
+            is SessionState.LoggedIn -> session.user
+            is SessionState.Anonymous -> null
+        }
 
     init {
         firebaseAuth.addAuthStateListener { state ->

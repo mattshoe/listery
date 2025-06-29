@@ -45,7 +45,7 @@ class CookBookViewModel @Inject constructor(
 
             log("Combining recipes and filter criteria")
             combine(
-                recipeRepository.recipes,
+                recipeRepository.userRecipes,
                 filterCriteria
             ) { recipes, filters ->
                 log("Received ${recipes.size} recipes from repository")

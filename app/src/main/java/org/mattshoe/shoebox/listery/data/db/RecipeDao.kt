@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import org.mattshoe.shoebox.listery.data.RecipeEntity
+import org.mattshoe.shoebox.listery.data.room.RecipeEntity
 
 @Dao
 interface RecipeDao {

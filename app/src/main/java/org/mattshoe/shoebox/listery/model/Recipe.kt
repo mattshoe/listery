@@ -4,6 +4,7 @@ import java.util.UUID
 import kotlin.time.Duration
 
 data class Recipe(
+    val id: String = "",
     val name: String,
     val starred: Boolean,
     val url: String?,

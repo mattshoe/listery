@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import org.mattshoe.shoebox.listery.data.firestore.RecipeFirestoreRepository
 import org.mattshoe.shoebox.listery.data.RecipeRepository
-import org.mattshoe.shoebox.listery.data.RecipeRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -14,5 +14,5 @@ interface RecipeModule {
 
     @Binds
     @Singleton
-    fun bindRecipeRepository(impl: RecipeRepositoryImpl): RecipeRepository
+    fun bindRecipeRepository(impl: RecipeFirestoreRepository): RecipeRepository
 }
