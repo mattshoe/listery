@@ -14,26 +14,14 @@ class RegisterUseCase @Inject constructor(
 ) {
     suspend fun execute(
         email: String,
-        password: String,
-        name: String?,
+        password: String
     ): LoginResult {
         return try {
             firebaseAuth
                 .createUserWithEmailAndPassword(email, password)
                 .await()
-                .user
-                ?.updateProfile(
-                        UserProfileChangeRequest.Builder()
-                            .setDisplayName(name)
-                            .build()
-                    )
-                ?.await()
-
-            firebaseAuth
-                .signInWithEmailAndPassword(email, password)
-                .await()
                 .user?.let {
-                    LoginResult.Success(user = it.toUser())
+                    LoginResult.Success(it.toUser())
                 }
                 ?: run {
                     firebaseAuth.signOut()

@@ -16,7 +16,8 @@ class SessionRepository @Inject constructor(
     private val _session = MutableStateFlow<SessionState>(
         firebaseAuth.currentUser.toSessionState()
     )
-    val session: StateFlow<SessionState> = _session.asStateFlow()
+    val state: StateFlow<SessionState> = _session.asStateFlow()
+
     val currentUser: User?
         get() = when (val session = _session.value) {
             is SessionState.LoggedIn -> session.user

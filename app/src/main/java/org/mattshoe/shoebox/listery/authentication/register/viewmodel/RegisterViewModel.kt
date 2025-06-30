@@ -68,8 +68,7 @@ class RegisterViewModel @Inject constructor(
         updateState { it.copy(loading = true) }
         val result = registerUseCase.execute(
             intent.state.email.value,
-            intent.state.password.value,
-            intent.state.name.value
+            intent.state.password.value
         )
         when (result) {
             is LoginResult.Success -> navigationProvider.navController.navigate(Routes.CookBook)

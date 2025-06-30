@@ -14,7 +14,7 @@ class NavigationViewModel @Inject constructor(
 ): ListeryViewModel<Unit, NavController>(Unit) {
 
     val landingPage: Any =
-        when (sessionRepository.session.value) {
+        when (sessionRepository.state.value) {
             is SessionState.LoggedIn -> Routes.CookBook
             is SessionState.Anonymous -> Routes.Login
         }

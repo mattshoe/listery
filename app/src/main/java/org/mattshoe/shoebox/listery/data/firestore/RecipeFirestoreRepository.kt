@@ -32,7 +32,7 @@ class RecipeFirestoreRepository @Inject constructor(
     override val userRecipes: Flow<List<Recipe>> = _recipes.asStateFlow()
 
     init {
-        sessionRepository.session
+        sessionRepository.state
             .filterIsInstance<SessionState.LoggedIn>()
             .flatMapLatest { session ->
                 observeRecipeUpdates(session.user.id)
