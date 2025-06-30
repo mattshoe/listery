@@ -140,18 +140,18 @@ fun LoginScreen(
                     )
                 }
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            ListeryPrimaryButton(
-                text = "Continue with Facebook",
-                onClick = { viewModel.handleIntent(LoginIntent.FacebookSignIn) },
-                leadingIcon = {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_facebook),
-                        contentDescription = "Facebook Icon",
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            )
+//            Spacer(modifier = Modifier.height(8.dp))
+//            ListeryPrimaryButton(
+//                text = "Continue with Facebook",
+//                onClick = { viewModel.handleIntent(LoginIntent.FacebookSignIn) },
+//                leadingIcon = {
+//                    Image(
+//                        painter = painterResource(id = R.drawable.ic_facebook),
+//                        contentDescription = "Facebook Icon",
+//                        modifier = Modifier.size(20.dp)
+//                    )
+//                }
+//            )
             Spacer(modifier = Modifier.height(20.dp))
             Row(
                 horizontalArrangement = Arrangement.Center,
