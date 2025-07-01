@@ -66,7 +66,6 @@ fun EditIngredientsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Quantity field
                 Row(
                     modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically
@@ -81,9 +80,7 @@ fun EditIngredientsScreen(
                         value = state.quantity.value,
                         placeholder = "",
                         enabled = state.quantity.enabled,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 4.dp),
+                        modifier = Modifier.weight(1f),
                         onValueChange = {
                             viewModel.handleIntent(
                                 UserIntent.QuantityUpdated(it)
@@ -106,9 +103,7 @@ fun EditIngredientsScreen(
                         value = state.unit.value,
                         placeholder = "",
                         textAlign = TextAlign.End,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 4.dp),
+                        modifier = Modifier.weight(1f),
                         onValueChange = {
                             viewModel.handleIntent(
                                 UserIntent.UnitUpdated(it)

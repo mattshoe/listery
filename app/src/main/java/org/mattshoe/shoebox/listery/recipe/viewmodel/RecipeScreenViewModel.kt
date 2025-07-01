@@ -29,7 +29,11 @@ class RecipeScreenViewModel @Inject constructor(
             .onEach { recipe ->
                 recipe?.let {
                     updateState {
-                        State.Ready(data = recipe)
+                        State.Ready(
+                            data = recipe.copy(
+                                ingredients = recipe.ingredients.sortedBy { it.name }
+                            )
+                        )
                     }
                 }
             }

@@ -87,7 +87,7 @@ fun RecipeOverviewBottomSheetScreen(
             value = state.hours.value,
             enabled = state.hours.enabled,
             placeholder = "----",
-            modifier = Modifier.width(50.dp).padding(horizontal = 4.dp),
+            modifier = Modifier.width(50.dp),
             onValueChange = {
                 onHoursUpdated(it)
             }
@@ -102,7 +102,7 @@ fun RecipeOverviewBottomSheetScreen(
             value = state.minutes.value,
             enabled = state.minutes.enabled,
             placeholder = "----",
-            modifier = Modifier.width(50.dp).padding(horizontal = 4.dp),
+            modifier = Modifier.width(50.dp),
             onValueChange = {
                 onMinutesUpdated(it)
             }
@@ -130,7 +130,7 @@ fun RecipeOverviewBottomSheetScreen(
             value = state.calories.value,
             enabled = state.calories.enabled,
             placeholder = "----",
-            modifier = Modifier.width(50.dp).padding(horizontal = 4.dp),
+            modifier = Modifier.width(50.dp),
             onValueChange = {
                 onCaloriesUpdated(it)
             }

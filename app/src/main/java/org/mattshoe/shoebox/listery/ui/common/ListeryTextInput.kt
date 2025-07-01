@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -171,15 +172,16 @@ fun ListeryTextInput(
     leadingIcon: (@Composable (() -> Unit))? = null,
     onValueChange: (TextFieldValue) -> Unit,
 ) {
+    var textFieldValue by remember { mutableStateOf(value) }
     var isFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(isFocused) {
-        if (isFocused && value.text.isNotEmpty() && highlightOnFocus) {
+        if (isFocused && highlightOnFocus) {
             // Select all text when focused
-            value.copy(
-                selection = TextRange(value.text.length, 0)
+            textFieldValue = value.copy(
+                selection = TextRange(textFieldValue.text.length, 0)
             )
         }
     }
@@ -190,8 +192,11 @@ fun ListeryTextInput(
             .focusRequester(focusRequester)
             .onFocusChanged { isFocused = it.isFocused }
             .then(modifier),
-        value = value,
-        onValueChange = onValueChange,
+        value = textFieldValue,
+        onValueChange =  {
+            textFieldValue = it
+            onValueChange(it)
+        },
         textStyle = MaterialTheme.typography.labelLarge.copy(
             color = MaterialTheme.colorScheme.outline,
             lineHeight = 26.sp,
@@ -208,8 +213,14 @@ fun ListeryTextInput(
                     leadingIcon()
                     Spacer(modifier = Modifier.width(8.dp))
                 }
-                Box(Modifier.weight(1f)) {
-                    if (value.text.isEmpty()) {
+                Box(
+                    modifier = if (textAlign == TextAlign.End) {
+                        Modifier.fillMaxWidth()
+                    } else {
+                        Modifier.weight(1f)
+                    }
+                ) {
+                    if (textFieldValue.text.isEmpty()) {
                         Text(
                             text = placeholder,
                             style = MaterialTheme.typography.labelLarge.copy(
