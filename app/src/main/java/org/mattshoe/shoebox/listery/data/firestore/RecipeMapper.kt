@@ -23,7 +23,6 @@ fun FirestoreRecipeModel.toRecipe(): Recipe {
         name,
         starred,
         url,
-        calories,
         ingredients.map { it.toIngredient() },
         prepTime?.seconds,
         notes,

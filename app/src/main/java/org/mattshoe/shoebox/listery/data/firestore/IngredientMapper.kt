@@ -14,12 +14,14 @@ fun IngredientFirestoreModel.toIngredient(): Ingredient {
     return Ingredient(
         name,
         qty,
-        unit
+        unit,
+        calories
     )
 }
 
 data class IngredientFirestoreModel(
     val name: String = "",
     val qty: Float = 0f,
-    val unit: String = ""
+    val unit: String = "",
+    val calories: Int = 0
 )

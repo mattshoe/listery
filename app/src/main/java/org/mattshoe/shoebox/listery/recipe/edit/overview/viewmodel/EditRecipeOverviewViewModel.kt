@@ -110,7 +110,6 @@ class EditRecipeOverviewViewModel @Inject constructor(
             val updatedRecipe = existingRecipe.copy(
                 name = existingRecipe.name,
                 url = intent.state.website.value,
-                calories = intent.state.calories.value?.toIntOrNull(),
                 prepTime = intent.state.hours.value.toHours() + intent.state.minutes.value.toMinutes(),
                 notes = intent.state.notes.value
             )

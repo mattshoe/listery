@@ -88,7 +88,8 @@ class EditIngredientsViewModel @Inject constructor(
                                         Ingredient(
                                             intent.state.name.value,
                                             intent.state.quantity.value.toFloatOrNull() ?: 0f,
-                                            intent.state.unit.value
+                                            intent.state.unit.value,
+                                            intent.state.calories.value
                                         )
                                     )
 

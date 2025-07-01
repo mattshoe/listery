@@ -3,7 +3,6 @@ package org.mattshoe.shoebox.listery.recipe.create.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
@@ -105,7 +104,6 @@ class CreateRecipeViewModel @Inject constructor(
                         name = intent.state.name.value,
                         starred = false,
                         url = intent.state.website.value,
-                        calories = intent.state.calories.value?.toIntOrNull(),
                         ingredients = listOf(),
                         prepTime = intent.state.hours.value.toHours() + intent.state.minutes.value.toMinutes(),
                         notes = intent.state.notes.value,
