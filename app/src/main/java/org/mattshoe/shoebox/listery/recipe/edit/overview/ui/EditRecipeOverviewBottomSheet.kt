@@ -51,9 +51,6 @@ fun EditRecipeOverviewBottomSheet(
                onMinutesUpdated = {
                    viewModel.handleIntent(UserIntent.MinutesUpdated(it))
                },
-               onCaloriesUpdated = {
-                   viewModel.handleIntent(UserIntent.CaloriesUpdated(it))
-               },
                onNotesUpdated = {
                    viewModel.handleIntent(UserIntent.NotesUpdated(it))
                },

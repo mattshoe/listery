@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,10 +34,11 @@ import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
 @Composable
 fun EditIngredientsScreen(
     recipeId: String,
+    ingredientId: String?,
     viewModel: EditIngredientsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    viewModel.initialize(recipeId)
+    viewModel.initialize(recipeId, ingredientId)
 
     ListeryBottomSheet(
         canDismiss = { !state.loading }
@@ -103,6 +107,9 @@ fun EditIngredientsScreen(
                         placeholder = "",
                         textAlign = TextAlign.End,
                         modifier = Modifier.weight(1f),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            capitalization = KeyboardCapitalization.None
+                        ),
                         onValueChange = {
                             viewModel.handleIntent(
                                 UserIntent.UnitUpdated(it)
@@ -110,6 +117,28 @@ fun EditIngredientsScreen(
                         }
                     )
                 }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(0.5f).padding(end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Calories:",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                ListeryNumberInput(
+                    value = state.calories.value,
+                    placeholder = "",
+                    modifier = Modifier.weight(1f),
+                    onValueChange = {
+                        viewModel.handleIntent(
+                            UserIntent.CaloriesUpdated(it)
+                        )
+                    }
+                )
             }
 
             Row {

@@ -10,20 +10,20 @@ fun Recipe.toFirestoreModel(): FirestoreRecipeModel {
         starred,
         url,
         calories,
-        ingredients.map { it.toFirestoreModel() },
+        ingredients.map { it.id },
         prepTime?.inWholeSeconds,
         notes,
         steps.map { it.toFirestoreModel() }
     )
 }
 
-fun FirestoreRecipeModel.toRecipe(): Recipe {
+fun FirestoreRecipeModel.toRecipe(ingredientsMap: Map<String, IngredientFirestoreModel>): Recipe {
     return Recipe(
         id,
         name,
         starred,
         url,
-        ingredients.map { it.toIngredient() },
+        ingredients.mapNotNull { ingredientsMap[it]?.toIngredient() },
         prepTime?.seconds,
         notes,
         steps.map { it.toRecipeStep() }
@@ -36,7 +36,7 @@ data class FirestoreRecipeModel(
     val starred: Boolean = false,
     val url: String? = null,
     val calories: Int? = null,
-    val ingredients: List<IngredientFirestoreModel> = emptyList(),
+    val ingredients: List<String> = emptyList(),
     val prepTime: Long? = null,
     val notes: String? = null,
     val steps: List<RecipeStepFirestoreModel> = emptyList()

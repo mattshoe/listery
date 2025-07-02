@@ -27,7 +27,7 @@ sealed interface Routes {
     data class EditRecipeOverviewBottomSheet(val id: String): Routes
 
     @Serializable
-    data class EditIngredientsBottomSheet(val recipeId: String): Routes
+    data class EditIngredientsBottomSheet(val recipeId: String, val ingredient: String?): Routes
 
     @Serializable
     data class EditDirectionsBottomSheet(val recipeId: String): Routes

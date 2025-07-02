@@ -9,7 +9,7 @@ data class RecipeOverviewState(
     val website: EditableField<String?> = EditableField(null),
     val hours: EditableField<String?> = EditableField(null),
     val minutes: EditableField<String?> = EditableField(null),
-    val calories: EditableField<String?> = EditableField(null),
+    val calories: EditableField<String> = EditableField(""),
     val notes: EditableField<String?> = EditableField(null),
 )
 

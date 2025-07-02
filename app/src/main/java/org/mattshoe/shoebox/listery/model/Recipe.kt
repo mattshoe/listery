@@ -4,7 +4,7 @@ import java.util.UUID
 import kotlin.time.Duration
 
 data class Recipe(
-    val id: String = "",
+    val id: String = UUID.randomUUID().toString(),
     val name: String,
     val starred: Boolean,
     val url: String?,
@@ -17,6 +17,7 @@ data class Recipe(
 }
 
 data class Ingredient(
+    val id: String = UUID.randomUUID().toString(),
     val name: String,
     val qty: Float,
     val unit: String,
@@ -25,6 +26,6 @@ data class Ingredient(
 
 data class RecipeStep(
     val instructions: String,
-    val key: String = UUID.randomUUID().toString()
+    val id: String = UUID.randomUUID().toString()
 )
 

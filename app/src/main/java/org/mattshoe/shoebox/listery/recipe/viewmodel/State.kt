@@ -10,5 +10,8 @@ sealed interface State {
         override val icon: Int = R.drawable.ic_crossed_silverware,
         override val message: String = "Oops! Looks like the kitchen's under renovation. Try again soon."
     ): State, GenericErrorScreenState
-    data class Ready(val data: Recipe): State
+    data class Ready(
+        val data: Recipe,
+        val editIngredient: Int? = null
+    ): State
 }

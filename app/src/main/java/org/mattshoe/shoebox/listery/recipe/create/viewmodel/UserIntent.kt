@@ -7,7 +7,6 @@ sealed interface UserIntent {
     data class WebsiteUpdated(val value: String): UserIntent
     data class HoursUpdated(val value: String): UserIntent
     data class MinutesUpdated(val value: String): UserIntent
-    data class CaloriesUpdated(val value: String): UserIntent
     data class NotesUpdated(val value: String): UserIntent
 
     data class Submit(val state: RecipeOverviewState): UserIntent

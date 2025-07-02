@@ -89,10 +89,10 @@ fun EditDirectionsScreen(
                     .weight(1f, fill = false),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                itemsIndexed(steps, key = { _, step -> step.key }) { index, step ->
+                itemsIndexed(steps, key = { _, step -> step.id }) { index, step ->
                     ReorderableItem(
                         reorderableLazyListState,
-                        key = step.key,
+                        key = step.id,
                     ) { isDragging ->
                         if (state.activeEditIndex == index) {
                             Row(

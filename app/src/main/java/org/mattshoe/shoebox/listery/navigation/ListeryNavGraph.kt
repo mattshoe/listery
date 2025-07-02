@@ -67,7 +67,7 @@ fun ListeryNavGraph(
 
                 bottomSheet<Routes.EditIngredientsBottomSheet> {
                     val navArg = it.toRoute<Routes.EditIngredientsBottomSheet>()
-                    EditIngredientsScreen(recipeId = navArg.recipeId)
+                    EditIngredientsScreen(recipeId = navArg.recipeId, ingredientId = navArg.ingredient)
                 }
 
                 bottomSheet<Routes.EditDirectionsBottomSheet> {

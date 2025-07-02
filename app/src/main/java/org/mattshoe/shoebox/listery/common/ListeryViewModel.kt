@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.update
 abstract class ListeryViewModel<State: Any, Intent>(
     initialState: State
 ): ViewModel() {
-    private val _state = MutableStateFlow(initialState)
+    protected val _state = MutableStateFlow(initialState)
+    protected val currentState: State?
+        get() = _state.value
 
     val state = _state.asStateFlow()
 
@@ -16,5 +18,15 @@ abstract class ListeryViewModel<State: Any, Intent>(
     
     protected fun updateState(update: (currentState: State) -> State) {
         _state.update(update)
+    }
+
+    protected inline fun <reified T: State> updateStateAs(update: (currentState: T) -> State) {
+        _state.update {
+            if (it is T) {
+                update(it)
+            } else {
+                it
+            }
+        }
     }
 }

@@ -1,14 +1,19 @@
 package org.mattshoe.shoebox.listery.data.firestore
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -36,11 +41,17 @@ class RecipeFirestoreRepository @Inject constructor(
             .filterIsInstance<SessionState.LoggedIn>()
             .flatMapLatest { session ->
                 observeRecipeUpdates(session.user.id)
+                    .combine(
+                        observeIngredientUpdates(session.user.id)
+                    ) { recipes, ingredients ->
+                        val ingredientsMap = ingredients.associateBy { it.id }
+                        recipes.map {
+                            it.toRecipe(ingredientsMap)
+                        }
+                    }
             }
-            .onEach { recipes->
-                _recipes.update {
-                    recipes
-                }
+            .onEach { recipes ->
+                _recipes.update { recipes }
             }.launchIn(CoroutineScope(Dispatchers.IO))
     }
 
@@ -53,10 +64,22 @@ class RecipeFirestoreRepository @Inject constructor(
     override suspend fun upsert(recipe: Recipe): String {
         val recipeId = if (recipe.id.isBlank()) UUID.randomUUID().toString() else recipe.id
         sessionRepository.currentUser?.id?.let { userId ->
-            firestore
-                .document("users/${userId}/recipes/$recipeId")
-                .set(recipe.toFirestoreModel())
-                .await()
+            buildList {
+                add(
+                    firestore
+                        .document("users/${userId}/recipes/$recipeId")
+                        .set(recipe.toFirestoreModel())
+                )
+                recipe.ingredients.forEach {
+                    add(
+                        firestore
+                            .document("users/$userId/ingredients/${it.id}")
+                            .set(it.toFirestoreModel())
+                    )
+                }
+            }.forEach {
+                it.await()
+            }
         }
         return recipeId
     }
@@ -80,26 +103,51 @@ class RecipeFirestoreRepository @Inject constructor(
         }
     }
 
-    private fun observeRecipeUpdates(userId: String): Flow<List<Recipe>> =
-        callbackFlow<List<Recipe>> {
-            val listener = firestore.collection("users/$userId/recipes")
-                .addSnapshotListener { snapshot, error ->
+    private fun observeRecipeUpdates(userId: String): Flow<List<FirestoreRecipeModel>> =
+        firestore
+            .collection("users/$userId/recipes")
+            .asCollectionFlow()
+
+    private fun observeIngredientUpdates(userId: String): Flow<List<IngredientFirestoreModel>> =
+        firestore
+            .collection("users/$userId/ingredients")
+            .asCollectionFlow()
+
+    private inline fun <reified T> Query.asCollectionFlow(
+        crossinline onError:  ProducerScope<List<T>>.(FirebaseFirestoreException) -> Unit = {}
+    ): Flow<List<T>> {
+        return callbackFlow {
+            addSnapshotListener { snapshot, error ->
+                FirebaseCollectorScope(
+                    snapshot,
+                    error,
+                    this
+                ).apply {
                     if (error != null) {
-                        // Handle error
-                        return@addSnapshotListener
+                        onError(error)
+                    } else {
+                        val items = snapshot?.documents?.mapNotNull { doc ->
+                            doc.toObject(T::class.java)
+                        } ?: emptyList()
+
+                        emit(items)
                     }
-
-                    val recipes = snapshot?.documents?.mapNotNull { doc ->
-                        doc.toObject(FirestoreRecipeModel::class.java)
-                            ?.copy(id = doc.id)
-                            ?.toRecipe()
-                    } ?: emptyList()
-
-                    trySend(recipes)
                 }
-
-            awaitClose {
-                listener.remove()
+            }.apply {
+                awaitClose {
+                    remove()
+                }
             }
         }
+    }
+
+    private class FirebaseCollectorScope<T>(
+        val snapshot: QuerySnapshot?,
+        val error: FirebaseFirestoreException?,
+        private val producerScope: ProducerScope<T>
+    ) {
+        fun emit(value: T) {
+            producerScope.trySend(value)
+        }
+    }
 }

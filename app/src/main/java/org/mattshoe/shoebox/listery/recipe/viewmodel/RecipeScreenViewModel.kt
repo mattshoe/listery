@@ -1,5 +1,6 @@
 package org.mattshoe.shoebox.listery.recipe.viewmodel
 
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +32,7 @@ class RecipeScreenViewModel @Inject constructor(
                     updateState {
                         State.Ready(
                             data = recipe.copy(
-                                ingredients = recipe.ingredients.sortedBy { it.name }
+                                ingredients = recipe.ingredients.sortedBy { it.name.uppercase() },
                             )
                         )
                     }
@@ -63,6 +64,7 @@ class RecipeScreenViewModel @Inject constructor(
             is UserIntent.AddToShoppingList -> handleAddToShoppingList(intent)
             is UserIntent.DeleteRecipe -> handleDeleteRecipe(intent)
             is UserIntent.DeleteIngredient -> handleDeleteIngredient(intent)
+            is UserIntent.EditIngredient -> handleEditIngredient(intent)
         }
     }
 
@@ -77,7 +79,7 @@ class RecipeScreenViewModel @Inject constructor(
     private fun handleEditIngredients(intent: UserIntent.AddIngredient) = viewModelScope.launch {
         recipe.value?.let {
             navigationProvider.navController.navigate(
-                Routes.EditIngredientsBottomSheet(it.id)
+                Routes.EditIngredientsBottomSheet(it.id, null)
             )
         }
     }
@@ -108,6 +110,15 @@ class RecipeScreenViewModel @Inject constructor(
             recipeRepository.remove(it.id)
             navigationProvider.navController.popBackStack()
         }
+    }
+
+    private fun handleEditIngredient(intent: UserIntent.EditIngredient) = viewModelScope.launch {
+        recipe.value?.id?.let {
+            navigationProvider.navController.navigate(
+                Routes.EditIngredientsBottomSheet(it, intent.id)
+            )
+        }
+
     }
 
     private fun handleDeleteIngredient(intent: UserIntent.DeleteIngredient) = viewModelScope.launch {

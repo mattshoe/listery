@@ -30,7 +30,6 @@ class CreateRecipeViewModel @Inject constructor(
                 is UserIntent.WebsiteUpdated -> handleWebsiteUpdated(intent)
                 is UserIntent.HoursUpdated -> handleHoursUpdated(intent)
                 is UserIntent.MinutesUpdated -> handleMinutesUpdated(intent)
-                is UserIntent.CaloriesUpdated -> handleCaloriesUpdated(intent)
                 is UserIntent.NotesUpdated -> handleNotesUpdated(intent)
                 is UserIntent.Submit -> handleSubmit(intent)
             }
@@ -66,14 +65,6 @@ class CreateRecipeViewModel @Inject constructor(
         updateState {
             it.copy(
                 minutes = EditableField(intent.value)
-            )
-        }
-    }
-
-    private suspend fun handleCaloriesUpdated(intent: UserIntent.CaloriesUpdated) {
-        updateState {
-            it.copy(
-                calories = EditableField(intent.value)
             )
         }
     }

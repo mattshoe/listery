@@ -34,7 +34,6 @@ fun RecipeOverviewBottomSheetScreen(
     onWebsiteUpdated: (String) -> Unit,
     onHoursUpdated: (String) -> Unit,
     onMinutesUpdated: (String) -> Unit,
-    onCaloriesUpdated: (String) -> Unit,
     onNotesUpdated: (String) -> Unit,
     onSubmit: (RecipeOverviewState) -> Unit
 ) {
@@ -111,29 +110,6 @@ fun RecipeOverviewBottomSheetScreen(
         Text(
             text = "minutes",
             style = MaterialTheme.typography.bodyMedium
-        )
-    }
-
-    Row(
-        verticalAlignment = Alignment.Bottom
-    ) {
-        Spacer(modifier = Modifier.height(8.dp))
-        Icon(
-            modifier = Modifier
-                .size(32.dp),
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_calories),
-            tint = MaterialTheme.colorScheme.onSurface,
-            contentDescription = "Calories"
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        ListeryNumberInput(
-            value = state.calories.value,
-            enabled = state.calories.enabled,
-            placeholder = "----",
-            modifier = Modifier.width(50.dp),
-            onValueChange = {
-                onCaloriesUpdated(it)
-            }
         )
     }
 

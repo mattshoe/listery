@@ -8,5 +8,5 @@ data class State(
     val name: EditableField<String?> = EditableField(null),
     val quantity: EditableField<String> = EditableField("1.0"),
     val unit: EditableField<String> = EditableField("whole"),
-    val calories: EditableField<Int> = EditableField(0)
+    val calories: EditableField<String> = EditableField("")
 )

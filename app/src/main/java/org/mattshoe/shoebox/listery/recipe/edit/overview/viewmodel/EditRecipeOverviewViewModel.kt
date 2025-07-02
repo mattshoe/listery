@@ -41,7 +41,7 @@ class EditRecipeOverviewViewModel @Inject constructor(
                         website = EditableField(recipe.url),
                         hours = EditableField(recipe.prepTime.prettyHours()),
                         minutes = EditableField(recipe.prepTime.prettyMinutes()),
-                        calories = EditableField(recipe.calories?.toString()),
+                        calories = EditableField(if (recipe.calories == 0) "" else recipe.calories.toString()),
                         notes = EditableField(recipe.notes)
                     )
                 }
@@ -61,7 +61,6 @@ class EditRecipeOverviewViewModel @Inject constructor(
     override fun handleIntent(intent: UserIntent) {
         viewModelScope.launch(Dispatchers.Default) {
             when (intent) {
-                is UserIntent.CaloriesUpdated -> handleCaloriesUpdated(intent)
                 is UserIntent.HoursUpdated -> handleHoursUpdated(intent)
                 is UserIntent.MinutesUpdated -> handleMinutesUpdated(intent)
                 is UserIntent.NotesUpdated -> handleNotesUpdated(intent)
@@ -80,12 +79,6 @@ class EditRecipeOverviewViewModel @Inject constructor(
     private suspend fun handleMinutesUpdated(intent: UserIntent.MinutesUpdated) {
         updateState {
             it.copy(minutes = EditableField(intent.value))
-        }
-    }
-
-    private suspend fun handleCaloriesUpdated(intent: UserIntent.CaloriesUpdated) {
-        updateState {
-            it.copy(calories = EditableField(intent.value))
         }
     }
 

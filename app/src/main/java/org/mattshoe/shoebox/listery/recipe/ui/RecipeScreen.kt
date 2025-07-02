@@ -3,6 +3,7 @@ package org.mattshoe.shoebox.listery.recipe.ui
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -235,9 +237,9 @@ fun RecipeOverviewTile(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 SubduedText(
-                    text = state.data.calories?.let {
-                        "%,d".format(it)
-                    } ?: "--",
+                    text = state.data.calories.let {
+                        if (it == 0) "%,d".format(it) else "--"
+                    },
                     style = MaterialTheme.typography.labelMedium
                 )
             }
@@ -283,7 +285,14 @@ fun IngredientsTile(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceContainer),
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onLongPress = {
+                                    handleIntent(UserIntent.EditIngredient(ingredient.id))
+                                }
+                            )
+                        },
                 ) {
                     Row(
                         modifier = Modifier.padding(top = if (index == 0) 0.dp else 6.dp),
@@ -295,7 +304,7 @@ fun IngredientsTile(
                             modifier = Modifier.weight(1f)
                         )
                         SubduedText(
-                            text = ingredient.qty.toString(),
+                            text = if (ingredient.qty == 0f) "" else ingredient.qty.toString(),
                             style = MaterialTheme.typography.bodyMedium
                         )
                         SubduedText(
@@ -303,6 +312,26 @@ fun IngredientsTile(
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
+
+//                    if (ingredient.calories > 0) {
+//                        Row(
+//                            modifier = Modifier.fillMaxWidth(),
+//                            horizontalArrangement = Arrangement.End
+//                        ) {
+//                            Icon(
+//                                modifier = Modifier
+//                                    .size(16.dp),
+//                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_calories),
+//                                tint = MaterialTheme.colorScheme.onSurface,
+//                                contentDescription = "Calories"
+//                            )
+//                            Spacer(modifier = Modifier.width(8.dp))
+//                            SubduedText(
+//                                text = ingredient.calories.toString(),
+//                                style = MaterialTheme.typography.bodyMedium
+//                            )
+//                        }
+//                    }
 
                     if (index != state.data.ingredients.lastIndex) {
                         HorizontalDivider(

@@ -1,13 +1,12 @@
 package org.mattshoe.shoebox.listery.data.firestore
 
-import org.mattshoe.shoebox.listery.model.Ingredient
 import org.mattshoe.shoebox.listery.model.RecipeStep
 import java.util.UUID
 
 fun RecipeStep.toFirestoreModel(): RecipeStepFirestoreModel {
     return RecipeStepFirestoreModel(
         instructions,
-        key
+        id
     )
 }
 
