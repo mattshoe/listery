@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -51,7 +50,7 @@ import org.mattshoe.shoebox.listery.util.bottomBorder
 @Composable
 fun ListeryNumberInput(
     value: String?,
-    placeholder: String,
+    placeholder: String = "",
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     highlightOnFocus: Boolean = true,
@@ -176,6 +175,10 @@ fun ListeryTextInput(
     var isFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+
+    if (value.text != textFieldValue.text) {
+        textFieldValue = textFieldValue.copy(text = value.text)
+    }
 
     LaunchedEffect(isFocused) {
         if (isFocused && highlightOnFocus) {

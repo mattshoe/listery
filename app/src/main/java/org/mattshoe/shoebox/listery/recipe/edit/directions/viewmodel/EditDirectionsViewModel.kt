@@ -52,7 +52,7 @@ class EditDirectionsViewModel @Inject constructor(
         recipe.value?.let { recipe ->
             recipeRepository.upsert(
                 recipe.copy(
-                    steps = recipe.steps + RecipeStep(instructions = intent.instructions)
+                    steps = recipe.steps + RecipeStep(instructions = intent.instructions),
                 )
             )
         }

@@ -37,8 +37,8 @@ fun EditIngredientsScreen(
     ingredientId: String?,
     viewModel: EditIngredientsViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
     viewModel.initialize(recipeId, ingredientId)
+    val state by viewModel.state.collectAsState()
 
     ListeryBottomSheet(
         canDismiss = { !state.loading }
@@ -54,7 +54,7 @@ fun EditIngredientsScreen(
                 Column {
                     BottomSheetTextSectionTitle("Ingredient Name")
                     ListeryTextInput(
-                        value = state.name,
+                        value = state.name.value,
                         placeholder = "Give your ingredient a name (required)",
                         modifier = Modifier.fillMaxWidth(),
                         onValueChange = {
@@ -81,7 +81,6 @@ fun EditIngredientsScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     ListeryNumberInput(
                         value = state.quantity.value,
-                        placeholder = "",
                         enabled = state.quantity.enabled,
                         modifier = Modifier.weight(1f),
                         onValueChange = {
@@ -131,7 +130,6 @@ fun EditIngredientsScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 ListeryNumberInput(
                     value = state.calories.value,
-                    placeholder = "",
                     modifier = Modifier.weight(1f),
                     onValueChange = {
                         viewModel.handleIntent(
@@ -144,7 +142,7 @@ fun EditIngredientsScreen(
             Row {
                 Spacer(modifier = Modifier.height(8.dp))
                 ListeryPrimaryButton(
-                    text = "Add ingredient!",
+                    text = "${if (ingredientId == null) "Add" else "Update" } ingredient!",
                     enabled = !state.loading && state.allowSubmit
                 ) {
                     viewModel.handleIntent(UserIntent.Submit(state))

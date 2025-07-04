@@ -85,7 +85,6 @@ fun RecipeOverviewBottomSheetScreen(
         ListeryNumberInput(
             value = state.hours.value,
             enabled = state.hours.enabled,
-            placeholder = "----",
             modifier = Modifier.width(50.dp),
             onValueChange = {
                 onHoursUpdated(it)
@@ -100,7 +99,6 @@ fun RecipeOverviewBottomSheetScreen(
         ListeryNumberInput(
             value = state.minutes.value,
             enabled = state.minutes.enabled,
-            placeholder = "----",
             modifier = Modifier.width(50.dp),
             onValueChange = {
                 onMinutesUpdated(it)

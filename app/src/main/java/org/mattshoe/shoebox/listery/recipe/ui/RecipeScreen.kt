@@ -3,7 +3,6 @@ package org.mattshoe.shoebox.listery.recipe.ui
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -238,7 +236,7 @@ fun RecipeOverviewTile(
                 Spacer(modifier = Modifier.width(8.dp))
                 SubduedText(
                     text = state.data.calories.let {
-                        if (it == 0) "%,d".format(it) else "--"
+                        if (it == 0) "--" else "%,d".format(it)
                     },
                     style = MaterialTheme.typography.labelMedium
                 )
@@ -286,12 +284,8 @@ fun IngredientsTile(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onLongPress = {
-                                    handleIntent(UserIntent.EditIngredient(ingredient.id))
-                                }
-                            )
+                        .clickable {
+                            handleIntent(UserIntent.EditIngredient(ingredient.id))
                         },
                 ) {
                     Row(

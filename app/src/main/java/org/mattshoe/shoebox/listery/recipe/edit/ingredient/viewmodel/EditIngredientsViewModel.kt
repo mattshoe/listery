@@ -40,7 +40,8 @@ class EditIngredientsViewModel @Inject constructor(
                                     name = EditableField(ingredient.name),
                                     quantity = EditableField(ingredient.qty.toString()),
                                     unit = EditableField(ingredient.unit),
-                                    calories = EditableField(ingredient.calories.toString())
+                                    calories = EditableField(ingredient.calories.toString()),
+                                    allowSubmit = ingredient.name.isNotBlank()
                                 )
                             }
                         }

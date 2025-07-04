@@ -98,9 +98,6 @@ class RecipeFirestoreRepository @Inject constructor(
     }
 
     override fun observe(id: String): Flow<Recipe?> {
-        firestore.document("").asFlow<String> { error ->
-            trySend("null")
-        }
         return _recipes.map { recipes ->
             recipes.firstOrNull { it.id == id }
         }
@@ -146,7 +143,7 @@ class RecipeFirestoreRepository @Inject constructor(
                 if (error != null) {
                     onError(error)
                 } else {
-                    emit(
+                    trySend(
                         snapshot?.toObject(T::class.java)
                     )
                 }

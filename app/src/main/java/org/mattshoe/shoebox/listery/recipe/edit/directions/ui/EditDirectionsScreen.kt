@@ -56,7 +56,7 @@ fun EditDirectionsScreen(
     val state by viewModel.state.collectAsState()
     viewModel.initialize(recipeId)
 
-    var newStep by remember { mutableStateOf(TextFieldValue("")) }
+    var newStep by remember { mutableStateOf("") }
     var editedStep by remember(state.isEditInProgress()) {
         mutableStateOf(
             TextFieldValue(
@@ -230,10 +230,10 @@ fun EditDirectionsScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 ListeryPrimaryButton(
                     text = "Add step",
-                    enabled = newStep.text.isNotBlank(),
+                    enabled = newStep.isNotBlank(),
                     onClick = {
-                        viewModel.handleIntent(UserIntent.AddStep(newStep.text.trim()))
-                        newStep = TextFieldValue("")
+                        viewModel.handleIntent(UserIntent.AddStep(newStep.trim()))
+                        newStep = ""
                     }
                 )
             }
