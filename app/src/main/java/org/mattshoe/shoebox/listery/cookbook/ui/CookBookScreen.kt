@@ -2,7 +2,9 @@ package org.mattshoe.shoebox.listery.cookbook.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
@@ -43,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -81,9 +85,46 @@ fun CookbookScreen(
             is CookBookState.Success -> CookbookSuccessScreen(currentState, insets) {
                 viewModel.handleIntent(it)
             }
+            is CookBookState.Empty -> CookbookEmptyScreen(currentState, insets) {
+                viewModel.handleIntent(it)
+            }
             is CookBookState.Loading -> CookbookLoadingScreen(insets)
             is CookBookState.Error -> GenericErrorScreen(currentState)
         }
+    }
+}
+
+@Composable
+fun CookbookEmptyScreen(
+    state: CookBookState.Empty,
+    insets: PaddingValues,
+    handleIntent: (UserIntent) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .padding(insets)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        MaterialTheme.colorScheme.primary
+        Image(
+            painter = painterResource(id = state.icon),
+            contentDescription = "",
+            modifier = Modifier
+                .fillMaxWidth(0.67f)
+                .wrapContentHeight()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        SubduedText(
+            text = state.text,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .padding(horizontal = 32.dp)
+                .fillMaxWidth()
+        )
     }
 }
 
