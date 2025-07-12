@@ -2,14 +2,15 @@ package org.mattshoe.shoebox.listery.authentication.profile.usecase
 
 import android.content.Context
 import android.net.Uri
-import coil3.ImageLoader
-import coil3.annotation.ExperimentalCoilApi
-import coil3.memory.MemoryCache
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
+import coil.memory.MemoryCache
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
+import org.mattshoe.shoebox.listery.authentication.data.SessionRepository
 import org.mattshoe.shoebox.listery.authentication.model.User
 import org.mattshoe.shoebox.listery.authentication.util.toUser
 import org.mattshoe.shoebox.listery.logging.loge
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class UploadProfilePhotoUseCase @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firebaseStorage: FirebaseStorage,
+    private val sessionRepository: SessionRepository,
     @ApplicationContext private val applicationContext: Context
 ) {
     @OptIn(ExperimentalCoilApi::class)
@@ -39,6 +41,10 @@ class UploadProfilePhotoUseCase @Inject constructor(
                 ImageLoader(applicationContext).apply {
                     diskCache?.remove(originalPhotoUrl)
                     diskCache?.remove(downLoadUrlString)
+
+                    diskCache?.clear()
+                    memoryCache?.clear()
+
                     memoryCache?.apply {
                         val keysToRemove = mutableListOf<MemoryCache.Key>()
                         keys.forEach { key ->
@@ -57,6 +63,7 @@ class UploadProfilePhotoUseCase @Inject constructor(
                     .setPhotoUri(downloadUrl)
                     .build()
                 currentUser.updateProfile(profileUpdates).await()
+                sessionRepository.triggerProfileRefresh()
 
                 Result.success(currentUser.toUser())
             }

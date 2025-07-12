@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.update
 import org.mattshoe.shoebox.listery.authentication.model.SessionState
 import org.mattshoe.shoebox.listery.authentication.model.User
 import org.mattshoe.shoebox.listery.authentication.util.toSessionState
+import java.util.UUID
 import javax.inject.Inject
 
 class SessionRepository @Inject constructor(
@@ -30,5 +31,16 @@ class SessionRepository @Inject constructor(
                 state.currentUser.toSessionState()
             }
         }
+    }
+
+    fun triggerProfileRefresh() {
+        (_session.value as? SessionState.LoggedIn)?.let { session ->
+            _session.update {
+                session.copy(
+                    profileSession = UUID.randomUUID().toString()
+                )
+            }
+        }
+
     }
 }

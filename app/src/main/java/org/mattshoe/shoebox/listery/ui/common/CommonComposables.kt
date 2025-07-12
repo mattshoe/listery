@@ -20,7 +20,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,11 +38,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.compose.EqualityDelegate
+import coil.compose.rememberAsyncImagePainter
 import coil.memory.MemoryCache
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.authentication.AuthenticationViewModel
 import org.mattshoe.shoebox.listery.authentication.model.SessionState
+import org.mattshoe.shoebox.listery.logging.logi
 import org.mattshoe.shoebox.listery.navigation.LocalNavController
 
 @Composable
@@ -51,7 +58,9 @@ fun Level1AppBar(
 ) {
     val viewModel: AuthenticationViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
-    val currentUser = (state as? SessionState.LoggedIn)?.user
+    val currentUser by remember {
+        derivedStateOf { (state as? SessionState.LoggedIn)?.user }
+    }
     TopAppBar(
         title = {
             Text(text = title)
@@ -221,15 +230,20 @@ fun RemoteImage(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ) {
-    AsyncImage(
+    logi("Recomposing image!")
+    val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
             .diskCacheKey(url)
             .memoryCacheKey(MemoryCache.Key(url))
             .crossfade(true)
             .build(),
-        contentDescription = contentDescription,
-        modifier = modifier,
         contentScale = contentScale
+    )
+    Image(
+        painter = painter,
+        contentDescription = contentDescription,
+        contentScale = contentScale,
+        modifier = modifier
     )
 }
