@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  deploy:
+  firebase-app-distribution:
     runs-on: ubuntu-latest
     
     steps:
