@@ -1,46 +1,57 @@
 package org.mattshoe.shoebox.listery.ui.common
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.memory.MemoryCache
+import coil.request.ImageRequest
 import org.mattshoe.shoebox.listery.R
+import org.mattshoe.shoebox.listery.authentication.AuthenticationViewModel
+import org.mattshoe.shoebox.listery.authentication.model.SessionState
 import org.mattshoe.shoebox.listery.navigation.LocalNavController
-import org.mattshoe.shoebox.listery.ui.BottomNavItem
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun Level1AppBar(title: String) {
+fun Level1AppBar(
+    title: String,
+    onProfileClick: () -> Unit = {},
+    onMoreOptionsClick: () -> Unit = {}
+) {
+    val viewModel: AuthenticationViewModel = hiltViewModel()
+    val state by viewModel.state.collectAsState()
+    val currentUser = (state as? SessionState.LoggedIn)?.user
     TopAppBar(
         title = {
             Text(text = title)
@@ -53,14 +64,25 @@ fun Level1AppBar(title: String) {
             scrolledContainerColor = Color.Green
         ),
         actions = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_account),
-                    contentDescription = "User Profile",
-                    modifier = Modifier.size(24.dp)
-                )
+            IconButton(onClick = onProfileClick) {
+                val photoUrl = currentUser?.photoUrl
+                if (photoUrl != null) {
+                    RemoteImage(
+                        url = photoUrl,
+                        contentDescription = "User Profile",
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_account),
+                        contentDescription = "User Profile",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = onMoreOptionsClick) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_more_options),
                     contentDescription = "More Options",
@@ -132,7 +154,7 @@ fun TextDivider(
                 .height(1.dp)
                 .background(dividerColor)
         )
-        
+
         // Centered text with padding
         Text(
             text = text,
@@ -141,7 +163,7 @@ fun TextDivider(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        
+
         // Right divider line
         Box(
             modifier = Modifier
@@ -173,7 +195,7 @@ fun CustomTextDivider(
                 .height(dividerHeight)
                 .background(dividerColor)
         )
-        
+
         // Centered text with padding
         Text(
             text = text,
@@ -181,7 +203,7 @@ fun CustomTextDivider(
             color = textColor,
             modifier = Modifier.padding(horizontal = horizontalPadding)
         )
-        
+
         // Right divider line
         Box(
             modifier = Modifier
@@ -190,4 +212,24 @@ fun CustomTextDivider(
                 .background(dividerColor)
         )
     }
+}
+
+@Composable
+fun RemoteImage(
+    url: String,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop
+) {
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(url)
+            .diskCacheKey(url)
+            .memoryCacheKey(MemoryCache.Key(url))
+            .crossfade(true)
+            .build(),
+        contentDescription = contentDescription,
+        modifier = modifier,
+        contentScale = contentScale
+    )
 }
