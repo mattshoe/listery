@@ -1,6 +1,11 @@
+@file:OptIn(ExperimentalEncodingApi::class)
+
 import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import java.io.FileInputStream
 import java.util.Properties
+import org.gradle.api.GradleException
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 plugins {
     alias(libs.plugins.android.application)
@@ -33,23 +38,28 @@ android {
 
     signingConfigs {
         create("release") {
-            // Try to find keystore.properties in multiple locations
-            val keystorePropertiesFile = when {
-                rootProject.file("keystore.properties").exists() -> rootProject.file("keystore.properties")
-                file("keystore.properties").exists() -> file("keystore.properties")
-                else -> null
-            }
-            
-            if (keystorePropertiesFile != null) {
-                val keystoreProperties = Properties()
-                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
+            // Only configure signing if running in CI environment
+            if (System.getenv("CI") == "true") {
+                val keystoreBase64 = System.getenv("KEYSTORE_BASE64")
+                val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
+                val keyAlias = System.getenv("KEY_ALIAS")
+                val keyPassword = System.getenv("KEY_PASSWORD")
+                
+                if (keystoreBase64 != null && keystorePassword != null && keyAlias != null && keyPassword != null) {
+                    val keystoreBytes = Base64.decode(keystoreBase64)
+                    val keystoreFile = File.createTempFile("keystore", ".jks")
+                    keystoreFile.writeBytes(keystoreBytes)
+                    
+                    storeFile = keystoreFile
+                    storePassword = keystorePassword
+                    this.keyAlias = keyAlias
+                    this.keyPassword = keyPassword
+                } else {
+                    throw GradleException("Missing required signing environment variables for CI build")
+                }
             } else {
-                // For local development without keystore, use debug signing
-                println("Warning: keystore.properties not found. Using debug signing for release builds.")
+                // Local builds will fail if trying to build release
+                throw GradleException("Release builds are only allowed in CI environment")
             }
         }
     }
@@ -62,11 +72,7 @@ android {
         }
         release {
             isMinifyEnabled = false
-            // Only use release signing if keystore is available
-            val releaseSigningConfig = signingConfigs.findByName("release")
-            if (releaseSigningConfig != null && releaseSigningConfig.storeFile != null) {
-                signingConfig = releaseSigningConfig
-            }
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
