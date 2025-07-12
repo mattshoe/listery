@@ -11,7 +11,6 @@ plugins {
     kotlin("plugin.serialization")
     id("com.google.gms.google-services")
     id("com.google.firebase.appdistribution")
-    id("com.gladed.androidgitversion")
 }
 
 android {
@@ -19,11 +18,12 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        val versionCodeProperty = project.findProperty("versionCode")?.toString()?.toIntOrNull() ?: 0
         applicationId = "org.mattshoe.shoebox.listery"
         minSdk = 28
         targetSdk = 35
-        versionCode = androidGitVersion.code()
-        versionName = androidGitVersion.name()
+        versionCode = versionCodeProperty
+        versionName = "0.0.$versionCodeProperty"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
