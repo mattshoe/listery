@@ -43,7 +43,7 @@ android {
                 val keystorePassword = System.getenv("KEYSTORE_PASSWORD") ?: throw GradleException("Missing KEYSTORE_PASSWORD environment variable for CI build")
                 val keyAlias = System.getenv("KEY_ALIAS") ?: throw GradleException("Missing KEY_ALIAS environment variable for CI build")
                 val keyPassword = System.getenv("KEY_PASSWORD") ?: throw GradleException("Missing KEY_PASSWORD environment variable for CI build")
-                
+
                 val keystoreBytes = Base64.decode(keystoreBase64)
                 val keystoreFile = File.createTempFile("keystore", ".jks")
                 keystoreFile.writeBytes(keystoreBytes)
