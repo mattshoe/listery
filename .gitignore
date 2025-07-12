@@ -21,10 +21,6 @@ local.properties
 *.keystore
 *.jks
 
-# Firebase configuration (if you have multiple environments)
-google-services.json
-google-services-*.json
-
 # Build configuration with sensitive data
 app/keystore.properties
 keystore.properties

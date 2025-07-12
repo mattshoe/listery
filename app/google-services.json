@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1000232382799",
+    "project_id": "listery-e91b2",
+    "storage_bucket": "listery-e91b2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1000232382799:android:f52f3f3579508c10d5553a",
+        "android_client_info": {
+          "package_name": "org.mattshoe.shoebox.listery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1000232382799-5cm1hk03vg07aemr24vk97c355bbkego.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.mattshoe.shoebox.listery",
+            "certificate_hash": "e74339a077a8d6ccd5c008409d471e56650dcc50"
+          }
+        },
+        {
+          "client_id": "1000232382799-6k3rf0lsduj2d59m4gfiu4hmnso28frv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.mattshoe.shoebox.listery",
+            "certificate_hash": "11735c455f4a6aae704ec528c2804d4732d4d44f"
+          }
+        },
+        {
+          "client_id": "1000232382799-7p5afvech58gibu5dnn5jqrtpb1gbp1r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBC6FfUEcyOdn8YCwdLUV4D-0jP7bpyNKM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1000232382799-7p5afvech58gibu5dnn5jqrtpb1gbp1r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
