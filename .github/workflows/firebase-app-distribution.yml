@@ -3,8 +3,6 @@ name: Deploy to Firebase App Distribution
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   firebase-app-distribution:
