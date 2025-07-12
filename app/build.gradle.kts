@@ -38,25 +38,20 @@ android {
 
     signingConfigs {
         create("release") {
-            // Only configure signing if running in CI environment
             if (System.getenv("CI") == "true") {
-                val keystoreBase64 = System.getenv("KEYSTORE_BASE64")
-                val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
-                val keyAlias = System.getenv("KEY_ALIAS")
-                val keyPassword = System.getenv("KEY_PASSWORD")
+                val keystoreBase64 = System.getenv("KEYSTORE_BASE64") ?: throw GradleException("Missing KEYSTORE_BASE64 environment variable for CI build")
+                val keystorePassword = System.getenv("KEYSTORE_PASSWORD") ?: throw GradleException("Missing KEYSTORE_PASSWORD environment variable for CI build")
+                val keyAlias = System.getenv("KEY_ALIAS") ?: throw GradleException("Missing KEY_ALIAS environment variable for CI build")
+                val keyPassword = System.getenv("KEY_PASSWORD") ?: throw GradleException("Missing KEY_PASSWORD environment variable for CI build")
                 
-                if (keystoreBase64 != null && keystorePassword != null && keyAlias != null && keyPassword != null) {
-                    val keystoreBytes = Base64.decode(keystoreBase64)
-                    val keystoreFile = File.createTempFile("keystore", ".jks")
-                    keystoreFile.writeBytes(keystoreBytes)
-                    
-                    storeFile = keystoreFile
-                    storePassword = keystorePassword
-                    this.keyAlias = keyAlias
-                    this.keyPassword = keyPassword
-                } else {
-                    throw GradleException("Missing required signing environment variables for CI build")
-                }
+                val keystoreBytes = Base64.decode(keystoreBase64)
+                val keystoreFile = File.createTempFile("keystore", ".jks")
+                keystoreFile.writeBytes(keystoreBytes)
+
+                storeFile = keystoreFile
+                storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
             } else {
                 // Local builds will fail if trying to build release
                 throw GradleException("Release builds are only allowed in CI environment")
