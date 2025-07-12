@@ -5,7 +5,7 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  assemble:
+  BuildDebug:
     runs-on: ubuntu-latest
     
     steps:
