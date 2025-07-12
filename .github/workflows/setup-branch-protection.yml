@@ -1,0 +1,63 @@
+name: Setup Branch Protection Rules
+
+on:
+  workflow_dispatch:
+    inputs:
+      branches:
+        description: 'Branches to protect (comma-separated)'
+        required: true
+        default: 'main,develop'
+      require_pr:
+        description: 'Require pull request before merging'
+        required: true
+        default: true
+      require_status_checks:
+        description: 'Require status checks to pass before merging'
+        required: true
+        default: true
+      required_status_checks:
+        description: 'Required status checks (comma-separated)'
+        required: true
+        default: 'Run App Validations'
+      require_branches_up_to_date:
+        description: 'Require branches to be up to date before merging'
+        required: true
+        default: true
+
+jobs:
+  setup-protection:
+    runs-on: ubuntu-latest
+    permissions:
+      administration: write
+    steps:
+      - name: Setup Branch Protection Rules
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branches = '${{ github.event.inputs.branches }}'.split(',').map(b => b.trim());
+            const requiredStatusChecks = '${{ github.event.inputs.required_status_checks }}'.split(',').map(s => s.trim());
+            
+            for (const branch of branches) {
+              console.log(`Setting up protection for branch: ${branch}`);
+              
+              try {
+                await github.rest.repos.updateBranchProtection({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  branch: branch,
+                  required_status_checks: {
+                    strict: ${{ github.event.inputs.require_branches_up_to_date }},
+                    contexts: requiredStatusChecks
+                  },
+                  enforce_admins: false,
+                  required_pull_request_reviews: null,
+                  restrictions: null,
+                  allow_force_pushes: false,
+                  allow_deletions: false
+                });
+                
+                console.log(`✅ Successfully protected branch: ${branch}`);
+              } catch (error) {
+                console.error(`❌ Failed to protect branch ${branch}:`, error.message);
+              }
+            } 

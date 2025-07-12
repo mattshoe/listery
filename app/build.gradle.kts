@@ -1,9 +1,7 @@
 @file:OptIn(ExperimentalEncodingApi::class)
 
+import com.android.build.gradle.internal.cxx.logging.warnln
 import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
-import java.io.FileInputStream
-import java.util.Properties
-import org.gradle.api.GradleException
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -23,7 +21,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        val versionCodeProperty = project.findProperty("versionCode")?.toString()?.toIntOrNull() ?: 0
+        val versionCodeProperty = project.findProperty("versionCode")?.toString()?.toIntOrNull() ?: 1
         applicationId = "org.mattshoe.shoebox.listery"
         minSdk = 28
         targetSdk = 35
@@ -38,12 +36,12 @@ android {
 
     signingConfigs {
         create("release") {
-            if (System.getenv("CI") == "true") {
-                val keystoreBase64 = System.getenv("KEYSTORE_BASE64") ?: throw GradleException("Missing KEYSTORE_BASE64 environment variable for CI build")
-                val keystorePassword = System.getenv("KEYSTORE_PASSWORD") ?: throw GradleException("Missing KEYSTORE_PASSWORD environment variable for CI build")
-                val keyAlias = System.getenv("KEY_ALIAS") ?: throw GradleException("Missing KEY_ALIAS environment variable for CI build")
-                val keyPassword = System.getenv("KEY_PASSWORD") ?: throw GradleException("Missing KEY_PASSWORD environment variable for CI build")
+            val keystoreBase64 = System.getenv("KEYSTORE_BASE64")
+            val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
+            val keyAlias = System.getenv("KEY_ALIAS")
+            val keyPassword = System.getenv("KEY_PASSWORD")
 
+            if (keystoreBase64 != null) {
                 val keystoreBytes = Base64.decode(keystoreBase64)
                 val keystoreFile = File.createTempFile("keystore", ".jks")
                 keystoreFile.writeBytes(keystoreBytes)
@@ -53,8 +51,7 @@ android {
                 this.keyAlias = keyAlias
                 this.keyPassword = keyPassword
             } else {
-                // Local builds will fail if trying to build release
-                throw GradleException("Release builds are only allowed in CI environment")
+                warnln("Signing Config KeyStore values not available!")
             }
         }
     }
@@ -62,7 +59,6 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            applicationIdSuffix = ".debug"
             setupFirebaseAppDistribution()
         }
         release {
