@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -77,6 +78,7 @@ fun Level1AppBar(
                     RemoteImage(
                         url = url,
                         contentDescription = "User Profile",
+                        placeholder = R.drawable.ic_account,
                         modifier = Modifier
                             .size(28.dp)
                             .clip(CircleShape)
@@ -225,6 +227,7 @@ fun CustomTextDivider(
 fun RemoteImage(
     url: String,
     contentDescription: String,
+    placeholder: Int,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ) {
@@ -233,6 +236,7 @@ fun RemoteImage(
             .data(url)
             .diskCacheKey(url)
             .memoryCacheKey(MemoryCache.Key(url))
+            .placeholder(placeholder)
             .crossfade(true)
             .build(),
         contentScale = contentScale
