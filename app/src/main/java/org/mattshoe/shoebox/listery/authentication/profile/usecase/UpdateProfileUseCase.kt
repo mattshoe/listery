@@ -4,13 +4,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
+import org.mattshoe.shoebox.listery.authentication.data.SessionRepository
 import org.mattshoe.shoebox.listery.authentication.model.User
 import org.mattshoe.shoebox.listery.authentication.util.toUser
 import org.mattshoe.shoebox.listery.logging.loge
 import javax.inject.Inject
 
 class UpdateProfileUseCase @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val sessionRepository: SessionRepository
 ) {
     suspend fun execute(
         firstName: String?,
@@ -34,6 +36,8 @@ class UpdateProfileUseCase @Inject constructor(
                     .build()
                 
                 currentUser.updateProfile(profileUpdates).await()
+
+                sessionRepository.refreshProfile()
                 
                 // Note: Phone number updates require additional verification
                 // For now, we'll just update the display name
