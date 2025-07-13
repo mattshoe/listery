@@ -120,6 +120,8 @@ dependencies {
     implementation(libs.firestore)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.remote.config)
+    implementation(libs.firebase.storage)
+    implementation(libs.coil.compose)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.openai.client)
