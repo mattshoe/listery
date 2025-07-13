@@ -54,9 +54,11 @@ androidx-compose-material3 = { group = "androidx.wear.compose", name = "compose-
 indriya = { module = "tech.units:indriya", version = "2.2.3" }
 androidx-material-navigation = { module = "androidx.compose.material:material-navigation", version = "1.8.3" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeMaterial3" }
+coil-compose = { module = "io.coil-kt:coil-compose", version = "2.7.0" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version = "33.16.0" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firestore = { module = "com.google.firebase:firebase-firestore" }
+firebase-storage = { module = "com.google.firebase:firebase-storage" }
 firebase-remote-config = { module = "com.google.firebase:firebase-config" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }

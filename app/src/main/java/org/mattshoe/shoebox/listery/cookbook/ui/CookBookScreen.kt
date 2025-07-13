@@ -44,6 +44,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -68,6 +70,8 @@ import org.mattshoe.shoebox.listery.ui.common.ListeryTextInput
 import org.mattshoe.shoebox.listery.ui.common.ListeryTile
 import org.mattshoe.shoebox.listery.ui.common.ShimmerPlaceholder
 import org.mattshoe.shoebox.listery.ui.common.SubduedText
+import org.mattshoe.shoebox.listery.navigation.LocalNavController
+import org.mattshoe.shoebox.listery.navigation.Routes
 import kotlin.time.Duration
 
 @Composable
@@ -75,9 +79,16 @@ fun CookbookScreen(
     viewModel: CookBookViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val navController = LocalNavController.current
 
     ListeryScaffold(
-        topBar = { Level1AppBar("CookBook") },
+        topBar = { 
+            Level1AppBar(
+                title = "CookBook",
+                onProfileClick = { navController.navigate(Routes.Profile) },
+                onMoreOptionsClick = { /* TODO: Implement more options */ }
+            ) 
+        },
         BottomNavItem.Cookbook,
         onFabClick =  { viewModel.handleIntent(UserIntent.NewRecipe) }
     ) { insets ->

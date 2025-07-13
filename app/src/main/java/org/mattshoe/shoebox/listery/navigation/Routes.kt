@@ -47,4 +47,6 @@ sealed interface Routes {
     @Serializable
     data object GenerateRecipe: Routes
 
+    @Serializable
+    data object Profile: Routes
 }

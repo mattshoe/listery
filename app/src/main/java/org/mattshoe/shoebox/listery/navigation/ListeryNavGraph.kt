@@ -18,6 +18,7 @@ import org.mattshoe.shoebox.listery.ai.generate.ui.GenerateRecipeScreen
 import org.mattshoe.shoebox.listery.ai.parseweb.ui.ParseWebsiteScreen
 import org.mattshoe.shoebox.listery.cookbook.ui.CookbookScreen
 import org.mattshoe.shoebox.listery.authentication.login.ui.LoginScreen
+import org.mattshoe.shoebox.listery.authentication.profile.ui.ProfileScreen
 import org.mattshoe.shoebox.listery.authentication.register.ui.RegisterBottomSheet
 import org.mattshoe.shoebox.listery.authentication.resetpassword.ui.ResetPasswordBottomSheet
 import org.mattshoe.shoebox.listery.recipe.create.ui.ChooseRecipeCreationMethodBottomSheet
@@ -79,6 +80,10 @@ fun ListeryNavGraph(
 
                 composable<Routes.Login> {
                     LoginScreen()
+                }
+
+                composable<Routes.Profile> {
+                    ProfileScreen()
                 }
 
                 bottomSheet<Routes.ResetPassword> {
