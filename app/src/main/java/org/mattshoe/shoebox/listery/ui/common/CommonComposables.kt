@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,11 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import coil.compose.EqualityDelegate
 import coil.compose.rememberAsyncImagePainter
 import coil.memory.MemoryCache
-import coil.request.CachePolicy
 import coil.request.ImageRequest
 import org.mattshoe.shoebox.listery.R
 import org.mattshoe.shoebox.listery.authentication.AuthenticationViewModel
@@ -53,13 +49,15 @@ import org.mattshoe.shoebox.listery.navigation.LocalNavController
 @OptIn(ExperimentalMaterial3Api::class)
 fun Level1AppBar(
     title: String,
+    authViewModel: AuthenticationViewModel = hiltViewModel(),
     onProfileClick: () -> Unit = {},
     onMoreOptionsClick: () -> Unit = {}
 ) {
-    val viewModel: AuthenticationViewModel = hiltViewModel()
-    val state by viewModel.state.collectAsState()
-    val currentUser by remember {
-        derivedStateOf { (state as? SessionState.LoggedIn)?.user }
+    val sessionState by authViewModel.state.collectAsState()
+    val photoUrl by remember {
+        derivedStateOf {
+            (sessionState as? SessionState.LoggedIn)?.user?.photoUrl
+        }
     }
     TopAppBar(
         title = {
@@ -67,17 +65,17 @@ fun Level1AppBar(
         },
         colors = TopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = Color.White,
-            navigationIconContentColor = Color.White,
-            actionIconContentColor = Color.White,
-            scrolledContainerColor = Color.Green
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            scrolledContainerColor = MaterialTheme.colorScheme.primary
         ),
         actions = {
             IconButton(onClick = onProfileClick) {
-                val photoUrl = currentUser?.photoUrl
-                if (photoUrl != null) {
+                val url = photoUrl
+                if (url != null) {
                     RemoteImage(
-                        url = photoUrl,
+                        url = url,
                         contentDescription = "User Profile",
                         modifier = Modifier
                             .size(28.dp)
@@ -230,7 +228,6 @@ fun RemoteImage(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ) {
-    logi("Recomposing image!")
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
