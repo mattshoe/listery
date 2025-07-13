@@ -9,7 +9,6 @@ fun FirebaseUser?.toSessionState(): SessionState {
     return this?.let {
         SessionState.LoggedIn(
             it.toUser(),
-            UUID.randomUUID().toString(),
             UUID.randomUUID().toString()
         )
     } ?: SessionState.Anonymous
