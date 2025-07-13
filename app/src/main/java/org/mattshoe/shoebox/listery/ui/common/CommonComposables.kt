@@ -58,8 +58,10 @@ fun Level1AppBar(
 ) {
     val viewModel: AuthenticationViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
-    val currentUser by remember {
-        derivedStateOf { (state as? SessionState.LoggedIn)?.user }
+    val photoUrl by remember {
+        derivedStateOf {
+            (state as? SessionState.LoggedIn)?.user?.photoUrl
+        }
     }
     TopAppBar(
         title = {
@@ -74,10 +76,10 @@ fun Level1AppBar(
         ),
         actions = {
             IconButton(onClick = onProfileClick) {
-                val photoUrl = currentUser?.photoUrl
-                if (photoUrl != null) {
+                val url = photoUrl
+                if (url != null) {
                     RemoteImage(
-                        url = photoUrl,
+                        url = url,
                         contentDescription = "User Profile",
                         modifier = Modifier
                             .size(28.dp)
@@ -230,7 +232,7 @@ fun RemoteImage(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ) {
-    logi("Recomposing image!")
+    logi("Recomposing image! -- $url")
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)

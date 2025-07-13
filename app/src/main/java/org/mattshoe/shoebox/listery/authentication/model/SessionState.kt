@@ -5,7 +5,7 @@ sealed interface SessionState {
     data class LoggedIn(
         val user: User,
         val sessionId: String,
-        val profileSession: String
+        val refreshId: String
     ): SessionState
 }
 

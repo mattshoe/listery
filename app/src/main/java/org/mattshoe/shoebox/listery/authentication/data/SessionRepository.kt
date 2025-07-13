@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.update
 import org.mattshoe.shoebox.listery.authentication.model.SessionState
 import org.mattshoe.shoebox.listery.authentication.model.User
 import org.mattshoe.shoebox.listery.authentication.util.toSessionState
+import org.mattshoe.shoebox.listery.authentication.util.toUser
+import org.mattshoe.shoebox.listery.logging.logd
 import java.util.UUID
 import javax.inject.Inject
 
@@ -33,14 +35,23 @@ class SessionRepository @Inject constructor(
         }
     }
 
-    fun triggerProfileRefresh() {
+    fun refreshProfile() {
         (_session.value as? SessionState.LoggedIn)?.let { session ->
-            _session.update {
-                session.copy(
-                    profileSession = UUID.randomUUID().toString()
-                )
+            firebaseAuth.currentUser?.let { firebaseUser ->
+                val user = firebaseUser.toUser().also {
+                    logd("Refresh Session -> ProfilePic - ${it.photoUrl} ")
+                }
+                _session.update {
+                    val newSession = session.copy(
+                        user = user,
+                        refreshId = UUID.randomUUID().toString()
+                    )
+
+                    logd("oldSession == newSession -> ${it == newSession}")
+
+                    newSession
+                }
             }
         }
-
     }
 }
