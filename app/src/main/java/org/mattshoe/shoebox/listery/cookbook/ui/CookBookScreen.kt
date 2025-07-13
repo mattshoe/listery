@@ -120,7 +120,7 @@ fun CookbookEmptyScreen(
             painter = painterResource(id = state.icon),
             contentDescription = "",
             modifier = Modifier
-                .fillMaxWidth(0.67f)
+                .fillMaxWidth(0.5f)
                 .wrapContentHeight()
         )
         Spacer(modifier = Modifier.height(16.dp))

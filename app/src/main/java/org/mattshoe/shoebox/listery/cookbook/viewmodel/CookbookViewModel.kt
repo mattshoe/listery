@@ -77,7 +77,7 @@ class CookBookViewModel @Inject constructor(
                     if (recipes.isEmpty())
                         CookBookState.Empty(
                             R.drawable.ic_cookbook_colorful,
-                            "You don't have any recipes yet! Tap the + button to create your own or generate one based on your preferences"
+                            "You don't have any recipes yet!\n\nTap the + button to create your own or generate one based on your preferences"
                         )
                     else
                         CookBookState.Success(filteredRecipes, filters.filterOptions)
