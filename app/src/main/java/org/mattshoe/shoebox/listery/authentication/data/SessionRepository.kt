@@ -1,25 +1,27 @@
 package org.mattshoe.shoebox.listery.authentication.data
 
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.mattshoe.shoebox.listery.authentication.model.SessionState
 import org.mattshoe.shoebox.listery.authentication.model.User
 import org.mattshoe.shoebox.listery.authentication.util.toSessionState
 import org.mattshoe.shoebox.listery.authentication.util.toUser
-import org.mattshoe.shoebox.listery.logging.logd
-import java.util.UUID
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@OptIn(DelicateCoroutinesApi::class)
+@Singleton
 class SessionRepository @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) {
     private val _session = MutableStateFlow<SessionState>(
         firebaseAuth.currentUser.toSessionState()
     )
-    val state: StateFlow<SessionState> = _session.asStateFlow()
+
+    val state: StateFlow<SessionState> = _session
 
     val currentUser: User?
         get() = when (val session = _session.value) {
@@ -38,18 +40,11 @@ class SessionRepository @Inject constructor(
     fun refreshProfile() {
         (_session.value as? SessionState.LoggedIn)?.let { session ->
             firebaseAuth.currentUser?.let { firebaseUser ->
-                val user = firebaseUser.toUser().also {
-                    logd("Refresh Session -> ProfilePic - ${it.photoUrl} ")
-                }
+                val user = firebaseUser.toUser()
                 _session.update {
-                    val newSession = session.copy(
-                        user = user,
-                        refreshId = UUID.randomUUID().toString()
+                    session.copy(
+                        user = user
                     )
-
-                    logd("oldSession == newSession -> ${it == newSession}")
-
-                    newSession
                 }
             }
         }

@@ -9,7 +9,6 @@ import org.mattshoe.shoebox.listery.authentication.data.SessionRepository
 import org.mattshoe.shoebox.listery.authentication.model.SessionState
 import org.mattshoe.shoebox.listery.authentication.profile.usecase.LogoutUseCase
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
-import org.mattshoe.shoebox.listery.logging.logd
 import javax.inject.Inject
 
 sealed interface AuthIntent {
@@ -27,7 +26,6 @@ class AuthenticationViewModel @Inject constructor(
     init {
         sessionRepository.state
             .onEach { session ->
-                logd("Session Updated -> ProfilePic - ${(session as? SessionState.LoggedIn)?.user?.photoUrl}")
                 updateState {
                     session
                 }
