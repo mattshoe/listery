@@ -1,16 +1,11 @@
 package org.mattshoe.shoebox.listery.ai.parseweb.usecase
 
 import android.webkit.URLUtil
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import crawlercommons.robots.SimpleRobotRulesParser
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
-import io.ktor.client.request.headers
 import io.ktor.client.statement.bodyAsBytes
 import io.ktor.client.statement.bodyAsText
-import kotlinx.serialization.Serializable
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.mattshoe.shoebox.listery.ai.GenerativeChat
 import org.mattshoe.shoebox.listery.ai.GenerativeError
 import org.mattshoe.shoebox.listery.ai.GenerativeResult
@@ -23,25 +18,6 @@ import org.mattshoe.shoebox.listery.util.retry
 import java.net.URL
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
-
-@Serializable
-data class DomainBlacklist(
-    val sites: List<BlacklistedSite>
-) {
-    fun entry(url: String): BlacklistedSite? {
-        return url.toHttpUrlOrNull()?.topPrivateDomain()?.let { domain ->
-            sites.firstOrNull {
-                it.domain == domain
-            }
-        }
-    }
-}
-
-@Serializable
-data class BlacklistedSite(
-    val domain: String,
-    val reason: String
-)
 
 class ParseWebsiteUseCase @Inject constructor(
     private val generativeChat: GenerativeChat,

@@ -15,6 +15,8 @@ import org.mattshoe.shoebox.listery.model.Recipe
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.serialization.json.Json
+import org.mattshoe.shoebox.listery.ai.GenerativeChat
+import org.mattshoe.shoebox.listery.ai.GenerativeResult
 import org.mattshoe.shoebox.listery.ai.common.RecipeJsonSchema
 import org.mattshoe.shoebox.listery.cuisine.model.Cuisine
 import org.mattshoe.shoebox.listery.lifestyle.model.Lifestyle
@@ -28,75 +30,39 @@ data class GenerateRecipeRequest(
 )
 
 class GenerateRecipeUseCase @Inject constructor(
-    private val remoteConfigRepository: RemoteConfigRepository
+    private val generativeChat: GenerativeChat
 ) {
+    private val instructions = """
+        You are a chef of the most creative and sensible kind. 
+        You will receive requests for unique recipes with various constraints.
+        You will accept these requests and generate recipes according to the constraints.
+        However, your audience must be presumed to be regular people of low cooking skill.
+        Thus, your recipes should reflect that in their simplicity and language.
+        This means you should keep your steps very light on jargon and concepts the common folk may not be familiar with.
+        However, your "notes" section should be a nicely formatted summary that really sells the meal.
+    """.trimIndent()
 
     suspend fun execute(request: GenerateRecipeRequest): Recipe {
-        val openai = OpenAI(
-            token = remoteConfigRepository.getString("OPENAI_KEY"),
-            timeout = Timeout(socket = 60.seconds),
-        )
-        
-        // Create a prompt that will extract recipe information
         val prompt = createPrompt(request)
-        
-        // Use OpenAI to parse the recipe
-        val chatCompletionRequest = ChatCompletionRequest(
-            model = ModelId("o4-mini-2025-04-16"),
-            messages = listOf(
-                ChatMessage(
-                    role = ChatRole.System,
-                    content = """
-                        You are a chef of the most creative and sensible kind. 
-                        You will receive requests for unique recipes with various constraints.
-                        You will accept these requests and generate recipes according to the constraints.
-                        However, your audience must be presumed to be regular people of low cooking skill.
-                        Thus, your recipes should reflect that in their simplicity and language.
-                        
-                        But above ALL ELSE:
-                        The recipe you generate MUST adhere perfectly to the following JSON schema:
-                        
-                        $RecipeJsonSchema
-                        
-                        Important, Unbreakable Rules:
-                        1. Obey the JSON schema.
-                        2. Ensure the JSON is valid.
-                        3. Follow all constraints specified in the prompt.
-                        4. Assume low-skill audience.
-                        5. Your response must contain ONLY the plain json text. NO OTHER TEXT OR MARKDOWN OR FORMATTING.
-                        6. I REPEAT: ONLY PLAIN TEXT JSON IN YOUR RESPONSE. NO OTHER MARKDOWN OR OTHER FORMATTING.
-                        7. If you receive website content that does not actually contain any recipe content, please return EXACTLY this JSON: { "error": 500 }
-                        """.trimIndent()
-                ),
-                ChatMessage(
-                    role = ChatRole.User,
-                    content = prompt
-                )
-            ),
-//            temperature = 0.1, // Low temperature for consistent JSON output
+
+        val result = generativeChat.execute<Recipe>(
+            instructions,
+            RecipeJsonSchema,
+            prompt
         )
 
-        val retryResult = retry {
-            val response = openai.chatCompletion(chatCompletionRequest)
-            val jsonResponse = response.choices.firstOrNull()?.message?.content
-                ?: throw Exception("Failed to generate recipe")
-
-            // Deserialize the JSON response into a Recipe object
-            Json.decodeFromString<Recipe>(jsonResponse)
-        }
-
-        return when (retryResult) {
-            is RetryResult.Success -> retryResult.value
-            is RetryResult.Failure -> throw retryResult.error
+        return when (result) {
+            is GenerativeResult.Success -> result.value
+            is GenerativeResult.Failure -> throw IllegalStateException("Unable to generate recipe")
         }
     }
 
 
     private fun createPrompt(request: GenerateRecipeRequest): String {
         return """
-                Cuisine: ${request.cuisine ?: "Any" }
-                Lifestyle: ${request.lifestyle ?: "Any" }
-                Prep Time: ${request.prepTime ?: "Any" }
-            """.trimIndent()
+            Cuisine: ${request.cuisine ?: "Any" }
+            Lifestyle: ${request.lifestyle ?: "Any" }
+            Prep Time: ${request.prepTime ?: "Any" }
+        """.trimIndent()
     }
 }
