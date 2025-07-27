@@ -1,74 +1,97 @@
 package org.mattshoe.shoebox.listery.ai.parseweb.usecase
 
-import com.aallam.openai.api.chat.ChatCompletionRequest
-import com.aallam.openai.api.chat.ChatMessage
-import com.aallam.openai.api.chat.ChatRole
-import com.aallam.openai.api.http.Timeout
-import com.aallam.openai.api.model.ModelId
-import com.aallam.openai.client.OpenAI
+import android.webkit.URLUtil
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import crawlercommons.robots.SimpleRobotRulesParser
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.request.get
+import io.ktor.client.request.headers
+import io.ktor.client.statement.bodyAsBytes
 import io.ktor.client.statement.bodyAsText
-import org.mattshoe.shoebox.listery.config.RemoteConfigRepository
-import org.mattshoe.shoebox.listery.model.Recipe
-import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import org.mattshoe.shoebox.listery.ai.GenerativeChat
+import org.mattshoe.shoebox.listery.ai.GenerativeError
+import org.mattshoe.shoebox.listery.ai.GenerativeResult
 import org.mattshoe.shoebox.listery.ai.common.RecipeJsonSchema
+import org.mattshoe.shoebox.listery.config.RemoteConfigRepository
+import org.mattshoe.shoebox.listery.logging.loge
+import org.mattshoe.shoebox.listery.model.Recipe
 import org.mattshoe.shoebox.listery.util.RetryResult
 import org.mattshoe.shoebox.listery.util.retry
+import java.net.URL
+import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
-class ParseWebsiteUseCase @Inject constructor(
-    private val remoteConfigRepository: RemoteConfigRepository
+@Serializable
+data class DomainBlacklist(
+    val sites: List<BlacklistedSite>
 ) {
-    private val httpClient = HttpClient(OkHttp)
-
-    suspend fun execute(site: String): Recipe {
-        val openai = OpenAI(
-            token = remoteConfigRepository.getString("OPENAI_KEY"),
-            timeout = Timeout(socket = 60.seconds),
-        )
-
-        // First, fetch the website content
-        val websiteContent = fetchWebsiteContent(site)
-        
-        // Create a prompt that will extract recipe information
-        val prompt = createRecipeExtractionPrompt(websiteContent, site)
-        
-        // Use OpenAI to parse the recipe
-        val chatCompletionRequest = ChatCompletionRequest(
-            model = ModelId("o4-mini-2025-04-16"),
-            messages = listOf(
-                ChatMessage(
-                    role = ChatRole.System,
-                    content = "You are a recipe parsing assistant. Extract recipe information from website content and return it as valid JSON that matches the specified Recipe schema."
-                ),
-                ChatMessage(
-                    role = ChatRole.User,
-                    content = prompt
-                )
-            ),
-//            temperature = 0.1, // Low temperature for consistent JSON output
-        )
-
-        val retryResult = retry {
-            val response = openai.chatCompletion(chatCompletionRequest)
-            val jsonResponse = response.choices.firstOrNull()?.message?.content
-                ?: throw Exception("Failed to parse recipe")
-
-            // Deserialize the JSON response into a Recipe object
-            Json.decodeFromString<Recipe>(jsonResponse)
-        }
-
-        return when (retryResult) {
-            is RetryResult.Success -> retryResult.value
-            is RetryResult.Failure -> throw retryResult.error
+    fun entry(url: String): BlacklistedSite? {
+        return url.toHttpUrlOrNull()?.topPrivateDomain()?.let { domain ->
+            sites.firstOrNull {
+                it.domain == domain
+            }
         }
     }
+}
 
-    private suspend fun fetchWebsiteContent(url: String): String {
-        val result = retry {
+@Serializable
+data class BlacklistedSite(
+    val domain: String,
+    val reason: String
+)
+
+class ParseWebsiteUseCase @Inject constructor(
+    private val generativeChat: GenerativeChat,
+    private val httpClient: HttpClient,
+    private val remoteConfig: RemoteConfigRepository
+) {
+    private var blacklist: DomainBlacklist? = null
+    private val instructions = """
+            You are tasked with extracting recipe information from a website and converting it into a specific JSON format.
+            
+            Notes:
+            1. Extract the recipe name, ingredients, servings count, and cooking steps from the website content
+            2. For ingredients, estimate calories if not provided (use reasonable defaults)
+            3. Convert prep time to seconds
+            4. If any information is missing, use null or empty arrays as appropriate
+        """.trimIndent()
+
+    init {
+        blacklist = remoteConfig.get<DomainBlacklist>("DOMAIN_BLACKLIST")
+    }
+
+    suspend fun execute(site: String): GenerativeResult<Recipe> {
+        val url = site.toJavaUrl()
+
+        blacklist?.entry(site)?.let {
+            return GenerativeResult.Failure(
+                reason = GenerativeError(it.reason)
+            )
+        }
+
+        if (!url.isUrlAllowedToBeScraped()) {
+            return GenerativeResult.Failure(
+                reason = GenerativeError(
+                    explanation = "${url.host} does not allow scraping!"
+                )
+            )
+        }
+
+        val websiteContent = fetchWebsiteContent(url)
+        val prompt = createRecipeExtractionPrompt(websiteContent, url)
+
+        return generativeChat.execute<Recipe>(
+            instructions,
+            RecipeJsonSchema,
+            prompt
+        )
+    }
+
+    private suspend fun fetchWebsiteContent(url: URL): String {
+        val result = retry(delay = 2.seconds) {
             val textContent = httpClient
                 .get(url)
                 .bodyAsText()
@@ -91,28 +114,35 @@ class ParseWebsiteUseCase @Inject constructor(
             .trim()
     }
 
-    private fun createRecipeExtractionPrompt(websiteContent: String, originalUrl: String): String {
+    private fun createRecipeExtractionPrompt(websiteContent: String, originalUrl: URL): String {
         return """
-You are tasked with extracting recipe information from a website and converting it into a specific JSON format.
+            Website URL: $originalUrl
+            Website Content:
+            $websiteContent
+        """.trimIndent()
+    }
 
-Website URL: $originalUrl
-Website Content:
-$websiteContent
+    suspend fun URL.isUrlAllowedToBeScraped(): Boolean {
+        try {
+            val robotsUrl = "${protocol}://${host}/robots.txt"
 
-Please extract the recipe information from the website and return it as a valid JSON object that matches this exact schema:
+            // Fetch robots.txt
+            val robotsContent = httpClient.get(robotsUrl)
 
-${RecipeJsonSchema}
+            // Parse it
+            val parser = SimpleRobotRulesParser()
+            val rules = parser.parseContent(host, robotsContent.bodyAsBytes(), "text/plain", "ListeryBot")
 
-Important guidelines:
-1. Extract the recipe name, ingredients, servings count, and cooking steps from the website content
-2. For ingredients, estimate calories if not provided (use reasonable defaults)
-3. Convert prep time to ISO 8601 duration format (PT30M, PT1H, PT1H30M, etc.)
-4. If any information is missing, use null or empty arrays as appropriate
-5. Ensure the JSON is valid and properly formatted
-6. ONLY return the JSON object, no additional text or explanations
-7. DO NOT SURROUND THE JSON WITH MARKDOWN. ONLY PLAIN TEXT.
-
-Return ONLY the JSON object, no other text:
-"""
+            // Check if allowed
+            return rules.isAllowed(toString())
+        } catch (e: Exception) {
+            loge(e)
+            return true
+        }
     }
 }
+
+fun String.toJavaUrl() = URL(
+    if (URLUtil.isValidUrl(this)) this
+    else "https://$this"
+)

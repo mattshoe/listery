@@ -1,8 +1,13 @@
 package org.mattshoe.shoebox.listery.ai.parseweb.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -30,14 +35,17 @@ fun ParseWebsiteScreen(
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            ListeryTextInput(
-                value = EditableField(
-                    value = state.url,
-                    enabled = !state.isLoading
-                ),
-                placeholder = "Enter website"
-            ) {
-                viewModel.handleIntent(UserIntent.UpdateUrl(it))
+            Row(modifier = Modifier.padding(8.dp)) {
+                ListeryTextInput(
+                    value = EditableField(
+                        value = state.url.trim(),
+                        enabled = !state.isLoading
+                    ),
+                    placeholder = "Enter website",
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                ) {
+                    viewModel.handleIntent(UserIntent.UpdateUrl(it))
+                }
             }
 
             // Error Display

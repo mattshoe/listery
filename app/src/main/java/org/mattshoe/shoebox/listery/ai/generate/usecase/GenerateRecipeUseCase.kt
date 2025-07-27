@@ -30,7 +30,6 @@ data class GenerateRecipeRequest(
 class GenerateRecipeUseCase @Inject constructor(
     private val remoteConfigRepository: RemoteConfigRepository
 ) {
-    private val httpClient = HttpClient(OkHttp)
 
     suspend fun execute(request: GenerateRecipeRequest): Recipe {
         val openai = OpenAI(
@@ -66,6 +65,7 @@ class GenerateRecipeUseCase @Inject constructor(
                         4. Assume low-skill audience.
                         5. Your response must contain ONLY the plain json text. NO OTHER TEXT OR MARKDOWN OR FORMATTING.
                         6. I REPEAT: ONLY PLAIN TEXT JSON IN YOUR RESPONSE. NO OTHER MARKDOWN OR OTHER FORMATTING.
+                        7. If you receive website content that does not actually contain any recipe content, please return EXACTLY this JSON: { "error": 500 }
                         """.trimIndent()
                 ),
                 ChatMessage(

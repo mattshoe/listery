@@ -1,17 +1,20 @@
 package org.mattshoe.shoebox.listery.ai.parseweb.viewmodel
 
+import android.webkit.URLUtil
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import org.mattshoe.shoebox.listery.ai.GenerativeResult
 import org.mattshoe.shoebox.listery.ai.parseweb.usecase.ParseWebsiteUseCase
 import org.mattshoe.shoebox.listery.common.ListeryViewModel
 import org.mattshoe.shoebox.listery.data.RecipeRepository
+import org.mattshoe.shoebox.listery.logging.loge
 import org.mattshoe.shoebox.listery.navigation.NavigationProvider
 import org.mattshoe.shoebox.listery.navigation.Routes
 import javax.inject.Inject
 
 data class State(
-    val url: String = " ",
+    val url: String = "",
     val parsedRecipe: String? = null,
     val isLoading: Boolean = false,
     val error: String? = null
@@ -55,21 +58,26 @@ class ParseWebsiteViewModel @Inject constructor(
                 )
             }
 
-            try {
-                updateState {
-                    it.copy(isLoading = true)
+            val result = parseWebsiteUseCase.execute(url)
+
+            when (result) {
+                is GenerativeResult.Success -> {
+                    val recipeId = recipeRepository.upsert(result.value)
+                    navigationProvider.navController.navigate(Routes.Recipe(recipeId))
                 }
-                val result = parseWebsiteUseCase.execute(url)
-                val recipeId = recipeRepository.upsert(result)
-                navigationProvider.navController.navigate(Routes.Recipe(recipeId))
-            } catch (e: Throwable) {
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        error = "Error parsing website: ${e.message}"
-                    )
+                is GenerativeResult.Failure -> {
+                    loge("Unable to parse website: ${result.reason}")
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            error = result.reason.explanation
+                        )
+                    }
                 }
             }
+
+
+
         }
     }
 }

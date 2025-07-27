@@ -125,6 +125,12 @@ class GenerateRecipeViewModel @Inject constructor(
             navigationProvider.navController.navigate(Routes.Recipe(id))
         } catch (e: Throwable) {
             loge(e)
+            updateState {
+                it.copy(
+                    isLoading = false,
+                    error = "We ran into an issue, please try again."
+                )
+            }
         }
     }
 }

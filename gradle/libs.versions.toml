@@ -65,12 +65,14 @@ material = { group = "com.google.android.material", name = "material", version.r
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 password4j = { module = "com.password4j:password4j", version = "1.8.3" }
+crawler-commons = { module = "com.github.crawler-commons:crawler-commons", version = "1.5" }
 
 #region OpenAI BOM
 openai-bom = { module = "com.aallam.openai:openai-client-bom", version = "4.0.1" }
 openai-client = { module = "com.aallam.openai:openai-client" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version = "3.2.1" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version = "3.2.1" }
 #endregion
 
 [plugins]

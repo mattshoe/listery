@@ -6,9 +6,11 @@ import android.os.Bundle
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.mattshoe.shoebox.listery.logging.logi
@@ -21,6 +23,7 @@ class ListeryApplication: Application() {
         super.onCreate()
 
         FirebaseApp.initializeApp(this)
+        Firebase.remoteConfig.fetchAndActivate()
 
         // Initialize cuisines and lifestyles in Firestore
         initializeCuisines()
